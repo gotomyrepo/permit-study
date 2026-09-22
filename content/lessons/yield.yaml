@@ -1,0 +1,58 @@
+id: yield
+order: 2
+title: Yield
+icon: "🔻"
+cards:
+  - id: yield-1
+    say: "This is a yield sign. Yield means: let the other cars go first."
+    scene: yield-intersection
+    step: show-sign
+    source:
+      page: 29
+      quote: "Prepare to stop and yield the right-of-way to vehicles and pedestrians in or heading toward the intersection."
+  - id: yield-2
+    say: "When you see a yield sign, slow down as you get close."
+    scene: yield-intersection
+    step: slow-down
+    source:
+      page: 29
+      quote: "Decrease speed as you reach the intersection."
+  - id: yield-3
+    say: "If a car is coming, stop and wait. Let it go first. When it is gone, you can go."
+    scene: yield-intersection
+    step: wait-then-go
+    source:
+      page: 29
+      quote: "You must come to a full stop at a YIELD sign if traffic conditions require it."
+questions:
+  - id: yield-q1
+    ask: "You are the blue car. There is a yield sign. Who goes first?"
+    scene: yield-intersection
+    step: question-freeze
+    choices: ["The blue car. That is you.", "The red car."]
+    answer: 1
+    explainCard: yield-3
+    source:
+      page: 29
+      quote: "Prepare to stop and yield the right-of-way to vehicles and pedestrians in or heading toward the intersection."
+  - id: yield-q2
+    ask: "What should you do when you get close to a yield sign?"
+    scene: sign-yield
+    step: show
+    choices: ["Speed up.", "Slow down.", "Honk your horn.", "Turn around."]
+    answer: 1
+    explainCard: yield-2
+    source:
+      page: 29
+      quote: "Decrease speed as you reach the intersection."
+  - id: yield-q3
+    ask: "What does this sign tell you to do?"
+    scene: sign-yield
+    step: show
+    choices: ["Stop every time, even if no one is coming.", "Let other cars go first.", "Do not turn.", "Go faster."]
+    answer: 1
+    explainCard: yield-1
+    signQuestion: true
+    source:
+      page: 29
+      quote: "Prepare to stop and yield the right-of-way to vehicles and pedestrians in or heading toward the intersection."

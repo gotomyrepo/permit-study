@@ -958,5 +958,97 @@
  {
   "id": "score-20-of-20",
   "text": "You got 20 out of 20."
+ },
+ {
+  "id": "end-yield",
+  "text": "Great job! You're done with Yield."
+ },
+ {
+  "id": "card-yield-1",
+  "text": "This is a yield sign. Yield means: let the other cars go first."
+ },
+ {
+  "id": "card-yield-2",
+  "text": "When you see a yield sign, slow down as you get close."
+ },
+ {
+  "id": "card-yield-3",
+  "text": "If a car is coming, stop and wait. Let it go first. When it is gone, you can go."
+ },
+ {
+  "id": "q-yield-q1",
+  "text": "You are the blue car. There is a yield sign. Who goes first?"
+ },
+ {
+  "id": "q-yield-q1-c0",
+  "text": "The blue car. That is you."
+ },
+ {
+  "id": "q-yield-q1-c1",
+  "text": "The red car."
+ },
+ {
+  "id": "q-yield-q1-yes",
+  "text": "Yes! The red car."
+ },
+ {
+  "id": "q-yield-q1-answer",
+  "text": "The answer is: The red car."
+ },
+ {
+  "id": "q-yield-q2",
+  "text": "What should you do when you get close to a yield sign?"
+ },
+ {
+  "id": "q-yield-q2-c0",
+  "text": "Speed up."
+ },
+ {
+  "id": "q-yield-q2-c1",
+  "text": "Slow down."
+ },
+ {
+  "id": "q-yield-q2-c2",
+  "text": "Honk your horn."
+ },
+ {
+  "id": "q-yield-q2-c3",
+  "text": "Turn around."
+ },
+ {
+  "id": "q-yield-q2-yes",
+  "text": "Yes! Slow down."
+ },
+ {
+  "id": "q-yield-q2-answer",
+  "text": "The answer is: Slow down."
+ },
+ {
+  "id": "q-yield-q3",
+  "text": "What does this sign tell you to do?"
+ },
+ {
+  "id": "q-yield-q3-c0",
+  "text": "Stop every time, even if no one is coming."
+ },
+ {
+  "id": "q-yield-q3-c1",
+  "text": "Let other cars go first."
+ },
+ {
+  "id": "q-yield-q3-c2",
+  "text": "Do not turn."
+ },
+ {
+  "id": "q-yield-q3-c3",
+  "text": "Go faster."
+ },
+ {
+  "id": "q-yield-q3-yes",
+  "text": "Yes! Let other cars go first."
+ },
+ {
+  "id": "q-yield-q3-answer",
+  "text": "The answer is: Let other cars go first."
  }
 ]
