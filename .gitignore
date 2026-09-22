@@ -2,3 +2,7 @@
 node_modules/
 dist/
 __pycache__/
+screenshots/
+voice-samples/
+test-results/
+playwright-report/
