@@ -1,7 +1,9 @@
 body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #fdfaf3; }
 /* ---- scenes ---- */
 svg.scene { display: block; width: 100%; height: auto; }
-.sign[data-state~="highlight"] { filter: drop-shadow(0 0 4px #fff59d) drop-shadow(0 0 3px #fbc02d); }
+/* Highlight: thick bright-yellow ring with a dark edge, gently swelling about once a second. */
+.sign[data-state~="highlight"] { filter: drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); animation: sign-pulse 1s ease-in-out infinite alternate; }
+@keyframes sign-pulse { from { filter: drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); } to { filter: drop-shadow(3.5px 0px 0 #ffeb3b) drop-shadow(-3.5px 0px 0 #ffeb3b) drop-shadow(0px 3.5px 0 #ffeb3b) drop-shadow(0px -3.5px 0 #ffeb3b) drop-shadow(3.5px 0px 0 #ffeb3b) drop-shadow(-3.5px 0px 0 #ffeb3b) drop-shadow(0px 3.5px 0 #ffeb3b) drop-shadow(0px -3.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); } }
 .light .lamp { fill: #424242; }
 .light .arrow { stroke: none; }
 .light[data-state~="red"] .lamp.red { fill: #f44336; }
@@ -16,6 +18,9 @@ svg.scene { display: block; width: 100%; height: auto; }
 .actor[data-state~="flashing"] .beacon { opacity: 1; animation: flash 0.5s steps(2) infinite; }
 .actor[data-state~="hidden"] { display: none; }
 @keyframes flash { 50% { opacity: 0.15; } }
+@media (prefers-reduced-motion: reduce) {
+  .light .lamp, .actor .beacon, .sign[data-state~="highlight"] { animation: none; }
+}
 /* ---- scene preview (dev) ---- */
 .preview-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }
 .preview-row h3 { width: 100%; margin: 4px 0; font-size: 16px; }
