@@ -965,7 +965,7 @@
  },
  {
   "id": "card-yield-1",
-  "text": "This is a yield sign. Yield means: let the other cars go first."
+  "text": "This is a yield sign. Yield means: let cars and people that are coming go first."
  },
  {
   "id": "card-yield-2",
@@ -973,7 +973,7 @@
  },
  {
   "id": "card-yield-3",
-  "text": "If a car is coming, stop and wait. Let it go first. When it is gone, you can go."
+  "text": "If a car is close, stop and wait. Let it go first. When it has passed, you can go."
  },
  {
   "id": "q-yield-q1",
@@ -1029,11 +1029,11 @@
  },
  {
   "id": "q-yield-q3-c0",
-  "text": "Stop every time, even if no one is coming."
+  "text": "Always stop, even with no cars."
  },
  {
   "id": "q-yield-q3-c1",
-  "text": "Let other cars go first."
+  "text": "Let cars and people go first."
  },
  {
   "id": "q-yield-q3-c2",
@@ -1045,10 +1045,10 @@
  },
  {
   "id": "q-yield-q3-yes",
-  "text": "Yes! Let other cars go first."
+  "text": "Yes! Let cars and people go first."
  },
  {
   "id": "q-yield-q3-answer",
-  "text": "The answer is: Let other cars go first."
+  "text": "The answer is: Let cars and people go first."
  }
 ]

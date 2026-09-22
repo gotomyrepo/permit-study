@@ -4,7 +4,7 @@ title: Yield
 icon: "🔻"
 cards:
   - id: yield-1
-    say: "This is a yield sign. Yield means: let the other cars go first."
+    say: "This is a yield sign. Yield means: let cars and people that are coming go first."
     scene: yield-intersection
     step: show-sign
     source:
@@ -18,7 +18,7 @@ cards:
       page: 29
       quote: "Decrease speed as you reach the intersection."
   - id: yield-3
-    say: "If a car is coming, stop and wait. Let it go first. When it is gone, you can go."
+    say: "If a car is close, stop and wait. Let it go first. When it has passed, you can go."
     scene: yield-intersection
     step: wait-then-go
     source:
@@ -49,7 +49,7 @@ questions:
     ask: "What does this sign tell you to do?"
     scene: sign-yield
     step: show
-    choices: ["Stop every time, even if no one is coming.", "Let other cars go first.", "Do not turn.", "Go faster."]
+    choices: ["Always stop, even with no cars.", "Let cars and people go first.", "Do not turn.", "Go faster."]
     answer: 1
     explainCard: yield-1
     signQuestion: true
