@@ -4,6 +4,8 @@ export class AudioPlayer {
   private audio = new Audio();
   private words = new Map<string, WordTiming[]>();
   private cancelCurrent: (() => void) | null = null;
+  /** Bumped by every play() and stop(); a play() that finds it changed after an await was replaced. */
+  private gen = 0;
 
   constructor(private base: string) { this.audio.preload = 'auto'; }
 
@@ -17,12 +19,17 @@ export class AudioPlayer {
     return this.words.get(id)!;
   }
 
-  /** Resolves when the clip ends. Rejects with AbortError if aborted or replaced by another play(), or with Error if it fails. */
+  /**
+   * Resolves when the clip ends. Rejects with AbortError if aborted, replaced by another play() or stopped,
+   * or with Error if it fails. Always settles.
+   */
   async play(id: string, signal: AbortSignal, onWord?: (i: number) => void): Promise<void> {
+    if (signal.aborted) throw signal.reason; // a dead signal must not stop what is playing now
+    const gen = ++this.gen;
     this.cancelCurrent?.();
-    if (signal.aborted) throw signal.reason;
     const words = onWord ? await this.timings(id) : [];
     if (signal.aborted) throw signal.reason;
+    if (gen !== this.gen) throw new DOMException('replaced', 'AbortError');
     const a = this.audio;
     a.pause();
     a.src = `${this.base}audio/${id}.mp3`;
@@ -57,5 +64,5 @@ export class AudioPlayer {
     });
   }
 
-  stop(): void { this.cancelCurrent?.(); this.audio.pause(); }
+  stop(): void { this.gen++; this.cancelCurrent?.(); this.audio.pause(); }
 }

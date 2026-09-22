@@ -22,8 +22,19 @@ export function clicked(el: HTMLElement, signal: AbortSignal): Promise<void> {
   });
 }
 
+/** Resolves with the index of the first element clicked. Removes all its listeners when it settles. */
 export function chooseOne(els: HTMLElement[], signal: AbortSignal): Promise<number> {
-  return Promise.race(els.map((el, i) => clicked(el, signal).then(() => i)));
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const onClicks = els.map((_, i) => () => { cleanup(); resolve(i); });
+    const onAbort = () => { cleanup(); reject(signal.reason); };
+    const cleanup = () => {
+      els.forEach((el, i) => el.removeEventListener('click', onClicks[i]));
+      signal.removeEventListener('abort', onAbort);
+    };
+    els.forEach((el, i) => el.addEventListener('click', onClicks[i]));
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
 }
 
 export function delay(ms: number, signal: AbortSignal): Promise<void> {
@@ -37,7 +48,26 @@ export function delay(ms: number, signal: AbortSignal): Promise<void> {
 
 export function childController(parent: AbortSignal): AbortController {
   const c = new AbortController();
-  if (parent.aborted) c.abort(parent.reason);
-  else parent.addEventListener('abort', () => c.abort(parent.reason), { once: true });
+  if (parent.aborted) {
+    c.abort(parent.reason);
+  } else {
+    const onParentAbort = () => c.abort(parent.reason);
+    parent.addEventListener('abort', onParentAbort, { once: true });
+    // Aborted on its own: stop listening to the parent so long-lived parents don't pile up listeners.
+    c.signal.addEventListener('abort', () => parent.removeEventListener('abort', onParentAbort), { once: true });
+  }
   return c;
+}
+
+/**
+ * Moves keyboard focus to the screen's main control: the first enabled primary (.btn.go) button,
+ * else the first enabled answer tile, else the first enabled button in the bottom bar, else any enabled button.
+ */
+export function focusMain(root: HTMLElement): HTMLElement | null {
+  const el = root.querySelector<HTMLElement>('.btn.go:not([disabled])')
+    ?? root.querySelector<HTMLElement>('.tile:not([disabled])')
+    ?? root.querySelector<HTMLElement>('.bar button:not([disabled])')
+    ?? root.querySelector<HTMLElement>('button:not([disabled])');
+  el?.focus();
+  return el;
 }

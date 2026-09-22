@@ -1,6 +1,6 @@
 import type { Lesson } from '../content/types';
 import type { ProgressStore } from '../progress/store';
-import { h } from '../ui/dom';
+import { focusMain, h } from '../ui/dom';
 import { speak, type Ctx } from './ctx';
 
 export type HomeChoice = { kind: 'lesson'; lesson: Lesson } | { kind: 'practice' };
@@ -15,6 +15,7 @@ export function showHome(ctx: Ctx, lessons: Lesson[], progress: ProgressStore): 
   const practice = h('button', { class: 'btn soft' }, '📝 Practice test');
   if (!next) keep.setAttribute('disabled', '');
   ctx.root.replaceChildren(h('div', { class: 'home-grid' }, ...tiles), h('div', { class: 'bar' }, keep, practice));
+  focusMain(ctx.root);
   void speak(ctx, 'phrase-home').catch(() => {});
   return new Promise((resolve, reject) => {
     keep.addEventListener('click', () => next && resolve({ kind: 'lesson', lesson: next }));

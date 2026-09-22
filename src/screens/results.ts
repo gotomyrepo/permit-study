@@ -1,7 +1,7 @@
 import { audioId, PHRASES, TEXT } from '../content/audioLines';
 import type { TestScore } from '../practice/assemble';
 import { Caption } from '../ui/caption';
-import { chooseOne, h } from '../ui/dom';
+import { childController, chooseOne, focusMain, h } from '../ui/dom';
 import { speak, type Ctx } from './ctx';
 
 export async function showResults(ctx: Ctx, s: TestScore, canReview: boolean): Promise<'home' | 'review'> {
@@ -15,10 +15,17 @@ export async function showResults(ctx: Ctx, s: TestScore, canReview: boolean): P
     h('div', { class: 'big-center' }, h('div', { class: 'huge' }, s.passed ? '🎉' : '💪'), score.el, verdict.el),
     h('div', { class: 'bar' }, ...buttons),
   );
+  focusMain(ctx.root);
+  // Lives only as long as this screen, so no clip from here plays over the next screen.
+  const screen = childController(ctx.signal);
   void (async () => {
-    await speak(ctx, audioId.score(s.correct, s.total), score);
-    await speak(ctx, verdictId, verdict);
+    if ((await speak(ctx, audioId.score(s.correct, s.total), score, screen.signal)) !== 'ok') return;
+    await speak(ctx, verdictId, verdict, screen.signal);
   })().catch(() => {});
-  const i = await chooseOne(buttons, ctx.signal);
-  return buttons[i] === review ? 'review' : 'home';
+  try {
+    const i = await chooseOne(buttons, ctx.signal);
+    return buttons[i] === review ? 'review' : 'home';
+  } finally {
+    screen.abort();
+  }
 }

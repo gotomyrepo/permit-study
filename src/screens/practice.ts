@@ -3,8 +3,8 @@ import { PHRASES } from '../content/audioLines';
 import { assembleTest, scoreTest, type TestAnswer } from '../practice/assemble';
 import type { ProgressStore } from '../progress/store';
 import { Caption } from '../ui/caption';
-import { clicked, h } from '../ui/dom';
-import { speak, type Ctx } from './ctx';
+import { clicked, focusMain, h } from '../ui/dom';
+import { speak, topBar, type Ctx } from './ctx';
 import { askQuestion } from './question';
 import { showResults } from './results';
 
@@ -17,6 +17,7 @@ export async function runPractice(ctx: Ctx, lessons: Lesson[], progress: Progres
       h('div', { class: 'big-center' }, h('div', { class: 'huge' }, '📝'), h('div', { class: 'caption' }, 'No test yet. Do a lesson first!')),
       h('div', { class: 'bar' }, home),
     );
+    focusMain(ctx.root);
     await clicked(home, ctx.signal);
     return;
   }
@@ -24,6 +25,7 @@ export async function runPractice(ctx: Ctx, lessons: Lesson[], progress: Progres
   const intro = new Caption(PHRASES['phrase-test-start']);
   const start = h('button', { class: 'btn go' }, '▶ Start');
   ctx.root.replaceChildren(h('div', { class: 'big-center' }, h('div', { class: 'huge' }, '📝'), intro.el), h('div', { class: 'bar' }, start));
+  focusMain(ctx.root);
   void speak(ctx, 'phrase-test-start', intro).catch(() => {});
   await clicked(start, ctx.signal);
   ctx.player.stop();
@@ -39,7 +41,8 @@ export async function runPractice(ctx: Ctx, lessons: Lesson[], progress: Progres
   if ((await showResults(ctx, scoreTest(answers), missed.length > 0)) !== 'review') return;
 
   const cap = new Caption(PHRASES['phrase-review-missed']);
-  ctx.root.replaceChildren(h('div', { class: 'big-center' }, cap.el));
+  ctx.root.replaceChildren(topBar(ctx, 0), h('div', { class: 'big-center' }, cap.el));
+  focusMain(ctx.root);
   await speak(ctx, 'phrase-review-missed', cap);
   for (const [i, item] of missed.entries()) {
     if (await askQuestion(ctx, item.lesson, item.q, 'teach', i / missed.length)) progress.clearMissed(item.q.id);

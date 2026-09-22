@@ -3,7 +3,7 @@ import { audioId } from '../content/audioLines';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
 import { Caption } from '../ui/caption';
-import { childController, clicked, delay, h } from '../ui/dom';
+import { childController, clicked, delay, focusMain, h } from '../ui/dom';
 import { speak, topBar, type Ctx } from './ctx';
 
 const AUDIO_FAIL_UNLOCK_MS = 3000;
@@ -28,6 +28,7 @@ export async function learnCard(ctx: Ctx, card: Card, fraction: number): Promise
   const again = h('button', { class: 'btn soft' }, '🔁 Watch again');
   const next = h('button', { class: 'btn go', disabled: '' }, '▶ Next');
   ctx.root.replaceChildren(topBar(ctx, fraction), stage, caption.el, h('div', { class: 'bar' }, say, again, next));
+  const autoFocused = focusMain(ctx.root);
 
   let run = 0;
   let current = childController(ctx.signal); // one per play; aborted when replaced
@@ -42,6 +43,8 @@ export async function learnCard(ctx: Ctx, card: Card, fraction: number): Promise
       await delay(AUDIO_FAIL_UNLOCK_MS, ctx.signal);
     }
     next.removeAttribute('disabled');
+    // Move focus to Next unless the learner has moved it themselves.
+    if (document.activeElement === autoFocused || document.activeElement === document.body) next.focus();
   };
   say.addEventListener('click', () => {
     say.classList.remove('retry-big');
