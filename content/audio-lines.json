@@ -1,0 +1,962 @@
+[
+ {
+  "id": "phrase-home",
+  "text": "Hi! Tap the green button to keep learning."
+ },
+ {
+  "id": "phrase-not-quite",
+  "text": "Not quite. Let's watch again."
+ },
+ {
+  "id": "phrase-num-1",
+  "text": "Number 1."
+ },
+ {
+  "id": "phrase-num-2",
+  "text": "Number 2."
+ },
+ {
+  "id": "phrase-num-3",
+  "text": "Number 3."
+ },
+ {
+  "id": "phrase-num-4",
+  "text": "Number 4."
+ },
+ {
+  "id": "phrase-passed",
+  "text": "You passed! Great job!"
+ },
+ {
+  "id": "phrase-not-yet",
+  "text": "Not yet. Let's keep practicing."
+ },
+ {
+  "id": "phrase-test-start",
+  "text": "Let's do a practice test. Listen to each question, then tap your answer."
+ },
+ {
+  "id": "phrase-review-missed",
+  "text": "Let's practice the ones you missed."
+ },
+ {
+  "id": "score-0-of-1",
+  "text": "You got 0 out of 1."
+ },
+ {
+  "id": "score-1-of-1",
+  "text": "You got 1 out of 1."
+ },
+ {
+  "id": "score-0-of-2",
+  "text": "You got 0 out of 2."
+ },
+ {
+  "id": "score-1-of-2",
+  "text": "You got 1 out of 2."
+ },
+ {
+  "id": "score-2-of-2",
+  "text": "You got 2 out of 2."
+ },
+ {
+  "id": "score-0-of-3",
+  "text": "You got 0 out of 3."
+ },
+ {
+  "id": "score-1-of-3",
+  "text": "You got 1 out of 3."
+ },
+ {
+  "id": "score-2-of-3",
+  "text": "You got 2 out of 3."
+ },
+ {
+  "id": "score-3-of-3",
+  "text": "You got 3 out of 3."
+ },
+ {
+  "id": "score-0-of-4",
+  "text": "You got 0 out of 4."
+ },
+ {
+  "id": "score-1-of-4",
+  "text": "You got 1 out of 4."
+ },
+ {
+  "id": "score-2-of-4",
+  "text": "You got 2 out of 4."
+ },
+ {
+  "id": "score-3-of-4",
+  "text": "You got 3 out of 4."
+ },
+ {
+  "id": "score-4-of-4",
+  "text": "You got 4 out of 4."
+ },
+ {
+  "id": "score-0-of-5",
+  "text": "You got 0 out of 5."
+ },
+ {
+  "id": "score-1-of-5",
+  "text": "You got 1 out of 5."
+ },
+ {
+  "id": "score-2-of-5",
+  "text": "You got 2 out of 5."
+ },
+ {
+  "id": "score-3-of-5",
+  "text": "You got 3 out of 5."
+ },
+ {
+  "id": "score-4-of-5",
+  "text": "You got 4 out of 5."
+ },
+ {
+  "id": "score-5-of-5",
+  "text": "You got 5 out of 5."
+ },
+ {
+  "id": "score-0-of-6",
+  "text": "You got 0 out of 6."
+ },
+ {
+  "id": "score-1-of-6",
+  "text": "You got 1 out of 6."
+ },
+ {
+  "id": "score-2-of-6",
+  "text": "You got 2 out of 6."
+ },
+ {
+  "id": "score-3-of-6",
+  "text": "You got 3 out of 6."
+ },
+ {
+  "id": "score-4-of-6",
+  "text": "You got 4 out of 6."
+ },
+ {
+  "id": "score-5-of-6",
+  "text": "You got 5 out of 6."
+ },
+ {
+  "id": "score-6-of-6",
+  "text": "You got 6 out of 6."
+ },
+ {
+  "id": "score-0-of-7",
+  "text": "You got 0 out of 7."
+ },
+ {
+  "id": "score-1-of-7",
+  "text": "You got 1 out of 7."
+ },
+ {
+  "id": "score-2-of-7",
+  "text": "You got 2 out of 7."
+ },
+ {
+  "id": "score-3-of-7",
+  "text": "You got 3 out of 7."
+ },
+ {
+  "id": "score-4-of-7",
+  "text": "You got 4 out of 7."
+ },
+ {
+  "id": "score-5-of-7",
+  "text": "You got 5 out of 7."
+ },
+ {
+  "id": "score-6-of-7",
+  "text": "You got 6 out of 7."
+ },
+ {
+  "id": "score-7-of-7",
+  "text": "You got 7 out of 7."
+ },
+ {
+  "id": "score-0-of-8",
+  "text": "You got 0 out of 8."
+ },
+ {
+  "id": "score-1-of-8",
+  "text": "You got 1 out of 8."
+ },
+ {
+  "id": "score-2-of-8",
+  "text": "You got 2 out of 8."
+ },
+ {
+  "id": "score-3-of-8",
+  "text": "You got 3 out of 8."
+ },
+ {
+  "id": "score-4-of-8",
+  "text": "You got 4 out of 8."
+ },
+ {
+  "id": "score-5-of-8",
+  "text": "You got 5 out of 8."
+ },
+ {
+  "id": "score-6-of-8",
+  "text": "You got 6 out of 8."
+ },
+ {
+  "id": "score-7-of-8",
+  "text": "You got 7 out of 8."
+ },
+ {
+  "id": "score-8-of-8",
+  "text": "You got 8 out of 8."
+ },
+ {
+  "id": "score-0-of-9",
+  "text": "You got 0 out of 9."
+ },
+ {
+  "id": "score-1-of-9",
+  "text": "You got 1 out of 9."
+ },
+ {
+  "id": "score-2-of-9",
+  "text": "You got 2 out of 9."
+ },
+ {
+  "id": "score-3-of-9",
+  "text": "You got 3 out of 9."
+ },
+ {
+  "id": "score-4-of-9",
+  "text": "You got 4 out of 9."
+ },
+ {
+  "id": "score-5-of-9",
+  "text": "You got 5 out of 9."
+ },
+ {
+  "id": "score-6-of-9",
+  "text": "You got 6 out of 9."
+ },
+ {
+  "id": "score-7-of-9",
+  "text": "You got 7 out of 9."
+ },
+ {
+  "id": "score-8-of-9",
+  "text": "You got 8 out of 9."
+ },
+ {
+  "id": "score-9-of-9",
+  "text": "You got 9 out of 9."
+ },
+ {
+  "id": "score-0-of-10",
+  "text": "You got 0 out of 10."
+ },
+ {
+  "id": "score-1-of-10",
+  "text": "You got 1 out of 10."
+ },
+ {
+  "id": "score-2-of-10",
+  "text": "You got 2 out of 10."
+ },
+ {
+  "id": "score-3-of-10",
+  "text": "You got 3 out of 10."
+ },
+ {
+  "id": "score-4-of-10",
+  "text": "You got 4 out of 10."
+ },
+ {
+  "id": "score-5-of-10",
+  "text": "You got 5 out of 10."
+ },
+ {
+  "id": "score-6-of-10",
+  "text": "You got 6 out of 10."
+ },
+ {
+  "id": "score-7-of-10",
+  "text": "You got 7 out of 10."
+ },
+ {
+  "id": "score-8-of-10",
+  "text": "You got 8 out of 10."
+ },
+ {
+  "id": "score-9-of-10",
+  "text": "You got 9 out of 10."
+ },
+ {
+  "id": "score-10-of-10",
+  "text": "You got 10 out of 10."
+ },
+ {
+  "id": "score-0-of-11",
+  "text": "You got 0 out of 11."
+ },
+ {
+  "id": "score-1-of-11",
+  "text": "You got 1 out of 11."
+ },
+ {
+  "id": "score-2-of-11",
+  "text": "You got 2 out of 11."
+ },
+ {
+  "id": "score-3-of-11",
+  "text": "You got 3 out of 11."
+ },
+ {
+  "id": "score-4-of-11",
+  "text": "You got 4 out of 11."
+ },
+ {
+  "id": "score-5-of-11",
+  "text": "You got 5 out of 11."
+ },
+ {
+  "id": "score-6-of-11",
+  "text": "You got 6 out of 11."
+ },
+ {
+  "id": "score-7-of-11",
+  "text": "You got 7 out of 11."
+ },
+ {
+  "id": "score-8-of-11",
+  "text": "You got 8 out of 11."
+ },
+ {
+  "id": "score-9-of-11",
+  "text": "You got 9 out of 11."
+ },
+ {
+  "id": "score-10-of-11",
+  "text": "You got 10 out of 11."
+ },
+ {
+  "id": "score-11-of-11",
+  "text": "You got 11 out of 11."
+ },
+ {
+  "id": "score-0-of-12",
+  "text": "You got 0 out of 12."
+ },
+ {
+  "id": "score-1-of-12",
+  "text": "You got 1 out of 12."
+ },
+ {
+  "id": "score-2-of-12",
+  "text": "You got 2 out of 12."
+ },
+ {
+  "id": "score-3-of-12",
+  "text": "You got 3 out of 12."
+ },
+ {
+  "id": "score-4-of-12",
+  "text": "You got 4 out of 12."
+ },
+ {
+  "id": "score-5-of-12",
+  "text": "You got 5 out of 12."
+ },
+ {
+  "id": "score-6-of-12",
+  "text": "You got 6 out of 12."
+ },
+ {
+  "id": "score-7-of-12",
+  "text": "You got 7 out of 12."
+ },
+ {
+  "id": "score-8-of-12",
+  "text": "You got 8 out of 12."
+ },
+ {
+  "id": "score-9-of-12",
+  "text": "You got 9 out of 12."
+ },
+ {
+  "id": "score-10-of-12",
+  "text": "You got 10 out of 12."
+ },
+ {
+  "id": "score-11-of-12",
+  "text": "You got 11 out of 12."
+ },
+ {
+  "id": "score-12-of-12",
+  "text": "You got 12 out of 12."
+ },
+ {
+  "id": "score-0-of-13",
+  "text": "You got 0 out of 13."
+ },
+ {
+  "id": "score-1-of-13",
+  "text": "You got 1 out of 13."
+ },
+ {
+  "id": "score-2-of-13",
+  "text": "You got 2 out of 13."
+ },
+ {
+  "id": "score-3-of-13",
+  "text": "You got 3 out of 13."
+ },
+ {
+  "id": "score-4-of-13",
+  "text": "You got 4 out of 13."
+ },
+ {
+  "id": "score-5-of-13",
+  "text": "You got 5 out of 13."
+ },
+ {
+  "id": "score-6-of-13",
+  "text": "You got 6 out of 13."
+ },
+ {
+  "id": "score-7-of-13",
+  "text": "You got 7 out of 13."
+ },
+ {
+  "id": "score-8-of-13",
+  "text": "You got 8 out of 13."
+ },
+ {
+  "id": "score-9-of-13",
+  "text": "You got 9 out of 13."
+ },
+ {
+  "id": "score-10-of-13",
+  "text": "You got 10 out of 13."
+ },
+ {
+  "id": "score-11-of-13",
+  "text": "You got 11 out of 13."
+ },
+ {
+  "id": "score-12-of-13",
+  "text": "You got 12 out of 13."
+ },
+ {
+  "id": "score-13-of-13",
+  "text": "You got 13 out of 13."
+ },
+ {
+  "id": "score-0-of-14",
+  "text": "You got 0 out of 14."
+ },
+ {
+  "id": "score-1-of-14",
+  "text": "You got 1 out of 14."
+ },
+ {
+  "id": "score-2-of-14",
+  "text": "You got 2 out of 14."
+ },
+ {
+  "id": "score-3-of-14",
+  "text": "You got 3 out of 14."
+ },
+ {
+  "id": "score-4-of-14",
+  "text": "You got 4 out of 14."
+ },
+ {
+  "id": "score-5-of-14",
+  "text": "You got 5 out of 14."
+ },
+ {
+  "id": "score-6-of-14",
+  "text": "You got 6 out of 14."
+ },
+ {
+  "id": "score-7-of-14",
+  "text": "You got 7 out of 14."
+ },
+ {
+  "id": "score-8-of-14",
+  "text": "You got 8 out of 14."
+ },
+ {
+  "id": "score-9-of-14",
+  "text": "You got 9 out of 14."
+ },
+ {
+  "id": "score-10-of-14",
+  "text": "You got 10 out of 14."
+ },
+ {
+  "id": "score-11-of-14",
+  "text": "You got 11 out of 14."
+ },
+ {
+  "id": "score-12-of-14",
+  "text": "You got 12 out of 14."
+ },
+ {
+  "id": "score-13-of-14",
+  "text": "You got 13 out of 14."
+ },
+ {
+  "id": "score-14-of-14",
+  "text": "You got 14 out of 14."
+ },
+ {
+  "id": "score-0-of-15",
+  "text": "You got 0 out of 15."
+ },
+ {
+  "id": "score-1-of-15",
+  "text": "You got 1 out of 15."
+ },
+ {
+  "id": "score-2-of-15",
+  "text": "You got 2 out of 15."
+ },
+ {
+  "id": "score-3-of-15",
+  "text": "You got 3 out of 15."
+ },
+ {
+  "id": "score-4-of-15",
+  "text": "You got 4 out of 15."
+ },
+ {
+  "id": "score-5-of-15",
+  "text": "You got 5 out of 15."
+ },
+ {
+  "id": "score-6-of-15",
+  "text": "You got 6 out of 15."
+ },
+ {
+  "id": "score-7-of-15",
+  "text": "You got 7 out of 15."
+ },
+ {
+  "id": "score-8-of-15",
+  "text": "You got 8 out of 15."
+ },
+ {
+  "id": "score-9-of-15",
+  "text": "You got 9 out of 15."
+ },
+ {
+  "id": "score-10-of-15",
+  "text": "You got 10 out of 15."
+ },
+ {
+  "id": "score-11-of-15",
+  "text": "You got 11 out of 15."
+ },
+ {
+  "id": "score-12-of-15",
+  "text": "You got 12 out of 15."
+ },
+ {
+  "id": "score-13-of-15",
+  "text": "You got 13 out of 15."
+ },
+ {
+  "id": "score-14-of-15",
+  "text": "You got 14 out of 15."
+ },
+ {
+  "id": "score-15-of-15",
+  "text": "You got 15 out of 15."
+ },
+ {
+  "id": "score-0-of-16",
+  "text": "You got 0 out of 16."
+ },
+ {
+  "id": "score-1-of-16",
+  "text": "You got 1 out of 16."
+ },
+ {
+  "id": "score-2-of-16",
+  "text": "You got 2 out of 16."
+ },
+ {
+  "id": "score-3-of-16",
+  "text": "You got 3 out of 16."
+ },
+ {
+  "id": "score-4-of-16",
+  "text": "You got 4 out of 16."
+ },
+ {
+  "id": "score-5-of-16",
+  "text": "You got 5 out of 16."
+ },
+ {
+  "id": "score-6-of-16",
+  "text": "You got 6 out of 16."
+ },
+ {
+  "id": "score-7-of-16",
+  "text": "You got 7 out of 16."
+ },
+ {
+  "id": "score-8-of-16",
+  "text": "You got 8 out of 16."
+ },
+ {
+  "id": "score-9-of-16",
+  "text": "You got 9 out of 16."
+ },
+ {
+  "id": "score-10-of-16",
+  "text": "You got 10 out of 16."
+ },
+ {
+  "id": "score-11-of-16",
+  "text": "You got 11 out of 16."
+ },
+ {
+  "id": "score-12-of-16",
+  "text": "You got 12 out of 16."
+ },
+ {
+  "id": "score-13-of-16",
+  "text": "You got 13 out of 16."
+ },
+ {
+  "id": "score-14-of-16",
+  "text": "You got 14 out of 16."
+ },
+ {
+  "id": "score-15-of-16",
+  "text": "You got 15 out of 16."
+ },
+ {
+  "id": "score-16-of-16",
+  "text": "You got 16 out of 16."
+ },
+ {
+  "id": "score-0-of-17",
+  "text": "You got 0 out of 17."
+ },
+ {
+  "id": "score-1-of-17",
+  "text": "You got 1 out of 17."
+ },
+ {
+  "id": "score-2-of-17",
+  "text": "You got 2 out of 17."
+ },
+ {
+  "id": "score-3-of-17",
+  "text": "You got 3 out of 17."
+ },
+ {
+  "id": "score-4-of-17",
+  "text": "You got 4 out of 17."
+ },
+ {
+  "id": "score-5-of-17",
+  "text": "You got 5 out of 17."
+ },
+ {
+  "id": "score-6-of-17",
+  "text": "You got 6 out of 17."
+ },
+ {
+  "id": "score-7-of-17",
+  "text": "You got 7 out of 17."
+ },
+ {
+  "id": "score-8-of-17",
+  "text": "You got 8 out of 17."
+ },
+ {
+  "id": "score-9-of-17",
+  "text": "You got 9 out of 17."
+ },
+ {
+  "id": "score-10-of-17",
+  "text": "You got 10 out of 17."
+ },
+ {
+  "id": "score-11-of-17",
+  "text": "You got 11 out of 17."
+ },
+ {
+  "id": "score-12-of-17",
+  "text": "You got 12 out of 17."
+ },
+ {
+  "id": "score-13-of-17",
+  "text": "You got 13 out of 17."
+ },
+ {
+  "id": "score-14-of-17",
+  "text": "You got 14 out of 17."
+ },
+ {
+  "id": "score-15-of-17",
+  "text": "You got 15 out of 17."
+ },
+ {
+  "id": "score-16-of-17",
+  "text": "You got 16 out of 17."
+ },
+ {
+  "id": "score-17-of-17",
+  "text": "You got 17 out of 17."
+ },
+ {
+  "id": "score-0-of-18",
+  "text": "You got 0 out of 18."
+ },
+ {
+  "id": "score-1-of-18",
+  "text": "You got 1 out of 18."
+ },
+ {
+  "id": "score-2-of-18",
+  "text": "You got 2 out of 18."
+ },
+ {
+  "id": "score-3-of-18",
+  "text": "You got 3 out of 18."
+ },
+ {
+  "id": "score-4-of-18",
+  "text": "You got 4 out of 18."
+ },
+ {
+  "id": "score-5-of-18",
+  "text": "You got 5 out of 18."
+ },
+ {
+  "id": "score-6-of-18",
+  "text": "You got 6 out of 18."
+ },
+ {
+  "id": "score-7-of-18",
+  "text": "You got 7 out of 18."
+ },
+ {
+  "id": "score-8-of-18",
+  "text": "You got 8 out of 18."
+ },
+ {
+  "id": "score-9-of-18",
+  "text": "You got 9 out of 18."
+ },
+ {
+  "id": "score-10-of-18",
+  "text": "You got 10 out of 18."
+ },
+ {
+  "id": "score-11-of-18",
+  "text": "You got 11 out of 18."
+ },
+ {
+  "id": "score-12-of-18",
+  "text": "You got 12 out of 18."
+ },
+ {
+  "id": "score-13-of-18",
+  "text": "You got 13 out of 18."
+ },
+ {
+  "id": "score-14-of-18",
+  "text": "You got 14 out of 18."
+ },
+ {
+  "id": "score-15-of-18",
+  "text": "You got 15 out of 18."
+ },
+ {
+  "id": "score-16-of-18",
+  "text": "You got 16 out of 18."
+ },
+ {
+  "id": "score-17-of-18",
+  "text": "You got 17 out of 18."
+ },
+ {
+  "id": "score-18-of-18",
+  "text": "You got 18 out of 18."
+ },
+ {
+  "id": "score-0-of-19",
+  "text": "You got 0 out of 19."
+ },
+ {
+  "id": "score-1-of-19",
+  "text": "You got 1 out of 19."
+ },
+ {
+  "id": "score-2-of-19",
+  "text": "You got 2 out of 19."
+ },
+ {
+  "id": "score-3-of-19",
+  "text": "You got 3 out of 19."
+ },
+ {
+  "id": "score-4-of-19",
+  "text": "You got 4 out of 19."
+ },
+ {
+  "id": "score-5-of-19",
+  "text": "You got 5 out of 19."
+ },
+ {
+  "id": "score-6-of-19",
+  "text": "You got 6 out of 19."
+ },
+ {
+  "id": "score-7-of-19",
+  "text": "You got 7 out of 19."
+ },
+ {
+  "id": "score-8-of-19",
+  "text": "You got 8 out of 19."
+ },
+ {
+  "id": "score-9-of-19",
+  "text": "You got 9 out of 19."
+ },
+ {
+  "id": "score-10-of-19",
+  "text": "You got 10 out of 19."
+ },
+ {
+  "id": "score-11-of-19",
+  "text": "You got 11 out of 19."
+ },
+ {
+  "id": "score-12-of-19",
+  "text": "You got 12 out of 19."
+ },
+ {
+  "id": "score-13-of-19",
+  "text": "You got 13 out of 19."
+ },
+ {
+  "id": "score-14-of-19",
+  "text": "You got 14 out of 19."
+ },
+ {
+  "id": "score-15-of-19",
+  "text": "You got 15 out of 19."
+ },
+ {
+  "id": "score-16-of-19",
+  "text": "You got 16 out of 19."
+ },
+ {
+  "id": "score-17-of-19",
+  "text": "You got 17 out of 19."
+ },
+ {
+  "id": "score-18-of-19",
+  "text": "You got 18 out of 19."
+ },
+ {
+  "id": "score-19-of-19",
+  "text": "You got 19 out of 19."
+ },
+ {
+  "id": "score-0-of-20",
+  "text": "You got 0 out of 20."
+ },
+ {
+  "id": "score-1-of-20",
+  "text": "You got 1 out of 20."
+ },
+ {
+  "id": "score-2-of-20",
+  "text": "You got 2 out of 20."
+ },
+ {
+  "id": "score-3-of-20",
+  "text": "You got 3 out of 20."
+ },
+ {
+  "id": "score-4-of-20",
+  "text": "You got 4 out of 20."
+ },
+ {
+  "id": "score-5-of-20",
+  "text": "You got 5 out of 20."
+ },
+ {
+  "id": "score-6-of-20",
+  "text": "You got 6 out of 20."
+ },
+ {
+  "id": "score-7-of-20",
+  "text": "You got 7 out of 20."
+ },
+ {
+  "id": "score-8-of-20",
+  "text": "You got 8 out of 20."
+ },
+ {
+  "id": "score-9-of-20",
+  "text": "You got 9 out of 20."
+ },
+ {
+  "id": "score-10-of-20",
+  "text": "You got 10 out of 20."
+ },
+ {
+  "id": "score-11-of-20",
+  "text": "You got 11 out of 20."
+ },
+ {
+  "id": "score-12-of-20",
+  "text": "You got 12 out of 20."
+ },
+ {
+  "id": "score-13-of-20",
+  "text": "You got 13 out of 20."
+ },
+ {
+  "id": "score-14-of-20",
+  "text": "You got 14 out of 20."
+ },
+ {
+  "id": "score-15-of-20",
+  "text": "You got 15 out of 20."
+ },
+ {
+  "id": "score-16-of-20",
+  "text": "You got 16 out of 20."
+ },
+ {
+  "id": "score-17-of-20",
+  "text": "You got 17 out of 20."
+ },
+ {
+  "id": "score-18-of-20",
+  "text": "You got 18 out of 20."
+ },
+ {
+  "id": "score-19-of-20",
+  "text": "You got 19 out of 20."
+ },
+ {
+  "id": "score-20-of-20",
+  "text": "You got 20 out of 20."
+ }
+]
