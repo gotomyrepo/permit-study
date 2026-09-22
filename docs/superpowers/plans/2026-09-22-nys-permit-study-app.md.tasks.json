@@ -37,7 +37,7 @@
   {
    "id": 4,
    "subject": "Task 4: Content pipeline (schema, citation check, audio line list)",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 4 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/content.test.ts && npm run check\"}\n```",
    "blockedBy": [
     1,
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T21:51:46.013248+00:00"
+ "lastUpdated": "2026-09-22T22:06:53.872007+00:00"
 }
