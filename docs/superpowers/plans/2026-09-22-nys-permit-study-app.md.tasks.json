@@ -65,7 +65,7 @@
   {
    "id": 7,
    "subject": "Task 7: Progress store and practice test logic",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 7 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/progress.test.ts tests/practice.test.ts\"}\n```",
    "blockedBy": [
     4
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T22:45:26.179962+00:00"
+ "lastUpdated": "2026-09-22T22:48:51.168471+00:00"
 }
