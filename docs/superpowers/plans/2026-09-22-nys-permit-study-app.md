@@ -246,7 +246,9 @@ git commit -m "chore: scaffold vite + typescript + vitest project"
 - [ ] `pages.json` has 84 entries
 - [ ] Page 10 text contains "at least 14 of the 20"
 
-**Verify:** `python -c "import json;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p), 'at least 14 of the 20' in p[9]['text'].replace('\n',' '))"` → `84 True`
+**Verify:** `python -c "import json,re;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p), 'at least 14 of the 20' in re.sub(r'\s+',' ',p[9]['text']))"` → `84 True`
+
+Note: pypdf's exact whitespace/line-break placement in extracted text varies by version, so the verify command collapses all whitespace before the substring check rather than only replacing newlines.
 
 **Steps:**
 
