@@ -83,3 +83,7 @@ svg.scene { display: block; width: 100%; height: auto; }
   .bar .btn, .top .btn { padding: 10px 8px; font-size: 20px; }
   .bar .btn.icon { min-width: 56px; }
 }
+/* ---- enabled vs disabled: icon buttons get a solid fill; disabled buttons are grey and dashed ---- */
+.btn.icon:not([disabled]) { background: #1e88e5; border: 2px solid #1565c0; }
+.tile .say { background: #1e88e5; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.btn[disabled] { opacity: 1; background: #eeeeee; color: #757575; border: 2px dashed #9e9e9e; filter: grayscale(1); }

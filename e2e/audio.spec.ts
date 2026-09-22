@@ -19,7 +19,7 @@ test('home focuses the main button', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Keep going/ })).toBeFocused();
 });
 
-test('question 🔊 still plays after an answer is picked', async ({ page }) => {
+test('question 🔊 is locked during the replay, then works again', async ({ page }) => {
   await page.getByRole('button', { name: /Yield/ }).click();
   for (let i = 0; i < 3; i++) {
     const next = page.getByRole('button', { name: /Next/ });
@@ -28,8 +28,14 @@ test('question 🔊 still plays after an answer is picked', async ({ page }) => 
   }
   await page.locator('.tile', { hasText: 'The blue car' }).click();
   await expect(page.locator('.feedback')).toContainText('Not quite');
+  const askSay = page.getByRole('button', { name: 'Hear the question' });
+  await expect(askSay).toBeDisabled(); // tapping it would cut off "Not quite" and the replay
+  await expect(askSay).toBeEnabled({ timeout: 30_000 });
+  // Let the automatic re-reading finish, then tap: the question plays again.
+  const reread = (await plays(page)).length;
+  await expect.poll(async () => (await plays(page)).slice(reread), { timeout: 20_000 }).toContain('q-yield-q1-c1.mp3');
   const before = (await plays(page)).length;
-  await page.getByRole('button', { name: 'Hear the question' }).click();
+  await askSay.click();
   await expect.poll(async () => (await plays(page)).slice(before)).toContain('q-yield-q1.mp3');
 });
 

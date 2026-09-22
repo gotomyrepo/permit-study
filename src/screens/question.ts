@@ -91,6 +91,7 @@ export async function askQuestion(ctx: Ctx, lesson: Lesson, q: Question, mode: Q
       if (tries === 1) {
         // Lock all tiles during the replay so a tap can't be silently lost.
         tiles.forEach((t) => t.setAttribute('disabled', ''));
+        askSay.setAttribute('disabled', ''); // a tap would cut off "Not quite" and the replay
         const nq = new Caption(PHRASES['phrase-not-quite']);
         feedback.className = 'feedback';
         feedback.replaceChildren(nq.el);
@@ -102,6 +103,7 @@ export async function askQuestion(ctx: Ctx, lesson: Lesson, q: Question, mode: Q
         feedback.replaceChildren();
         showQuestionScene();
         tiles.forEach((t) => { if (!t.classList.contains('tried')) t.removeAttribute('disabled'); });
+        askSay.removeAttribute('disabled');
         focusMain(ctx.root);
         continue;
       }

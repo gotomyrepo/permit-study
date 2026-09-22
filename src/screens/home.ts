@@ -6,7 +6,7 @@ import { speak, type Ctx } from './ctx';
 export type HomeChoice = { kind: 'lesson'; lesson: Lesson } | { kind: 'practice' };
 
 export function showHome(ctx: Ctx, lessons: Lesson[], progress: ProgressStore): Promise<HomeChoice> {
-  const next = progress.nextLesson(lessons);
+  const next = progress.keepGoing(lessons);
   const tiles = lessons.map((l) => {
     const cls = ['lesson-tile', progress.isCompleted(l.id) ? 'done' : '', l === next ? 'next' : ''].filter(Boolean).join(' ');
     return h('button', { class: cls }, h('span', { class: 'icon' }, l.icon), h('span', {}, l.title));

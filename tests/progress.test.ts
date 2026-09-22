@@ -47,44 +47,67 @@ describe('ProgressStore', () => {
     expect(p.isCompleted('signs')).toBe(true);
   });
 
-  describe('saved place', () => {
+  describe('saved places', () => {
     const yieldL = { id: 'yield', cards: [{}, {}, {}] };
-    test('is saved per lesson and survives a reload', () => {
+    const L = [
+      { id: 'signs', order: 1, cards: [{}, {}, {}] },
+      { id: 'yield', order: 2, cards: [{}, {}, {}] },
+      { id: 'lights', order: 3, cards: [{}, {}, {}] },
+    ];
+    test('are saved per lesson and survive a reload', () => {
       const kv = memKV();
       const p = new ProgressStore(kv);
       expect(p.resumeCard(yieldL)).toBe(0);
       p.setPlace('yield', 2);
-      expect(new ProgressStore(kv).resumeCard(yieldL)).toBe(2);
-    });
-    test('another lesson starts at card 0', () => {
-      const p = new ProgressStore(memKV());
-      p.setPlace('yield', 2);
-      expect(p.resumeCard({ id: 'signs', cards: [{}, {}, {}] })).toBe(0);
+      p.setPlace('signs', 1);
+      const q = new ProgressStore(kv);
+      expect(q.resumeCard(yieldL)).toBe(2);
+      expect(q.resumeCard(L[0])).toBe(1);
+      expect(q.resumeCard(L[2])).toBe(0);
     });
     test('an index out of range after a lesson changes falls back to 0', () => {
       const p = new ProgressStore(memKV());
       p.setPlace('yield', 2);
       expect(p.resumeCard({ id: 'yield', cards: [{}, {}] })).toBe(0);
     });
-    test('clearPlace forgets it', () => {
+    test('clearPlace forgets only that lesson', () => {
       const p = new ProgressStore(memKV());
       p.setPlace('yield', 1);
-      p.clearPlace();
+      p.setPlace('signs', 2);
+      p.clearPlace('yield');
       expect(p.resumeCard(yieldL)).toBe(0);
+      expect(p.resumeCard(L[0])).toBe(2);
     });
     test('bad stored places are dropped, other data kept', () => {
-      for (const place of [{ lesson: 5, card: 1 }, { lesson: 'yield', card: -1 }, { lesson: 'yield', card: 1.5 }, 'x', null]) {
-        const kv = memKV({ [ProgressStore.KEY]: JSON.stringify({ completed: ['signs'], missed: [], place }) });
+      for (const places of [{ yield: { card: -1, seq: 1 } }, { yield: { card: 1.5, seq: 1 } }, { yield: 'x' }, { yield: { card: 1 } }, 'x', null, [1]]) {
+        const kv = memKV({ [ProgressStore.KEY]: JSON.stringify({ completed: ['signs'], missed: [], places }) });
         const p = new ProgressStore(kv);
         expect(p.resumeCard(yieldL)).toBe(0);
         expect(p.isCompleted('signs')).toBe(true);
       }
     });
-    test('old saves without a place still load', () => {
+    test('old saves without places still load', () => {
       const kv = memKV({ [ProgressStore.KEY]: JSON.stringify({ completed: ['signs'], missed: ['q1'] }) });
       const p = new ProgressStore(kv);
       expect(p.missed()).toEqual(['q1']);
       expect(p.resumeCard(yieldL)).toBe(0);
+    });
+    test('Keep going picks the most recently used unfinished lesson', () => {
+      const kv = memKV();
+      const p = new ProgressStore(kv);
+      expect(p.keepGoing(L)?.id).toBe('signs'); // nothing started: nextLesson
+      p.setPlace('lights', 1);
+      p.setPlace('yield', 2);
+      expect(p.keepGoing(L)?.id).toBe('yield');
+      p.setPlace('lights', 0); // moving in a lesson makes it the most recent
+      expect(new ProgressStore(kv).keepGoing(L)?.id).toBe('lights');
+    });
+    test('Keep going skips finished lessons and lessons that no longer exist', () => {
+      const p = new ProgressStore(memKV());
+      p.setPlace('yield', 2);
+      p.setPlace('gone', 1);
+      p.completeLesson('yield'); // e.g. a completed lesson replayed and left mid-way
+      expect(p.keepGoing(L)?.id).toBe('signs');
     });
   });
 });

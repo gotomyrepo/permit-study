@@ -44,7 +44,7 @@ export class App {
       const move = await learnCard(ctx, lesson.cards[i], i / total, i > 0);
       if (move === 'next') i++;
       else if (move === 'back') i--;
-      else { this.progress.clearPlace(); i = 0; }
+      else { this.progress.clearPlace(lesson.id); i = 0; }
     }
     let n = lesson.cards.length;
     for (const q of lesson.questions) {
@@ -52,7 +52,7 @@ export class App {
       if (ok) this.progress.clearMissed(q.id); else this.progress.markMissed(q.id);
     }
     this.progress.completeLesson(lesson.id);
-    this.progress.clearPlace();
+    this.progress.clearPlace(lesson.id);
     await lessonEnd(ctx, lesson);
   }
 }

@@ -1,9 +1,18 @@
 export interface KV { getItem(k: string): string | null; setItem(k: string, v: string): void }
-interface Place { lesson: string; card: number }
-interface Data { completed: string[]; missed: string[]; place?: Place }
+/** Where she is in one lesson; `seq` orders places by how recently they were used. */
+interface Place { card: number; seq: number }
+interface Data { completed: string[]; missed: string[]; places: Record<string, Place> }
 
 const isPlace = (x: unknown): x is Place =>
-  !!x && typeof x === 'object' && typeof (x as Place).lesson === 'string' && Number.isInteger((x as Place).card) && (x as Place).card >= 0;
+  !!x && typeof x === 'object' && Number.isInteger((x as Place).card) && (x as Place).card >= 0 && Number.isFinite((x as Place).seq);
+
+function loadPlaces(x: unknown): Record<string, Place> {
+  const out: Record<string, Place> = {};
+  if (x && typeof x === 'object' && !Array.isArray(x)) {
+    for (const [id, p] of Object.entries(x)) if (isPlace(p)) out[id] = { card: p.card, seq: p.seq };
+  }
+  return out;
+}
 
 export function safeStorage(): KV {
   try {
@@ -31,11 +40,11 @@ export class ProgressStore {
         return {
           completed: d.completed.filter((x: unknown) => typeof x === 'string'),
           missed: d.missed.filter((x: unknown) => typeof x === 'string'),
-          ...(isPlace(d.place) ? { place: { lesson: d.place.lesson, card: d.place.card } } : {}),
+          places: loadPlaces(d.places),
         };
       }
     } catch { /* fall through */ }
-    return { completed: [], missed: [] };
+    return { completed: [], missed: [], places: {} };
   }
 
   private save(): void {
@@ -48,18 +57,33 @@ export class ProgressStore {
     const sorted = [...lessons].sort((a, b) => a.order - b.order);
     return sorted.find((l) => !this.isCompleted(l.id)) ?? sorted[0];
   }
-  /** Card to resume a lesson at: the saved card if it is for this lesson and still exists, else 0. */
+  /** Card to resume a lesson at: its saved card if that card still exists, else 0. */
   resumeCard(lesson: { id: string; cards: readonly unknown[] }): number {
-    const p = this.data.place;
-    return p && p.lesson === lesson.id && p.card < lesson.cards.length ? p.card : 0;
+    const p = this.data.places[lesson.id];
+    return p && p.card < lesson.cards.length ? p.card : 0;
   }
+  /** Saves her card in a lesson and marks that lesson as the most recently used. */
   setPlace(lesson: string, card: number): void {
-    const p = this.data.place;
-    if (p && p.lesson === lesson && p.card === card) return;
-    this.data.place = { lesson, card };
+    const all = Object.entries(this.data.places);
+    const top = all.reduce((m, [, p]) => Math.max(m, p.seq), 0);
+    const p = this.data.places[lesson];
+    if (p && p.card === card && p.seq === top) return;
+    this.data.places[lesson] = { card, seq: top + 1 };
     this.save();
   }
-  clearPlace(): void { if (this.data.place) { delete this.data.place; this.save(); } }
+  clearPlace(lesson: string): void {
+    if (lesson in this.data.places) { delete this.data.places[lesson]; this.save(); }
+  }
+  /** "Keep going": the most recently used unfinished lesson with a saved place, else nextLesson(). */
+  keepGoing<T extends { id: string; order: number }>(lessons: T[]): T | undefined {
+    let best: T | undefined;
+    let bestSeq = -Infinity;
+    for (const l of lessons) {
+      const p = this.data.places[l.id];
+      if (p && !this.isCompleted(l.id) && p.seq > bestSeq) { best = l; bestSeq = p.seq; }
+    }
+    return best ?? this.nextLesson(lessons);
+  }
   missed(): string[] { return [...this.data.missed]; }
   markMissed(qid: string): void { if (!this.data.missed.includes(qid)) { this.data.missed.push(qid); this.save(); } }
   clearMissed(qid: string): void {
