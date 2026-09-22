@@ -13,7 +13,7 @@ export default defineConfig({
   },
   plugins: [
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['icon.svg'],
       manifest: {
         name: 'Permit Practice',
@@ -26,10 +26,12 @@ export default defineConfig({
         theme_color: '#1e88e5',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
         ],
       },
       workbox: {
+        skipWaiting: false,
+        clientsClaim: false,
         globPatterns: ['**/*.{js,css,html,svg,png,mp3,json}'],
         globIgnores: ['**/scene-preview.html'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
