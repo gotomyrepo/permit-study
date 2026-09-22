@@ -76,3 +76,10 @@ svg.scene { display: block; width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .retry-big { animation: none; }
 }
+/* ---- lesson nav: four buttons in the card bar must fit a phone ---- */
+.bar .btn { min-width: 0; }
+.top .btn:not(.icon) { flex: 0 0 auto; }
+@media (max-width: 480px) {
+  .bar .btn, .top .btn { padding: 10px 8px; font-size: 20px; }
+  .bar .btn.icon { min-width: 56px; }
+}

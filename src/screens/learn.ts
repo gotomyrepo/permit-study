@@ -3,7 +3,7 @@ import { audioId } from '../content/audioLines';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
 import { Caption } from '../ui/caption';
-import { childController, clicked, delay, focusMain, h } from '../ui/dom';
+import { childController, chooseOne, delay, focusMain, h } from '../ui/dom';
 import { speak, topBar, type Ctx } from './ctx';
 
 const AUDIO_FAIL_UNLOCK_MS = 3000;
@@ -21,13 +21,21 @@ export async function playCard(
   return said;
 }
 
-export async function learnCard(ctx: Ctx, card: Card, fraction: number): Promise<void> {
+export type CardMove = 'next' | 'back' | 'restart';
+
+/** Shows one card. Resolves with where to go next; the card's audio and animation are stopped by then. */
+export async function learnCard(ctx: Ctx, card: Card, fraction: number, canGoBack: boolean): Promise<CardMove> {
   const stage = h('div', { class: 'stage' });
   const caption = new Caption(card.say);
   const say = h('button', { class: 'btn soft icon', 'aria-label': 'Hear again' }, '🔊');
   const again = h('button', { class: 'btn soft' }, '🔁 Watch again');
+  const back = h('button', { class: 'btn soft' }, '◀ Back');
   const next = h('button', { class: 'btn go', disabled: '' }, '▶ Next');
-  ctx.root.replaceChildren(topBar(ctx, fraction), stage, caption.el, h('div', { class: 'bar' }, say, again, next));
+  const restart = h('button', { class: 'btn soft' }, '↺ Start over');
+  ctx.root.replaceChildren(
+    topBar(ctx, fraction, restart), stage, caption.el,
+    h('div', { class: 'bar' }, say, again, ...(canGoBack ? [back] : []), next),
+  );
   const autoFocused = focusMain(ctx.root);
 
   let run = 0;
@@ -52,8 +60,9 @@ export async function learnCard(ctx: Ctx, card: Card, fraction: number): Promise
   });
   again.addEventListener('click', () => void go().catch(() => {}));
   void go().catch(() => {});
+  const moves: [HTMLElement, CardMove][] = [[next, 'next'], [restart, 'restart'], ...(canGoBack ? [[back, 'back'] as [HTMLElement, CardMove]] : [])];
   try {
-    await clicked(next, ctx.signal);
+    return moves[await chooseOne(moves.map(([el]) => el), ctx.signal)][1];
   } finally {
     current.abort();
     ctx.player.stop();

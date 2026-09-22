@@ -38,13 +38,21 @@ export class App {
 
   private async runLesson(ctx: Ctx, lesson: Lesson): Promise<void> {
     const total = lesson.cards.length + lesson.questions.length;
-    let n = 0;
-    for (const card of lesson.cards) await learnCard(ctx, card, n++ / total);
+    let i = this.progress.resumeCard(lesson);
+    while (i < lesson.cards.length) {
+      this.progress.setPlace(lesson.id, i);
+      const move = await learnCard(ctx, lesson.cards[i], i / total, i > 0);
+      if (move === 'next') i++;
+      else if (move === 'back') i--;
+      else { this.progress.clearPlace(); i = 0; }
+    }
+    let n = lesson.cards.length;
     for (const q of lesson.questions) {
       const ok = await askQuestion(ctx, lesson, q, 'teach', n++ / total);
       if (ok) this.progress.clearMissed(q.id); else this.progress.markMissed(q.id);
     }
     this.progress.completeLesson(lesson.id);
+    this.progress.clearPlace();
     await lessonEnd(ctx, lesson);
   }
 }

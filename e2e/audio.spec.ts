@@ -42,9 +42,11 @@ test('results verdict does not play over the review screen', async ({ page }) =>
     await expect(page.locator('.tile.picked')).toHaveCount(0);
   }
   const review = page.getByRole('button', { name: /missed/ });
+  // Note how many clips had started at the moment of the tap, inside the page (no race with the test runner).
+  await review.evaluate((b) => b.addEventListener('click', () => { (window as any).atTap = (window as any).plays.length; }, { capture: true }));
   await review.click();
-  const before = (await plays(page)).length;
   await page.waitForTimeout(4000);
+  const before = await page.evaluate(() => (window as any).atTap as number);
   const after = (await plays(page)).slice(before);
   expect(after[0]).toBe('phrase-review-missed.mp3');
   expect(after).not.toContain('phrase-not-yet.mp3');

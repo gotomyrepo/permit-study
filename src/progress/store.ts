@@ -1,5 +1,9 @@
 export interface KV { getItem(k: string): string | null; setItem(k: string, v: string): void }
-interface Data { completed: string[]; missed: string[] }
+interface Place { lesson: string; card: number }
+interface Data { completed: string[]; missed: string[]; place?: Place }
+
+const isPlace = (x: unknown): x is Place =>
+  !!x && typeof x === 'object' && typeof (x as Place).lesson === 'string' && Number.isInteger((x as Place).card) && (x as Place).card >= 0;
 
 export function safeStorage(): KV {
   try {
@@ -27,6 +31,7 @@ export class ProgressStore {
         return {
           completed: d.completed.filter((x: unknown) => typeof x === 'string'),
           missed: d.missed.filter((x: unknown) => typeof x === 'string'),
+          ...(isPlace(d.place) ? { place: { lesson: d.place.lesson, card: d.place.card } } : {}),
         };
       }
     } catch { /* fall through */ }
@@ -43,6 +48,18 @@ export class ProgressStore {
     const sorted = [...lessons].sort((a, b) => a.order - b.order);
     return sorted.find((l) => !this.isCompleted(l.id)) ?? sorted[0];
   }
+  /** Card to resume a lesson at: the saved card if it is for this lesson and still exists, else 0. */
+  resumeCard(lesson: { id: string; cards: readonly unknown[] }): number {
+    const p = this.data.place;
+    return p && p.lesson === lesson.id && p.card < lesson.cards.length ? p.card : 0;
+  }
+  setPlace(lesson: string, card: number): void {
+    const p = this.data.place;
+    if (p && p.lesson === lesson && p.card === card) return;
+    this.data.place = { lesson, card };
+    this.save();
+  }
+  clearPlace(): void { if (this.data.place) { delete this.data.place; this.save(); } }
   missed(): string[] { return [...this.data.missed]; }
   markMissed(qid: string): void { if (!this.data.missed.includes(qid)) { this.data.missed.push(qid); this.save(); } }
   clearMissed(qid: string): void {

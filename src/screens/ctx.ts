@@ -18,9 +18,10 @@ export async function speak(ctx: Ctx, id: string, caption?: Caption, signal: Abo
   }
 }
 
-export function topBar(ctx: Ctx, fraction: number): HTMLElement {
+/** Home button, progress bar, then any extra buttons (e.g. Start over). */
+export function topBar(ctx: Ctx, fraction: number, ...extra: HTMLElement[]): HTMLElement {
   const home = h('button', { class: 'btn soft icon', 'aria-label': 'Home' }, '🏠');
   home.addEventListener('click', () => ctx.goHome());
   const bar = h('div', { class: 'progress' }, h('i', { style: `width:${Math.round(fraction * 100)}%` }));
-  return h('div', { class: 'top' }, home, bar);
+  return h('div', { class: 'top' }, home, bar, ...extra);
 }
