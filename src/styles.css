@@ -96,3 +96,13 @@ svg.scene { display: block; width: 100%; height: auto; }
 .review .figure { color: #b71c1c; font-weight: 600; }
 .review .correct { color: #2e7d32; font-weight: 700; }
 .review .listen { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid #90caf9; background: #e3f2fd; cursor: pointer; }
+.review .listen-wrap { display: inline-flex; align-items: center; gap: 6px; }
+.review .listen-sm { padding: 2px 8px; font-size: 13px; }
+.review .audio-warn { color: #b71c1c; font-size: 13px; font-weight: 600; }
+.review .explain { font-size: 14px; color: #555; margin: 6px 0; }
+.review ol { padding-left: 22px; }
+.review ol li { margin: 4px 0; }
+.review .thumb.error { background: #ffebee; color: #b71c1c; font-size: 13px; font-weight: 600; padding: 8px; display: flex; align-items: center; }
+@media (max-width: 700px) {
+  .review .row { grid-template-columns: 1fr; }
+}
