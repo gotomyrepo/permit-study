@@ -19,7 +19,7 @@
   {
    "id": 2,
    "subject": "Task 2: Scene engine core (pure, no DOM)",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 2 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/geometry.test.ts tests/engine.test.ts tests/check.test.ts\"}\n```",
    "blockedBy": [
     0
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T21:39:51.733079+00:00"
+ "lastUpdated": "2026-09-22T21:47:26.451859+00:00"
 }
