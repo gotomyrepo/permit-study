@@ -47,7 +47,7 @@
   {
    "id": 5,
    "subject": "Task 5: Audio generation and voice choice (parent checkpoint)",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 5 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -m pytest tests_py -q && npm run audio\"}\n```",
    "blockedBy": [
     4
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T22:06:53.872007+00:00"
+ "lastUpdated": "2026-09-22T22:41:11.883162+00:00"
 }
