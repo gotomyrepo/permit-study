@@ -19,7 +19,11 @@ svg.scene { display: block; width: 100%; height: auto; }
 .actor[data-state~="hidden"] { display: none; }
 @keyframes flash { 50% { opacity: 0.15; } }
 @media (prefers-reduced-motion: reduce) {
-  .light .lamp, .actor .beacon, .sign[data-state~="highlight"] { animation: none; }
+  /* Same selectors as the flashing rules so specificity ties and this later rule wins; fill/opacity from those rules keep them solid on. */
+  .light[data-state~="flash-red"] .lamp.red,
+  .light[data-state~="flash-yellow"] .lamp.yellow,
+  .actor[data-state~="flashing"] .beacon,
+  .sign[data-state~="highlight"] { animation: none; }
 }
 /* ---- scene preview (dev) ---- */
 .preview-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }
