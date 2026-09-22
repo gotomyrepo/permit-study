@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/permit-study/',
   build: {
     rollupOptions: {
-      input: { main: r('./index.html'), preview: r('./scene-preview.html') },
+      input: { main: r('./index.html'), review: r('./review.html'), preview: r('./scene-preview.html') },
     },
   },
   test: { environment: 'node', include: ['tests/**/*.test.ts'] },

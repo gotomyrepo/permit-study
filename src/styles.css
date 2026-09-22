@@ -87,3 +87,12 @@ svg.scene { display: block; width: 100%; height: auto; }
 .btn.icon:not([disabled]) { background: #1e88e5; border: 2px solid #1565c0; }
 .tile .say { background: #1e88e5; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .btn[disabled] { opacity: 1; background: #eeeeee; color: #757575; border: 2px dashed #9e9e9e; filter: grayscale(1); }
+/* ---- parent review page ---- */
+#app.review { display: block; max-width: 1200px; font-size: 16px; }
+.review .row { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid #ddd; align-items: start; }
+.review .thumb { background: #8bc34a; border-radius: 8px; overflow: hidden; }
+.review .say { font-size: 18px; font-weight: 600; margin: 0 0 6px; }
+.review blockquote { margin: 6px 0 0; padding: 8px 10px; background: #fff8e1; border-left: 4px solid #fbc02d; }
+.review .figure { color: #b71c1c; font-weight: 600; }
+.review .correct { color: #2e7d32; font-weight: 700; }
+.review .listen { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid #90caf9; background: #e3f2fd; cursor: pointer; }
