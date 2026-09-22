@@ -74,6 +74,18 @@ describe('validateLessons: numbers must match exactly (real manual text)', () =>
     const good = l(55, '1 1⁄2 oz. liquor');
     expect(validateLessons([good], realPage(55), scenesReal)).toEqual([]);
   });
+
+  test('"legal to sound your horn..." does not match inside "illegal to sound your horn..." (p76)', () => {
+    const bad = l(76, 'legal to sound your horn when you approach');
+    expect(validateLessons([bad], realPage(76), scenesReal).join()).toContain('quote not found on page 76');
+    const good = l(76, 'illegal to sound your horn when you approach');
+    expect(validateLessons([good], realPage(76), scenesReal)).toEqual([]);
+  });
+
+  test('"legal to use portable..." does not match inside "illegal to use portable..." (p52)', () => {
+    const bad = l(52, 'legal to use portable electronic devices');
+    expect(validateLessons([bad], realPage(52), scenesReal).join()).toContain('quote not found on page 52');
+  });
 });
 
 describe('validateLessons: quote minimum length', () => {

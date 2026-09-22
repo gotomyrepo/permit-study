@@ -1,5 +1,5 @@
 import type { Lesson, Source } from './types';
-import { normalizeForMatch } from './normalize';
+import { normalizeForMatch, normalizeIndexed } from './normalize';
 import { audioLines } from './audioLines';
 
 export interface ManualPage { page: number; text: string }
@@ -9,31 +9,58 @@ const MIN_QUOTE_NORM_LEN = 20;
 const MIN_QUOTE_WORDS = 4;
 
 const isDigit = (c: string | undefined) => c !== undefined && c >= '0' && c <= '9';
+const isLetter = (c: string | undefined) => c !== undefined && c >= 'a' && c <= 'z';
 
 /**
- * True if `quote` (already normalized) occurs in `haystack` (already normalized) at a
- * position where it isn't a partial number: if the quote starts or ends with a digit,
- * the character immediately outside the match may not also be a digit. Without this,
- * "5 mph" would match inside "55 mph" and "5 feet" inside "15 feet".
+ * Is there a letter immediately before `pos` in the un-stripped page text `t`, treating a
+ * hyphenated line break ("intersec-\ntion") as no boundary at all (i.e. still the same word)?
  */
-function quoteFound(haystack: string, quote: string): boolean {
+function letterBefore(t: string, pos: number): boolean {
+  let j = pos - 1;
+  if (t[j] === '\n' && t[j - 1] === '-') j -= 2;
+  return isLetter(t[j]);
+}
+
+/** Mirror of letterBefore, checking the character immediately after `pos` (exclusive end of a match). */
+function letterAfter(t: string, pos: number): boolean {
+  let j = pos;
+  if (t[j] === '-' && t[j + 1] === '\n') j += 2;
+  return isLetter(t[j]);
+}
+
+/**
+ * True if `quote` (already normalized) occurs in the normalized page text `norm` at a
+ * position that respects word/number boundaries:
+ * - if the quote starts or ends with a digit, the normalized character immediately
+ *   outside the match may not also be a digit ("5 mph" must not match inside "55 mph");
+ * - if the quote starts or ends with a letter, the ORIGINAL (un-stripped) page character
+ *   immediately outside the match may not also be a letter ("legal ..." must not match
+ *   inside "illegal ...", since normalizeForMatch strips the space that would separate them).
+ * `t`/`idx` are normalizeIndexed(pageText): idx[k] is t's index for norm[k].
+ */
+function quoteFound(norm: string, t: string, idx: number[], quote: string): boolean {
   if (!quote) return false;
   const startsDigit = isDigit(quote[0]);
   const endsDigit = isDigit(quote[quote.length - 1]);
+  const startsLetter = isLetter(quote[0]);
+  const endsLetter = isLetter(quote[quote.length - 1]);
   let from = 0;
   for (;;) {
-    const idx = haystack.indexOf(quote, from);
-    if (idx < 0) return false;
-    const beforeOk = !startsDigit || !isDigit(haystack[idx - 1]);
-    const afterOk = !endsDigit || !isDigit(haystack[idx + quote.length]);
-    if (beforeOk && afterOk) return true;
-    from = idx + 1;
+    const i = norm.indexOf(quote, from);
+    if (i < 0) return false;
+    const last = i + quote.length - 1;
+    const beforeDigitOk = !startsDigit || !isDigit(norm[i - 1]);
+    const afterDigitOk = !endsDigit || !isDigit(norm[i + quote.length]);
+    const beforeLetterOk = !startsLetter || !letterBefore(t, idx[i]);
+    const afterLetterOk = !endsLetter || !letterAfter(t, idx[last] + 1);
+    if (beforeDigitOk && afterDigitOk && beforeLetterOk && afterLetterOk) return true;
+    from = i + 1;
   }
 }
 
 export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: SceneIndex): string[] {
   const errors: string[] = [];
-  const norm = new Map(pages.map((p) => [p.page, normalizeForMatch(p.text)]));
+  const indexed = new Map(pages.map((p) => [p.page, normalizeIndexed(p.text)]));
   const ids = new Set<string>();
   const orders = new Set<number>();
 
@@ -42,7 +69,7 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
     ids.add(id);
   };
   const checkSource = (s: Source, where: string) => {
-    const here = norm.get(s.page);
+    const here = indexed.get(s.page);
     if (here === undefined) { errors.push(`${where}: page ${s.page} is not in the manual`); return; }
     if (s.quote) {
       const normQuote = normalizeForMatch(s.quote);
@@ -51,8 +78,13 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
         errors.push(`${where}: quote too short to verify (need ${MIN_QUOTE_NORM_LEN}+ characters or ${MIN_QUOTE_WORDS}+ words): "${s.quote}"`);
         return;
       }
-      const text = here + (norm.get(s.page + 1) ?? '');
-      if (!quoteFound(text, normQuote)) errors.push(`${where}: quote not found on page ${s.page}: "${s.quote}"`);
+      // Concatenate this page with the next so a quote may continue across a page break;
+      // idx offsets for the next page's characters shift by here.t.length.
+      const next = indexed.get(s.page + 1);
+      const t = here.t + (next?.t ?? '');
+      const norm = here.norm + (next?.norm ?? '');
+      const idx = next ? here.idx.concat(next.idx.map((k) => k + here.t.length)) : here.idx;
+      if (!quoteFound(norm, t, idx, normQuote)) errors.push(`${where}: quote not found on page ${s.page}: "${s.quote}"`);
     }
   };
   const checkScene = (scene: string, step: string, where: string) => {
