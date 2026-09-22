@@ -1,1 +1,22 @@
 body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #fdfaf3; }
+/* ---- scenes ---- */
+svg.scene { display: block; width: 100%; height: auto; }
+.sign[data-state~="highlight"] { filter: drop-shadow(0 0 4px #fff59d) drop-shadow(0 0 3px #fbc02d); }
+.light .lamp { fill: #424242; }
+.light .arrow { stroke: none; }
+.light[data-state~="red"] .lamp.red { fill: #f44336; }
+.light[data-state~="yellow"] .lamp.yellow { fill: #ffc107; }
+.light[data-state~="green"] .lamp.green { fill: #4caf50; }
+.light[data-state~="green-arrow"] .arrow { stroke: #4caf50; stroke-width: 3; }
+.light[data-state~="flash-red"] .lamp.red { fill: #f44336; animation: flash 1s steps(2) infinite; }
+.light[data-state~="flash-yellow"] .lamp.yellow { fill: #ffc107; animation: flash 1s steps(2) infinite; }
+.actor .stop-arm { display: none; }
+.actor[data-state~="stop-arm"] .stop-arm { display: inline; }
+.actor .beacon { opacity: 0.25; }
+.actor[data-state~="flashing"] .beacon { opacity: 1; animation: flash 0.5s steps(2) infinite; }
+.actor[data-state~="hidden"] { display: none; }
+@keyframes flash { 50% { opacity: 0.15; } }
+/* ---- scene preview (dev) ---- */
+.preview-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }
+.preview-row h3 { width: 100%; margin: 4px 0; font-size: 16px; }
+.preview-cell { width: 230px; font-size: 12px; }
