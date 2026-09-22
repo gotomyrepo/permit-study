@@ -84,7 +84,7 @@
   {
    "id": 9,
    "subject": "Task 9: Parent fact-check page",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 9 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run dev (manual check of /review.html)\"}\n```",
    "blockedBy": [
     6
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T23:30:15.933034+00:00"
+ "lastUpdated": "2026-09-22T23:38:01.051741+00:00"
 }

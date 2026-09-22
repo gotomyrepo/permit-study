@@ -14,7 +14,7 @@ const listen = (id: string, small = false) => {
   b.addEventListener('click', () => {
     warn.hidden = true;
     audio.src = `${base}audio/${id}.mp3`;
-    audio.play().catch(() => { warn.hidden = false; });
+    audio.play().catch((e: unknown) => { if ((e as { name?: string })?.name !== 'AbortError') warn.hidden = false; });
   });
   return h('span', { class: 'listen-wrap' }, b, warn);
 };
