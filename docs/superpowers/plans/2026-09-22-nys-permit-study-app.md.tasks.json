@@ -28,7 +28,7 @@
   {
    "id": 3,
    "subject": "Task 3: Scene rendering, standard layouts, first scene (yield)",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 3 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/scenes.test.ts && npm run shots -- yield-intersection sign-yield\"}\n```",
    "blockedBy": [
     2
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T21:47:26.451859+00:00"
+ "lastUpdated": "2026-09-22T21:51:46.013248+00:00"
 }
