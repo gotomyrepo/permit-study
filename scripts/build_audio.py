@@ -18,6 +18,21 @@ def norm(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", s.lower())
 
 
+LOOKAHEAD = 3
+MIN_PARTIAL = 3
+
+
+def _is_match(tok: str, p: int, bw: str) -> bool:
+    if not tok[p:].startswith(bw):
+        return False
+    # A short boundary word (like "a" or "an") starting fresh at a token
+    # boundary must consume the whole token, so it can't falsely prefix-match
+    # the start of an unrelated longer token (e.g. "a" into "away").
+    if p == 0 and len(bw) < MIN_PARTIAL and len(bw) != len(tok):
+        return False
+    return True
+
+
 def match_words(text: str, boundaries: list[dict]) -> list[dict]:
     """Map each spoken word to the index of the whitespace-separated caption token it belongs to."""
     toks = [norm(t) for t in text.split()]
@@ -28,9 +43,10 @@ def match_words(text: str, boundaries: list[dict]) -> list[dict]:
         if not bw:
             continue
         j, p = ti, pos
-        while j < len(toks) and not toks[j][p:].startswith(bw):
+        limit = min(len(toks), ti + LOOKAHEAD + 1)
+        while j < limit and not _is_match(toks[j], p, bw):
             j, p = j + 1, 0
-        if j >= len(toks):
+        if j >= limit:
             continue
         start = bd["offset"] // 10000
         out.append({"i": j, "start": start, "end": start + bd["duration"] // 10000})
@@ -80,8 +96,13 @@ async def build_one(line: dict, voice: dict, manifest: dict, sem: asyncio.Semaph
     return True
 
 
+ID_RE = re.compile(r"^[a-z0-9_-]+$")
+
+
 async def main() -> None:
     lines = json.loads(LINES.read_text(encoding="utf-8"))
+    for line in lines:
+        assert ID_RE.match(line["id"]), f"invalid audio line id: {line['id']!r}"
     voice = json.loads(VOICE.read_text(encoding="utf-8"))
     OUT.mkdir(parents=True, exist_ok=True)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {}
@@ -96,7 +117,13 @@ async def main() -> None:
         MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8")
     removed = 0
     for f in OUT.iterdir():
-        if f.name != "manifest.json" and f.stem not in keep:
+        if f.is_dir():
+            continue
+        if f.suffix not in (".mp3", ".json"):
+            continue
+        if f.name == "manifest.json":
+            continue
+        if f.stem not in keep:
             f.unlink()
             removed += 1
     print(f"{sum(made)} generated, {len(lines) - sum(made)} unchanged, {removed} stale files removed")

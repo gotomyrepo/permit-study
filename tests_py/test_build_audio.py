@@ -28,3 +28,19 @@ def test_hyphenated_token_gets_several_boundaries():
 def test_unmatched_boundary_is_skipped():
     words = match_words("Park 15 feet away.", [b("Park", 0), b("fifteen", 1), b("feet", 2), b("away", 3)])
     assert [w["i"] for w in words] == [0, 2, 3]
+
+
+def test_search_does_not_jump_past_nearby_unmatched_words():
+    text = "Go 55 mph here. It takes an hour."
+    boundaries = [
+        b("Go", 0), b("fifty", 1), b("five", 2), b("miles", 3), b("per", 4), b("hour", 5),
+        b("here", 6), b("It", 7), b("takes", 8), b("an", 9), b("hour", 10),
+    ]
+    words = match_words(text, boundaries)
+    tail = [w["i"] for w in words if w["i"] >= 3]
+    assert tail == [3, 4, 5, 6, 7]
+
+
+def test_short_word_does_not_prefix_match_longer_token():
+    words = match_words("Go away now.", [b("Go", 0), b("a", 1), b("now", 2)])
+    assert [w["i"] for w in words] == [0, 2]
