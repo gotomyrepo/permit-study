@@ -40,4 +40,31 @@ describe('scoreTest', () => {
     expect(scoreTest([{ correct: true, sign: false }, { correct: true, sign: false }, { correct: false, sign: false }]).passed).toBe(false);
     expect(scoreTest([{ correct: true, sign: false }, { correct: true, sign: false }, { correct: true, sign: false }]).passed).toBe(true);
   });
+  test('empty test never passes', () => {
+    expect(scoreTest([])).toMatchObject({ correct: 0, total: 0, passed: false });
+  });
+});
+
+describe('assembleTest and scoreTest with atypical pools', () => {
+  test('pool with no sign questions: assembles all-non-sign test and scores with fallback rule', () => {
+    const t = assembleTest(pool(25, 0), new Set(), seeded(4));
+    expect(t).toHaveLength(20);
+    expect(t.filter((x) => x.q.signQuestion)).toHaveLength(0);
+    const passing = t.map(() => ({ correct: true, sign: false }));
+    expect(scoreTest(passing).passed).toBe(true);
+    const failing = t.map((_, i) => ({ correct: i < 13, sign: false }));
+    expect(scoreTest(failing).passed).toBe(false);
+  });
+
+  test('pool of exactly 20 with only 2 sign questions: fallback sign rule applies', () => {
+    const t = assembleTest(pool(20, 2), new Set(), seeded(5));
+    expect(t).toHaveLength(20);
+    expect(t.filter((x) => x.q.signQuestion)).toHaveLength(2);
+    const passing = t.map((x) => ({ correct: true, sign: x.q.signQuestion }));
+    const score = scoreTest(passing);
+    expect(score.signTotal).toBe(2);
+    expect(score.passed).toBe(true);
+    const failSign = t.map((x) => ({ correct: !x.q.signQuestion, sign: x.q.signQuestion }));
+    expect(scoreTest(failSign).passed).toBe(false);
+  });
 });

@@ -33,8 +33,8 @@ export function scoreTest(answers: TestAnswer[]): TestScore {
   const correct = answers.filter((a) => a.correct).length;
   const signTotal = answers.filter((a) => a.sign).length;
   const signCorrect = answers.filter((a) => a.sign && a.correct).length;
-  const passed = total === TEST_SIZE && signTotal === SIGN_COUNT
+  const passed = total > 0 && (total === TEST_SIZE && signTotal === SIGN_COUNT
     ? correct >= 14 && signCorrect >= 2 // manual p.10
-    : correct >= Math.ceil(total * 0.7) && (signTotal === 0 || signCorrect >= Math.ceil(signTotal / 2));
+    : correct >= Math.ceil(total * 0.7) && (signTotal === 0 || signCorrect >= Math.ceil(signTotal / 2)));
   return { correct, total, signCorrect, signTotal, passed };
 }

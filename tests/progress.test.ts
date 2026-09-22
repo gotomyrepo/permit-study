@@ -34,6 +34,12 @@ describe('ProgressStore', () => {
     const p = new ProgressStore(memKV({ [ProgressStore.KEY]: '{not json' }));
     expect(p.missed()).toEqual([]);
   });
+  test('non-string entries in stored arrays are dropped', () => {
+    const raw = JSON.stringify({ completed: ['signs', 42, null], missed: ['q1', { bad: true }] });
+    const p = new ProgressStore(memKV({ [ProgressStore.KEY]: raw }));
+    expect(p.isCompleted('signs')).toBe(true);
+    expect(p.missed()).toEqual(['q1']);
+  });
   test('storage that throws does not break the app', () => {
     const kv: KV = { getItem: () => { throw new Error('denied'); }, setItem: () => { throw new Error('denied'); } };
     const p = new ProgressStore(kv);

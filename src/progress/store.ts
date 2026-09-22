@@ -23,7 +23,12 @@ export class ProgressStore {
     try {
       const raw = this.kv.getItem(ProgressStore.KEY);
       const d = raw ? JSON.parse(raw) : null;
-      if (d && Array.isArray(d.completed) && Array.isArray(d.missed)) return { completed: d.completed, missed: d.missed };
+      if (d && Array.isArray(d.completed) && Array.isArray(d.missed)) {
+        return {
+          completed: d.completed.filter((x: unknown) => typeof x === 'string'),
+          missed: d.missed.filter((x: unknown) => typeof x === 'string'),
+        };
+      }
     } catch { /* fall through */ }
     return { completed: [], missed: [] };
   }
