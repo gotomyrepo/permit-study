@@ -1,4 +1,47 @@
-body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #fdfaf3; }
+:root {
+  --bg: #fdfaf3; --ink: #222; --go: #43a047; --soft: #e3f2fd; --soft-ink: #1565c0;
+  --hl: #fff59d; --you: #1e88e5; --radius: 14px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); }
+#app { max-width: 960px; margin: 0 auto; padding: 12px 16px; min-height: 100vh; display: flex; flex-direction: column; gap: 12px; }
+.top { display: flex; align-items: center; gap: 12px; }
+.progress { flex: 1; height: 14px; background: #e0e0e0; border-radius: 7px; overflow: hidden; }
+.progress > i { display: block; height: 100%; background: var(--go); }
+.btn { font: inherit; font-size: 24px; font-weight: 700; border: 0; border-radius: var(--radius); padding: 14px 20px; cursor: pointer; min-height: 64px; }
+.btn.go { background: var(--go); color: #fff; }
+.btn.soft { background: var(--soft); color: var(--soft-ink); border: 2px solid #90caf9; }
+.btn.icon { min-width: 64px; flex: 0 0 auto; }
+.btn[disabled] { opacity: 0.35; cursor: default; }
+.retry-big { outline: 6px solid #fbc02d; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { outline-color: var(--hl); } }
+.bar { display: flex; gap: 12px; }
+.bar .btn { flex: 1; }
+.stage { background: #8bc34a; border-radius: var(--radius); overflow: hidden; display: flex; justify-content: center; }
+.stage svg { max-height: 52vh; }
+.caption { background: #fff; border: 2px solid #eee; border-radius: var(--radius); padding: 12px 16px; font-size: 30px; font-weight: 600; line-height: 1.35; flex: 1; }
+.w.hl { background: var(--hl); border-radius: 4px; }
+.ask-row { display: flex; gap: 12px; align-items: stretch; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { font: inherit; background: #fff; border: 4px solid #ccc; border-radius: var(--radius); padding: 12px 36px 12px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 22px; font-weight: 700; color: var(--ink); position: relative; }
+.tile .num { background: #333; color: #fff; border-radius: 50%; width: 36px; height: 36px; line-height: 36px; font-size: 20px; }
+.tile .say { position: absolute; top: 6px; right: 8px; font-size: 24px; }
+.tile.reading { border-color: #fbc02d; box-shadow: 0 0 0 4px var(--hl); }
+.tile.right { border-color: var(--go); box-shadow: 0 0 0 4px #c8e6c9; }
+.tile.picked { border-color: var(--you); }
+.tile.tried, .tile[disabled] { opacity: 0.45; cursor: default; }
+.feedback { font-size: 28px; font-weight: 700; text-align: center; }
+.feedback .caption { font-size: 28px; }
+.feedback.good .caption { border-color: #a5d6a7; background: #e8f5e9; }
+.home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.lesson-tile { font: inherit; background: #fff; border: 3px solid #ccc; border-radius: var(--radius); padding: 12px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 20px; font-weight: 700; cursor: pointer; position: relative; color: var(--ink); }
+.lesson-tile .icon { font-size: 48px; line-height: 1.1; }
+.lesson-tile.done::after { content: "✓"; position: absolute; top: 4px; right: 10px; color: var(--go); font-size: 28px; }
+.lesson-tile.next { border-color: var(--you); box-shadow: 0 0 0 4px #bbdefb; }
+.big-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
+.big-center .caption { flex: 0 0 auto; }
+.huge { font-size: 96px; }
 /* ---- scenes ---- */
 svg.scene { display: block; width: 100%; height: auto; }
 /* Highlight: thick bright-yellow ring with a dark edge, gently swelling about once a second. */
@@ -29,3 +72,7 @@ svg.scene { display: block; width: 100%; height: auto; }
 .preview-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }
 .preview-row h3 { width: 100%; margin: 4px 0; font-size: 16px; }
 .preview-cell { width: 230px; font-size: 12px; }
+/* ---- app: reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .retry-big { animation: none; }
+}
