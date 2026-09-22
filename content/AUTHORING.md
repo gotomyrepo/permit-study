@@ -25,7 +25,7 @@ The learner is 18, autistic, and reads at a 1st–2nd grade level. Everything is
 - In scenes, the learner's car has `you: true`; that is what makes it blue.
 
 ## Questions
-- 3–6 per lesson. At least half should have 4 choices, like the real test.
+- 3–6 per lesson. At least half should have 4 choices, like the real test. Never more than 4 (the schema rejects 5+).
 - Wrong choices must be clearly wrong according to the manual, not tricky.
 - `answer` counts from 0: the first choice is 0.
 - `explainCard` is the card that teaches the answer; it replays when she misses. It must be a card in the same lesson.
