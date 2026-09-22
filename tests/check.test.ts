@@ -91,6 +91,15 @@ describe('checkScene', () => {
     expect(checkScene(s)).toEqual([]);
   });
 
+  test('flags moving into a zero-length stopsBehind window', () => {
+    const s: SceneDef = { ...base(), actors: [blue], steps: [
+      { id: 'arrive-instant', duration: 2000,
+        tracks: { blue: [{ t: 1000, x: 165, y: 210, heading: 0 }] },
+        expect: [{ type: 'stopsBehind', actor: 'blue', line: 'line-nb', from: 1000, to: 1000 }] },
+    ] };
+    expect(checkScene(s).some((v) => v.message.includes('moving'))).toBe(true);
+  });
+
   test('flags structural errors', () => {
     const s: SceneDef = { ...base(), actors: [blue], steps: [
       { id: 'a', duration: 1000, tracks: { ghost: [{ t: 500, x: 0, y: 0, heading: 0 }] } },

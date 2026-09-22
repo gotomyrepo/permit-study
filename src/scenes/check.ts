@@ -87,9 +87,9 @@ export function checkScene(scene: SceneDef, dt = DT): Violation[] {
         const fr = front(p, SIZES[a.kind].length);
         const d = dir(line.heading);
         if ((fr.x - line.x) * d.x + (fr.y - line.y) * d.y > 0) add(step.id, t, `"${a.id}" is past line "${line.id}"`);
-        if (t + dt > e.to) continue;
-        const later = frameAt(scene, si, Math.min(t + dt, step.duration)).poses[a.id];
-        if (Math.hypot(later.x - p.x, later.y - p.y) > STILL_PX) add(step.id, t, `"${a.id}" is moving but should be stopped behind "${line.id}"`);
+        const sampleT = t + dt > e.to ? Math.max(0, t - dt) : Math.min(t + dt, step.duration);
+        const other = frameAt(scene, si, sampleT).poses[a.id];
+        if (Math.hypot(other.x - p.x, other.y - p.y) > STILL_PX) add(step.id, t, `"${a.id}" is moving but should be stopped behind "${line.id}"`);
       }
     }
 
