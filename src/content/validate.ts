@@ -1,8 +1,35 @@
 import type { Lesson, Source } from './types';
 import { normalizeForMatch } from './normalize';
+import { audioLines } from './audioLines';
 
 export interface ManualPage { page: number; text: string }
 export type SceneIndex = Record<string, string[]>;
+
+const MIN_QUOTE_NORM_LEN = 20;
+const MIN_QUOTE_WORDS = 4;
+
+const isDigit = (c: string | undefined) => c !== undefined && c >= '0' && c <= '9';
+
+/**
+ * True if `quote` (already normalized) occurs in `haystack` (already normalized) at a
+ * position where it isn't a partial number: if the quote starts or ends with a digit,
+ * the character immediately outside the match may not also be a digit. Without this,
+ * "5 mph" would match inside "55 mph" and "5 feet" inside "15 feet".
+ */
+function quoteFound(haystack: string, quote: string): boolean {
+  if (!quote) return false;
+  const startsDigit = isDigit(quote[0]);
+  const endsDigit = isDigit(quote[quote.length - 1]);
+  let from = 0;
+  for (;;) {
+    const idx = haystack.indexOf(quote, from);
+    if (idx < 0) return false;
+    const beforeOk = !startsDigit || !isDigit(haystack[idx - 1]);
+    const afterOk = !endsDigit || !isDigit(haystack[idx + quote.length]);
+    if (beforeOk && afterOk) return true;
+    from = idx + 1;
+  }
+}
 
 export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: SceneIndex): string[] {
   const errors: string[] = [];
@@ -18,8 +45,14 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
     const here = norm.get(s.page);
     if (here === undefined) { errors.push(`${where}: page ${s.page} is not in the manual`); return; }
     if (s.quote) {
+      const normQuote = normalizeForMatch(s.quote);
+      const words = s.quote.trim().split(/\s+/).filter(Boolean).length;
+      if (normQuote.length < MIN_QUOTE_NORM_LEN && words < MIN_QUOTE_WORDS) {
+        errors.push(`${where}: quote too short to verify (need ${MIN_QUOTE_NORM_LEN}+ characters or ${MIN_QUOTE_WORDS}+ words): "${s.quote}"`);
+        return;
+      }
       const text = here + (norm.get(s.page + 1) ?? '');
-      if (!text.includes(normalizeForMatch(s.quote))) errors.push(`${where}: quote not found on page ${s.page}: "${s.quote}"`);
+      if (!quoteFound(text, normQuote)) errors.push(`${where}: quote not found on page ${s.page}: "${s.quote}"`);
     }
   };
   const checkScene = (scene: string, step: string, where: string) => {
@@ -48,5 +81,18 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
       if (!cardIds.has(q.explainCard)) errors.push(`${where}: explainCard "${q.explainCard}" is not a card in this lesson`);
     }
   }
+
+  try {
+    const audioSeenAt = new Map<string, string>();
+    for (const line of audioLines(lessons)) {
+      const prior = audioSeenAt.get(line.id);
+      if (prior !== undefined) errors.push(`duplicate audio id "${line.id}" (id collision between generated audio lines)`);
+      else audioSeenAt.set(line.id, line.text);
+    }
+  } catch {
+    // A malformed answer index (already reported above) can make audioLines() throw
+    // while building feedback text; skip the audio-id check in that case.
+  }
+
   return errors;
 }

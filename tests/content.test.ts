@@ -1,14 +1,20 @@
+import { readFileSync } from 'node:fs';
 import { describe, test, expect } from 'vitest';
 import { normalizeForMatch } from '../src/content/normalize';
 import { validateLessons } from '../src/content/validate';
 import { audioLines, audioId, TEXT } from '../src/content/audioLines';
 import { LessonSchema, type Lesson } from '../src/content/types';
+import type { ManualPage } from '../src/content/validate';
 
 const pages = [
   { page: 29, text: 'MEANING: Decrease speed \nas you reach the intersec-\ntion. Y ou must come to a full stop at \na YIELD sign if traffic conditions require it.' },
   { page: 30, text: 'Traffic signals are usually red, yellow and green.' },
 ];
 const scenes = { 'yield-intersection': ['slow-down', 'question-freeze'] };
+
+// Real pypdf-extracted text, used to guard against normalizeForMatch collapsing distinct numbers.
+const realPages: ManualPage[] = JSON.parse(readFileSync('content/manual/pages.json', 'utf8'));
+const realPage = (n: number) => [realPages.find((p) => p.page === n)!];
 
 const lesson = (over: Partial<Lesson> = {}): Lesson => LessonSchema.parse({
   id: 'yield', order: 2, title: 'Yield', icon: '🔻',
@@ -25,6 +31,61 @@ describe('normalizeForMatch', () => {
     expect(normalizeForMatch('intersec-\ntion')).toBe(normalizeForMatch('intersection'));
     expect(normalizeForMatch('Y ou')).toBe('you');
     expect(normalizeForMatch('ﬁre “hydrant”')).toBe('firehydrant');
+  });
+  test('keeps punctuation that sits between digits, or next to a digit', () => {
+    expect(normalizeForMatch('.08')).toBe('.08');
+    expect(normalizeForMatch('1 1⁄2')).toBe('11/2');
+  });
+});
+
+describe('validateLessons: numbers must match exactly (real manual text)', () => {
+  const scenesReal = { s: ['step'] };
+  const l = (page: number, quote: string): Lesson => LessonSchema.parse({
+    id: 'l', order: 1, title: 'T', icon: '🔻',
+    cards: [{ id: 'c1', say: 'say', scene: 's', step: 'step', source: { page, quote } }],
+    questions: [{ id: 'q1', ask: 'ask', scene: 's', step: 'step', choices: ['a', 'b'], answer: 0, explainCard: 'c1',
+      source: { page, quote } }],
+  });
+
+  test('.08 BAC does not match a wrong quote of "0.8 BAC"', () => {
+    const bad = l(55, 'a BAC of 0.8 percent or higher is evidence of intoxication');
+    expect(validateLessons([bad], realPage(55), scenesReal).join()).toContain('quote not found on page 55');
+    const good = l(55, 'a BAC of .08 percent or higher is evidence of intoxication');
+    expect(validateLessons([good], realPage(55), scenesReal)).toEqual([]);
+  });
+
+  test('55 mph does not match a wrong quote of "5 mph"', () => {
+    const bad = l(47, '5 mph (88 km/h)');
+    expect(validateLessons([bad], realPage(47), scenesReal).join()).toContain('quote not found on page 47');
+    const good = l(47, '55 mph (88 km/h)');
+    expect(validateLessons([good], realPage(47), scenesReal)).toEqual([]);
+  });
+
+  test('15 feet does not match a wrong quote of "5 feet"', () => {
+    const bad = l(43, '5 feet (5 m) of a fire hydrant');
+    expect(validateLessons([bad], realPage(43), scenesReal).join()).toContain('quote not found on page 43');
+    const good = l(43, '15 feet (5 m) of a fire hydrant');
+    expect(validateLessons([good], realPage(43), scenesReal)).toEqual([]);
+  });
+
+  test('1 1/2 oz. liquor does not match a wrong quote of "11 2 oz. liquor"', () => {
+    const bad = l(55, '11 2 oz. liquor');
+    expect(validateLessons([bad], realPage(55), scenesReal).join()).toContain('quote not found on page 55');
+    const good = l(55, '1 1⁄2 oz. liquor');
+    expect(validateLessons([good], realPage(55), scenesReal)).toEqual([]);
+  });
+});
+
+describe('validateLessons: quote minimum length', () => {
+  test('rejects a short, generic quote', () => {
+    const l: Lesson = LessonSchema.parse({
+      id: 'l', order: 1, title: 'T', icon: '🔻',
+      cards: [{ id: 'c1', say: 'say', scene: 's', step: 'step', source: { page: 29, quote: 'stop sign.' } }],
+      questions: [{ id: 'q1', ask: 'ask', scene: 's', step: 'step', choices: ['a', 'b'], answer: 0, explainCard: 'c1',
+        source: { page: 29, quote: 'stop sign.' } }],
+    });
+    const e = validateLessons([l], pages, { s: ['step'] }).join('\n');
+    expect(e).toContain('quote too short');
   });
 });
 
@@ -84,5 +145,24 @@ describe('audioLines', () => {
     expect(TEXT.yes(q)).toBe('Yes! Red.');
     expect(TEXT.answerIs(q)).toBe('The answer is: Red.');
     expect(audioId.choice(q, 1)).toBe('q-yield-q1-c1');
+  });
+});
+
+describe('validateLessons: audio id collisions', () => {
+  test('rejects a question id that collides with another question\'s generated audio id', () => {
+    // question "a"'s "yes" audio id is "q-a-yes"; a question literally id'd "a-yes" gets
+    // an "ask" audio id of "q-a-yes" too, via audioId.ask = `q-${id}`.
+    const l: Lesson = LessonSchema.parse({
+      id: 'l', order: 1, title: 'T', icon: '🔻',
+      cards: [{ id: 'c1', say: 'say', scene: 'yield-intersection', step: 'slow-down',
+        source: { page: 29, quote: 'Decrease speed as you reach the intersection.' } }],
+      questions: [
+        { id: 'a', ask: 'ask 1', scene: 'yield-intersection', step: 'question-freeze', choices: ['x', 'y'], answer: 1,
+          explainCard: 'c1', source: { page: 29, quote: 'Decrease speed as you reach the intersection.' } },
+        { id: 'a-yes', ask: 'ask 2', scene: 'yield-intersection', step: 'question-freeze', choices: ['x', 'y'], answer: 1,
+          explainCard: 'c1', source: { page: 29, quote: 'Decrease speed as you reach the intersection.' } },
+      ],
+    });
+    expect(validateLessons([l], pages, scenes).join()).toContain('duplicate audio id "q-a-yes"');
   });
 });
