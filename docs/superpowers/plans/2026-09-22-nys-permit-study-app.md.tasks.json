@@ -10,8 +10,8 @@
   {
    "id": 1,
    "subject": "Task 1: Download and extract the official manual",
-   "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 1 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -c \\\"import json;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p))\\\"\"}\n```",
+   "status": "completed",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 1 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -c \\\"import json,re;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p), 'at least 14 of the 20' in re.sub(r'\\\\s+',' ',p[9]['text']))\\\"\"}\n```",
    "blockedBy": [
     0
    ]
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T21:36:58.617784+00:00"
+ "lastUpdated": "2026-09-22T21:39:51.733079+00:00"
 }
