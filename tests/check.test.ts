@@ -72,6 +72,25 @@ describe('checkScene', () => {
     expect(checkScene(s).some((v) => v.message.includes('entered'))).toBe(true);
   });
 
+  test('flags entersAfter when one actor never enters the zone', () => {
+    const s: SceneDef = { ...base(), actors: [blue, red], steps: [
+      { id: 'ghost-crossing', duration: 4000,
+        tracks: { blue: [{ t: 4000, x: 165, y: -40, heading: 0 }], red: [{ t: 1000, x: 60, y: 165, heading: 90 }, { t: 4000, x: 60, y: 165, heading: 90 }] },
+        expect: [{ type: 'entersAfter', actor: 'blue', other: 'red', zone: 'junction' }] },
+    ] };
+    expect(checkScene(s).some((v) => v.message.includes('never entered'))).toBe(true);
+  });
+
+  test('linear stopsBehind: actor leaving exactly at `to` is not flagged as moving', () => {
+    const s: SceneDef = { ...base(), actors: [blue], steps: [
+      { id: 'depart-linear', duration: 2000,
+        at: { blue: { x: 165, y: 210, heading: 0 } },
+        tracks: { blue: [{ t: 1000, x: 165, y: 210, heading: 0 }, { t: 2000, x: 165, y: 100, heading: 0 }] },
+        expect: [{ type: 'stopsBehind', actor: 'blue', line: 'line-nb', from: 0, to: 1000 }] },
+    ] };
+    expect(checkScene(s)).toEqual([]);
+  });
+
   test('flags structural errors', () => {
     const s: SceneDef = { ...base(), actors: [blue], steps: [
       { id: 'a', duration: 1000, tracks: { ghost: [{ t: 500, x: 0, y: 0, heading: 0 }] } },

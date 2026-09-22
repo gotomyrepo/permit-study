@@ -87,6 +87,7 @@ export function checkScene(scene: SceneDef, dt = DT): Violation[] {
         const fr = front(p, SIZES[a.kind].length);
         const d = dir(line.heading);
         if ((fr.x - line.x) * d.x + (fr.y - line.y) * d.y > 0) add(step.id, t, `"${a.id}" is past line "${line.id}"`);
+        if (t + dt > e.to) continue;
         const later = frameAt(scene, si, Math.min(t + dt, step.duration)).poses[a.id];
         if (Math.hypot(later.x - p.x, later.y - p.y) > STILL_PX) add(step.id, t, `"${a.id}" is moving but should be stopped behind "${line.id}"`);
       }
@@ -96,8 +97,12 @@ export function checkScene(scene: SceneDef, dt = DT): Violation[] {
       if (e.type !== 'entersAfter') continue;
       const enter = firstIn.get(e.actor);
       const otherLast = lastIn.get(e.other);
-      if (enter !== undefined && otherLast !== undefined && enter <= otherLast)
+      if (enter === undefined || otherLast === undefined) {
+        const missing = enter === undefined ? e.actor : e.other;
+        add(step.id, 0, `"${missing}" never entered zone "${e.zone}" — both "${e.actor}" and "${e.other}" must cross the zone within the same step`);
+      } else if (enter <= otherLast) {
         add(step.id, enter, `"${e.actor}" entered "${e.zone}" at ${enter}ms while "${e.other}" was still there until ${otherLast}ms`);
+      }
     }
   });
   return out;
