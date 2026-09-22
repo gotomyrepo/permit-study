@@ -44,3 +44,13 @@ def test_search_does_not_jump_past_nearby_unmatched_words():
 def test_short_word_does_not_prefix_match_longer_token():
     words = match_words("Go away now.", [b("Go", 0), b("a", 1), b("now", 2)])
     assert [w["i"] for w in words] == [0, 2]
+
+
+def test_short_word_matches_at_current_token():
+    text = "Make a U-turn and a K-turn here."
+    boundaries = [
+        b("Make", 0), b("a", 1), b("U", 2), b("turn", 3), b("and", 4),
+        b("a", 5), b("K", 6), b("turn", 7), b("here", 8),
+    ]
+    words = match_words(text, boundaries)
+    assert [w["i"] for w in words] == [0, 1, 2, 2, 3, 4, 5, 5, 6]

@@ -22,20 +22,25 @@ LOOKAHEAD = 3
 MIN_PARTIAL = 3
 
 
-def _is_match(tok: str, p: int, bw: str) -> bool:
+def _is_match(tok: str, p: int, bw: str, compound: bool) -> bool:
     if not tok[p:].startswith(bw):
         return False
-    # A short boundary word (like "a" or "an") starting fresh at a token
-    # boundary must consume the whole token, so it can't falsely prefix-match
-    # the start of an unrelated longer token (e.g. "a" into "away").
-    if p == 0 and len(bw) < MIN_PARTIAL and len(bw) != len(tok):
+    # A short boundary word (like "a" or "an") is only allowed to prefix-match
+    # part of a token when that token is a hyphenated compound (e.g.
+    # "U-turn" spoken as "u" then "turn"), since that's the only legitimate
+    # reason a caption token gets built up from several short boundaries.
+    # Otherwise it must match the whole token, so it can't falsely prefix-
+    # match the start of an unrelated longer token (e.g. "a" into "away").
+    if not compound and len(bw) < MIN_PARTIAL and len(bw) != len(tok):
         return False
     return True
 
 
 def match_words(text: str, boundaries: list[dict]) -> list[dict]:
     """Map each spoken word to the index of the whitespace-separated caption token it belongs to."""
-    toks = [norm(t) for t in text.split()]
+    raw = text.split()
+    toks = [norm(t) for t in raw]
+    compound = ["-" in t for t in raw]
     out: list[dict] = []
     ti, pos = 0, 0
     for bd in boundaries:
@@ -44,7 +49,7 @@ def match_words(text: str, boundaries: list[dict]) -> list[dict]:
             continue
         j, p = ti, pos
         limit = min(len(toks), ti + LOOKAHEAD + 1)
-        while j < limit and not _is_match(toks[j], p, bw):
+        while j < limit and not _is_match(toks[j], p, bw, compound[j]):
             j, p = j + 1, 0
         if j >= limit:
             continue
