@@ -93,7 +93,7 @@
   {
    "id": 10,
    "subject": "Task 10: Installable app (PWA) + icons",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 10 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run build\"}\n```",
    "blockedBy": [
     8,
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-22T23:38:01.051741+00:00"
+ "lastUpdated": "2026-09-22T23:54:36.622312+00:00"
 }
