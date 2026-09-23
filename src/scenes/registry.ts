@@ -1,9 +1,10 @@
 import type { SceneDef } from './types';
 import { yieldScenes } from './defs/yield';
 import { signsScenes } from './defs/signs';
+import { lightsScenes } from './defs/lights';
 
 // Each lesson task adds its scene list here.
-const ALL: SceneDef[] = [...yieldScenes, ...signsScenes];
+const ALL: SceneDef[] = [...yieldScenes, ...signsScenes, ...lightsScenes];
 
 export const SCENES: Record<string, SceneDef> = Object.fromEntries(ALL.map((s) => [s.id, s]));
 export const ALL_SCENES: readonly SceneDef[] = ALL;

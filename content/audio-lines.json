@@ -1234,5 +1234,161 @@
  {
   "id": "q-yield-q3-answer",
   "text": "The answer is: Let cars and people go first."
+ },
+ {
+  "id": "end-lights",
+  "text": "Great job! You're done with Traffic lights."
+ },
+ {
+  "id": "card-lights-red",
+  "text": "A red light means stop. Stop before the line. Wait until the light is green."
+ },
+ {
+  "id": "card-lights-green",
+  "text": "A green light means go. But you still must yield to other cars when needed."
+ },
+ {
+  "id": "card-lights-yellow",
+  "text": "A yellow light means get ready to stop. The light will turn red soon."
+ },
+ {
+  "id": "card-lights-flash-red",
+  "text": "A flashing red light is the same as a stop sign. Stop. Let others go first. Then go when it is safe."
+ },
+ {
+  "id": "card-lights-arrow",
+  "text": "This light is red with a green arrow. You may go only the way the arrow points. Here, you turn left. Go only if the way is clear."
+ },
+ {
+  "id": "q-lights-q1",
+  "text": "You are the blue car. The light is red. What do you do?"
+ },
+ {
+  "id": "q-lights-q1-c0",
+  "text": "Stop. Wait for the green light."
+ },
+ {
+  "id": "q-lights-q1-c1",
+  "text": "Go fast."
+ },
+ {
+  "id": "q-lights-q1-c2",
+  "text": "Honk and go."
+ },
+ {
+  "id": "q-lights-q1-c3",
+  "text": "Back up."
+ },
+ {
+  "id": "q-lights-q1-yes",
+  "text": "Yes! Stop. Wait for the green light."
+ },
+ {
+  "id": "q-lights-q1-answer",
+  "text": "The answer is: Stop. Wait for the green light."
+ },
+ {
+  "id": "q-lights-q2",
+  "text": "You are the blue car. The light is yellow. What does it mean?"
+ },
+ {
+  "id": "q-lights-q2-c0",
+  "text": "Speed up."
+ },
+ {
+  "id": "q-lights-q2-c1",
+  "text": "Get ready to stop."
+ },
+ {
+  "id": "q-lights-q2-c2",
+  "text": "The light will turn green."
+ },
+ {
+  "id": "q-lights-q2-c3",
+  "text": "Park here."
+ },
+ {
+  "id": "q-lights-q2-yes",
+  "text": "Yes! Get ready to stop."
+ },
+ {
+  "id": "q-lights-q2-answer",
+  "text": "The answer is: Get ready to stop."
+ },
+ {
+  "id": "q-lights-q3",
+  "text": "A red light is flashing. It means the same as what?"
+ },
+ {
+  "id": "q-lights-q3-c0",
+  "text": "A green light."
+ },
+ {
+  "id": "q-lights-q3-c1",
+  "text": "A gas station sign."
+ },
+ {
+  "id": "q-lights-q3-c2",
+  "text": "A stop sign."
+ },
+ {
+  "id": "q-lights-q3-c3",
+  "text": "A work zone sign."
+ },
+ {
+  "id": "q-lights-q3-yes",
+  "text": "Yes! A stop sign."
+ },
+ {
+  "id": "q-lights-q3-answer",
+  "text": "The answer is: A stop sign."
+ },
+ {
+  "id": "q-lights-q4",
+  "text": "You are the blue car. The light is green. What do you do?"
+ },
+ {
+  "id": "q-lights-q4-c0",
+  "text": "Stop and wait."
+ },
+ {
+  "id": "q-lights-q4-c1",
+  "text": "Go, but yield to other cars."
+ },
+ {
+  "id": "q-lights-q4-c2",
+  "text": "Back up."
+ },
+ {
+  "id": "q-lights-q4-yes",
+  "text": "Yes! Go, but yield to other cars."
+ },
+ {
+  "id": "q-lights-q4-answer",
+  "text": "The answer is: Go, but yield to other cars."
+ },
+ {
+  "id": "q-lights-q5",
+  "text": "You are the blue car. The light is red with a green arrow. Where can you go?"
+ },
+ {
+  "id": "q-lights-q5-c0",
+  "text": "Only the way the arrow points."
+ },
+ {
+  "id": "q-lights-q5-c1",
+  "text": "Any way you like."
+ },
+ {
+  "id": "q-lights-q5-c2",
+  "text": "Straight ahead, right now."
+ },
+ {
+  "id": "q-lights-q5-yes",
+  "text": "Yes! Only the way the arrow points."
+ },
+ {
+  "id": "q-lights-q5-answer",
+  "text": "The answer is: Only the way the arrow points."
  }
 ]

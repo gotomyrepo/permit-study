@@ -1,0 +1,91 @@
+id: lights
+order: 3
+title: Traffic lights
+icon: "🚦"
+cards:
+  - id: lights-red
+    say: "A red light means stop. Stop before the line. Wait until the light is green."
+    scene: light-red
+    step: red-stop
+    source:
+      page: 31
+      quote: "STEADY RED: Stop. Do not go until the light is green."
+  - id: lights-green
+    say: "A green light means go. But you still must yield to other cars when needed."
+    scene: light-green
+    step: green-go
+    source:
+      page: 31
+      quote: "STEADY GREEN: Go, but yield the right-of-way to other traffic at the intersection as required by law"
+  - id: lights-yellow
+    say: "A yellow light means get ready to stop. The light will turn red soon."
+    scene: light-yellow
+    step: yellow-ready
+    source:
+      page: 31
+      quote: "STEADY YELLOW: Be prepared to stop. A steady yellow light means the traffic signal is about to turn red."
+  - id: lights-flash-red
+    say: "A flashing red light is the same as a stop sign. Stop. Let others go first. Then go when it is safe."
+    scene: light-flash-red
+    step: stop-then-go
+    source:
+      page: 31
+      quote: "FLASHING RED: Means the same as a STOP sign: Stop, yield the right-of-way, and go when it is safe."
+  - id: lights-arrow
+    say: "This light is red with a green arrow. You may go only the way the arrow points. Here, you turn left. Go only if the way is clear."
+    scene: light-arrow
+    step: arrow-turn
+    source:
+      page: 31
+      quote: "If a green arrow is shown with the red light, you can go only toward the arrow and only if the intersection is clear."
+questions:
+  - id: lights-q1
+    ask: "You are the blue car. The light is red. What do you do?"
+    scene: light-red
+    step: question-freeze
+    choices: ["Stop. Wait for the green light.", "Go fast.", "Honk and go.", "Back up."]
+    answer: 0
+    explainCard: lights-red
+    source:
+      page: 31
+      quote: "STEADY RED: Stop. Do not go until the light is green."
+  - id: lights-q2
+    ask: "You are the blue car. The light is yellow. What does it mean?"
+    scene: light-yellow
+    step: question-freeze
+    choices: ["Speed up.", "Get ready to stop.", "The light will turn green.", "Park here."]
+    answer: 1
+    explainCard: lights-yellow
+    source:
+      page: 31
+      quote: "STEADY YELLOW: Be prepared to stop. A steady yellow light means the traffic signal is about to turn red."
+  - id: lights-q3
+    ask: "A red light is flashing. It means the same as what?"
+    scene: light-flash-red
+    step: question-freeze
+    choices: ["A green light.", "A gas station sign.", "A stop sign.", "A work zone sign."]
+    answer: 2
+    explainCard: lights-flash-red
+    source:
+      page: 31
+      quote: "FLASHING RED: Means the same as a STOP sign"
+  - id: lights-q4
+    ask: "You are the blue car. The light is green. What do you do?"
+    scene: light-green
+    step: question-freeze
+    choices: ["Stop and wait.", "Go, but yield to other cars.", "Back up."]
+    answer: 1
+    explainCard: lights-green
+    source:
+      page: 31
+      quote: "STEADY GREEN: Go, but yield the right-of-way to other traffic at the intersection as required by law"
+  - id: lights-q5
+    ask: "You are the blue car. The light is red with a green arrow. Where can you go?"
+    scene: light-arrow
+    step: question-freeze
+    choices: ["Only the way the arrow points.", "Any way you like.", "Straight ahead, right now."]
+    answer: 0
+    explainCard: lights-arrow
+    source:
+      page: 31
+      quote: "If a green arrow is shown with the red light, you can go only toward the arrow and only if the intersection is clear."
