@@ -1418,5 +1418,193 @@
  {
   "id": "q-lights-q6-answer",
   "text": "The answer is: Stop, like at a stop sign."
+ },
+ {
+  "id": "end-markings",
+  "text": "Great job! You're done with Pavement markings."
+ },
+ {
+  "id": "card-markings-yellow",
+  "text": "Yellow lines split cars going opposite ways. You go one way. The red car goes the other way."
+ },
+ {
+  "id": "card-markings-white",
+  "text": "White lines split cars going the same way. You and the green car go the same way."
+ },
+ {
+  "id": "card-markings-broken",
+  "text": "This white line is broken. It has gaps. You may cross it to pass the green car. Do it only when it is safe."
+ },
+ {
+  "id": "card-markings-double",
+  "text": "Two solid yellow lines mean no passing. Stay in your lane, behind the green car."
+ },
+ {
+  "id": "card-markings-stop-line",
+  "text": "At a stop sign, stop before the white stop line. No stop line? Then stop before the crosswalk."
+ },
+ {
+  "id": "q-markings-q1",
+  "text": "What does a yellow line in the middle of the road split?"
+ },
+ {
+  "id": "q-markings-q1-c0",
+  "text": "Cars going opposite ways."
+ },
+ {
+  "id": "q-markings-q1-c1",
+  "text": "Cars going the same way."
+ },
+ {
+  "id": "q-markings-q1-c2",
+  "text": "Parking spots."
+ },
+ {
+  "id": "q-markings-q1-c3",
+  "text": "Bus stops."
+ },
+ {
+  "id": "q-markings-q1-yes",
+  "text": "Yes! Cars going opposite ways."
+ },
+ {
+  "id": "q-markings-q1-answer",
+  "text": "The answer is: Cars going opposite ways."
+ },
+ {
+  "id": "q-markings-q2",
+  "text": "What does a white line between lanes split?"
+ },
+ {
+  "id": "q-markings-q2-c0",
+  "text": "Bike paths."
+ },
+ {
+  "id": "q-markings-q2-c1",
+  "text": "Cars going opposite ways."
+ },
+ {
+  "id": "q-markings-q2-c2",
+  "text": "Cars going the same way."
+ },
+ {
+  "id": "q-markings-q2-c3",
+  "text": "Parking spots."
+ },
+ {
+  "id": "q-markings-q2-yes",
+  "text": "Yes! Cars going the same way."
+ },
+ {
+  "id": "q-markings-q2-answer",
+  "text": "The answer is: Cars going the same way."
+ },
+ {
+  "id": "q-markings-q3",
+  "text": "You are the blue car. The white line is broken. When can you change lanes?"
+ },
+ {
+  "id": "q-markings-q3-c0",
+  "text": "When it is safe."
+ },
+ {
+  "id": "q-markings-q3-c1",
+  "text": "Never."
+ },
+ {
+  "id": "q-markings-q3-c2",
+  "text": "Any time, without looking."
+ },
+ {
+  "id": "q-markings-q3-yes",
+  "text": "Yes! When it is safe."
+ },
+ {
+  "id": "q-markings-q3-answer",
+  "text": "The answer is: When it is safe."
+ },
+ {
+  "id": "q-markings-q4",
+  "text": "You are the blue car. There are two solid yellow lines. What do you do?"
+ },
+ {
+  "id": "q-markings-q4-c0",
+  "text": "Pass the green car."
+ },
+ {
+  "id": "q-markings-q4-c1",
+  "text": "Stay in your lane. No passing."
+ },
+ {
+  "id": "q-markings-q4-c2",
+  "text": "Honk and pass."
+ },
+ {
+  "id": "q-markings-q4-c3",
+  "text": "Cross the yellow lines."
+ },
+ {
+  "id": "q-markings-q4-yes",
+  "text": "Yes! Stay in your lane. No passing."
+ },
+ {
+  "id": "q-markings-q4-answer",
+  "text": "The answer is: Stay in your lane. No passing."
+ },
+ {
+  "id": "q-markings-q5",
+  "text": "You are the blue car. There is a stop sign and a white stop line. Where do you stop?"
+ },
+ {
+  "id": "q-markings-q5-c0",
+  "text": "On the crosswalk."
+ },
+ {
+  "id": "q-markings-q5-c1",
+  "text": "Before the stop line."
+ },
+ {
+  "id": "q-markings-q5-c2",
+  "text": "Past the stop line."
+ },
+ {
+  "id": "q-markings-q5-c3",
+  "text": "In the middle of the road."
+ },
+ {
+  "id": "q-markings-q5-yes",
+  "text": "Yes! Before the stop line."
+ },
+ {
+  "id": "q-markings-q5-answer",
+  "text": "The answer is: Before the stop line."
+ },
+ {
+  "id": "q-markings-q6",
+  "text": "You are the blue car. There is a stop sign and a crosswalk, but no stop line. Where do you stop?"
+ },
+ {
+  "id": "q-markings-q6-c0",
+  "text": "Past the crosswalk."
+ },
+ {
+  "id": "q-markings-q6-c1",
+  "text": "On the crosswalk."
+ },
+ {
+  "id": "q-markings-q6-c2",
+  "text": "Before the crosswalk."
+ },
+ {
+  "id": "q-markings-q6-c3",
+  "text": "In the middle of the road."
+ },
+ {
+  "id": "q-markings-q6-yes",
+  "text": "Yes! Before the crosswalk."
+ },
+ {
+  "id": "q-markings-q6-answer",
+  "text": "The answer is: Before the crosswalk."
  }
 ]

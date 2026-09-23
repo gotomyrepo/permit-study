@@ -11,8 +11,10 @@ export function road(x: number, y: number, w: number, h: number): string {
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${COLORS.road}"/>`;
 }
 
-export function line(x1: number, y1: number, x2: number, y2: number, o: { color?: string; dash?: boolean; width?: number } = {}): string {
-  return `<line x1="${n(x1)}" y1="${n(y1)}" x2="${n(x2)}" y2="${n(y2)}" stroke="${o.color ?? COLORS.white}" stroke-width="${o.width ?? 2.5}"${o.dash ? ' stroke-dasharray="10 8"' : ''}/>`;
+/** `dash: true` gives the standard "10 8" dashes; a string sets a custom stroke-dasharray. */
+export function line(x1: number, y1: number, x2: number, y2: number, o: { color?: string; dash?: boolean | string; width?: number } = {}): string {
+  const dash = o.dash === true ? '10 8' : o.dash || '';
+  return `<line x1="${n(x1)}" y1="${n(y1)}" x2="${n(x2)}" y2="${n(y2)}" stroke="${o.color ?? COLORS.white}" stroke-width="${o.width ?? 2.5}"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`;
 }
 
 export function doubleYellow(x1: number, y1: number, x2: number, y2: number): string {

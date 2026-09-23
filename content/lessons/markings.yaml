@@ -1,0 +1,101 @@
+id: markings
+order: 4
+title: Pavement markings
+icon: "🛣️"
+cards:
+  - id: markings-yellow
+    say: "Yellow lines split cars going opposite ways. You go one way. The red car goes the other way."
+    scene: markings-yellow
+    step: teach
+    source:
+      page: 32
+      quote: "Lines that separate traffic that moves in opposite directions are yellow."
+  - id: markings-white
+    say: "White lines split cars going the same way. You and the green car go the same way."
+    scene: markings-white
+    step: teach
+    source:
+      page: 32
+      quote: "Lines that separate lanes of traffic that move in the same direction are white."
+  - id: markings-broken
+    say: "This white line is broken. It has gaps. You may cross it to pass the green car. Do it only when it is safe."
+    scene: markings-broken
+    step: teach
+    source:
+      page: 32
+      quote: "One broken line: You can pass other vehicles or change lanes if you can do so safely without interfering with traffic."
+  - id: markings-double
+    say: "Two solid yellow lines mean no passing. Stay in your lane, behind the green car."
+    scene: markings-double
+    step: teach
+    source:
+      page: 32
+      quote: "Double solid lines: You cannot pass or change lanes."
+  - id: markings-stop-line
+    say: "At a stop sign, stop before the white stop line. No stop line? Then stop before the crosswalk."
+    scene: markings-stop-line
+    step: teach
+    source:
+      page: 32
+      quote: "When required to stop because of a sign or light, you must stop before you reach the stop line, if there is one, or the crosswalk."
+questions:
+  - id: markings-q1
+    ask: "What does a yellow line in the middle of the road split?"
+    scene: markings-yellow
+    step: question-freeze
+    choices: ["Cars going opposite ways.", "Cars going the same way.", "Parking spots.", "Bus stops."]
+    answer: 0
+    explainCard: markings-yellow
+    source:
+      page: 32
+      quote: "Lines that separate traffic that moves in opposite directions are yellow."
+  - id: markings-q2
+    ask: "What does a white line between lanes split?"
+    scene: markings-white
+    step: question-freeze
+    choices: ["Bike paths.", "Cars going opposite ways.", "Cars going the same way.", "Parking spots."]
+    answer: 2
+    explainCard: markings-white
+    source:
+      page: 32
+      quote: "Lines that separate lanes of traffic that move in the same direction are white."
+  - id: markings-q3
+    ask: "You are the blue car. The white line is broken. When can you change lanes?"
+    scene: markings-broken
+    step: question-freeze
+    choices: ["When it is safe.", "Never.", "Any time, without looking."]
+    answer: 0
+    explainCard: markings-broken
+    source:
+      page: 32
+      quote: "One broken line: You can pass other vehicles or change lanes if you can do so safely without interfering with traffic."
+  - id: markings-q4
+    ask: "You are the blue car. There are two solid yellow lines. What do you do?"
+    scene: markings-double
+    step: question-freeze
+    choices: ["Pass the green car.", "Stay in your lane. No passing.", "Honk and pass.", "Cross the yellow lines."]
+    answer: 1
+    explainCard: markings-double
+    source:
+      page: 32
+      quote: "Double solid lines: You cannot pass or change lanes."
+  - id: markings-q5
+    ask: "You are the blue car. There is a stop sign and a white stop line. Where do you stop?"
+    scene: markings-stop-line
+    step: freeze-line
+    choices: ["On the crosswalk.", "Before the stop line.", "Past the stop line.", "In the middle of the road."]
+    answer: 1
+    explainCard: markings-stop-line
+    source:
+      page: 32
+      quote: "When required to stop because of a sign or light, you must stop before you reach the stop line, if there is one, or the crosswalk."
+  - id: markings-q6
+    ask: "You are the blue car. There is a stop sign and a crosswalk, but no stop line. Where do you stop?"
+    scene: markings-stop-line
+    step: freeze-crosswalk
+    choices: ["Past the crosswalk.", "On the crosswalk.", "Before the crosswalk.", "In the middle of the road."]
+    answer: 2
+    explainCard: markings-stop-line
+    source:
+      page: 32
+      quote: "When required to stop because of a sign or light, you must stop before you reach the stop line, if there is one, or the crosswalk."
