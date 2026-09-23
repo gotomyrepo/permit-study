@@ -133,4 +133,16 @@ export const lightArrow: SceneDef = {
   ],
 };
 
-export const lightsScenes: SceneDef[] = [lightRed, lightGreen, lightYellow, lightFlashRed, lightArrow];
+/** The light is out (no state set, so every lamp is unlit). Blue is stopped behind the bar, as at a stop sign. */
+export const lightOut: SceneDef = {
+  id: 'light-out', width: 300, height: 300, ...L,
+  actors: [{ ...blue, start: stopPose('nb') }],
+  steps: [
+    {
+      id: 'question-freeze', duration: 500,
+      expect: [{ type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 500 }],
+    },
+  ],
+};
+
+export const lightsScenes: SceneDef[] = [lightRed, lightGreen, lightYellow, lightFlashRed, lightArrow, lightOut];

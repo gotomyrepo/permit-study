@@ -91,7 +91,7 @@ questions:
       quote: "If a green arrow is shown with the red light, you can go only toward the arrow and only if the intersection is clear."
   - id: lights-q6
     ask: "The traffic light is not working. What do you do?"
-    scene: light-flash-red
+    scene: light-out
     step: question-freeze
     choices: ["Stop, like at a stop sign.", "Go fast.", "Honk and go.", "Turn around."]
     answer: 0
