@@ -5,13 +5,13 @@
    "id": 0,
    "subject": "Task 0: Project scaffold",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 0 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test\"}\n```"
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 0 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test\"}\n```"
   },
   {
    "id": 1,
    "subject": "Task 1: Download and extract the official manual",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 1 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -c \\\"import json,re;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p), 'at least 14 of the 20' in re.sub(r'\\\\s+',' ',p[9]['text']))\\\"\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 1 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -c \\\"import json,re;p=json.load(open('content/manual/pages.json',encoding='utf-8'));print(len(p), 'at least 14 of the 20' in re.sub(r'\\\\s+',' ',p[9]['text']))\\\"\"}\n```",
    "blockedBy": [
     0
    ]
@@ -20,7 +20,7 @@
    "id": 2,
    "subject": "Task 2: Scene engine core (pure, no DOM)",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 2 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/geometry.test.ts tests/engine.test.ts tests/check.test.ts\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 2 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/geometry.test.ts tests/engine.test.ts tests/check.test.ts\"}\n```",
    "blockedBy": [
     0
    ]
@@ -29,7 +29,7 @@
    "id": 3,
    "subject": "Task 3: Scene rendering, standard layouts, first scene (yield)",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 3 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/scenes.test.ts && npm run shots -- yield-intersection sign-yield\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 3 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/scenes.test.ts && npm run shots -- yield-intersection sign-yield\"}\n```",
    "blockedBy": [
     2
    ]
@@ -38,7 +38,7 @@
    "id": 4,
    "subject": "Task 4: Content pipeline (schema, citation check, audio line list)",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 4 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/content.test.ts && npm run check\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 4 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/content.test.ts && npm run check\"}\n```",
    "blockedBy": [
     1,
     3
@@ -48,7 +48,7 @@
    "id": 5,
    "subject": "Task 5: Audio generation and voice choice (parent checkpoint)",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 5 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -m pytest tests_py -q && npm run audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 5 section.\n\n```json:metadata\n{\"verifyCommand\": \"python -m pytest tests_py -q && npm run audio\"}\n```",
    "blockedBy": [
     4
    ]
@@ -57,7 +57,7 @@
    "id": 6,
    "subject": "Task 6: Yield lesson (worked example) + authoring guide",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 6 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 6 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run check -- --audio\"}\n```",
    "blockedBy": [
     5
    ]
@@ -66,7 +66,7 @@
    "id": 7,
    "subject": "Task 7: Progress store and practice test logic",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 7 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/progress.test.ts tests/practice.test.ts\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 7 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx vitest run tests/progress.test.ts tests/practice.test.ts\"}\n```",
    "blockedBy": [
     4
    ]
@@ -75,7 +75,7 @@
    "id": 8,
    "subject": "Task 8: App UI (screens, audio player, captions) + e2e test",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 8 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx tsc --noEmit && npm run e2e\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 8 section.\n\n```json:metadata\n{\"verifyCommand\": \"npx tsc --noEmit && npm run e2e\"}\n```",
    "blockedBy": [
     6,
     7
@@ -85,7 +85,7 @@
    "id": 9,
    "subject": "Task 9: Parent fact-check page",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 9 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run dev (manual check of /review.html)\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 9 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run dev (manual check of /review.html)\"}\n```",
    "blockedBy": [
     6
    ]
@@ -94,7 +94,7 @@
    "id": 10,
    "subject": "Task 10: Installable app (PWA) + icons",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 10 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run build\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 10 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm run build\"}\n```",
    "blockedBy": [
     8,
     9
@@ -104,7 +104,7 @@
    "id": 11,
    "subject": "Task 11: Publish to GitHub Pages (ask user first)",
    "status": "completed",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 11 section.\n\n```json:metadata\n{\"verifyCommand\": \"gh run watch\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 11 section.\n\n```json:metadata\n{\"verifyCommand\": \"gh run watch\"}\n```",
    "blockedBy": [
     10
    ]
@@ -112,8 +112,8 @@
   {
    "id": 12,
    "subject": "Task 12: Lesson: Signs",
-   "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 12 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "status": "completed",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 12 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -123,7 +123,7 @@
    "id": 13,
    "subject": "Task 13: Lesson: Traffic lights",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 13 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 13 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -133,7 +133,7 @@
    "id": 14,
    "subject": "Task 14: Lesson: Pavement markings",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 14 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 14 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -143,7 +143,7 @@
    "id": 15,
    "subject": "Task 15: Lesson: Right-of-way",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 15 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 15 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -153,7 +153,7 @@
    "id": 16,
    "subject": "Task 16: Lesson: Turns",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 16 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 16 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -163,7 +163,7 @@
    "id": 17,
    "subject": "Task 17: Lesson: Emergency vehicles",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 17 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 17 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -173,7 +173,7 @@
    "id": 18,
    "subject": "Task 18: Lesson: School buses",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 18 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 18 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -183,7 +183,7 @@
    "id": 19,
    "subject": "Task 19: Lesson: Speed",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 19 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 19 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -193,7 +193,7 @@
    "id": 20,
    "subject": "Task 20: Lesson: Parking",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 20 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 20 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -203,7 +203,7 @@
    "id": 21,
    "subject": "Task 21: Lesson: Alcohol and drugs",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 21 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 21 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
@@ -213,7 +213,7 @@
    "id": 22,
    "subject": "Task 22: Final pass, parent handoff, CLAUDE.md",
    "status": "pending",
-   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md \u2014 Task 22 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio && npm run e2e && npm run build\"}\n```",
+   "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 22 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio && npm run e2e && npm run build\"}\n```",
    "blockedBy": [
     11,
     12,
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-23T00:31:35.937630+00:00"
+ "lastUpdated": "2026-09-23T18:49:58.321Z"
 }
