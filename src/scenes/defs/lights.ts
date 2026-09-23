@@ -45,18 +45,18 @@ export const lightRed: SceneDef = {
 export const lightGreen: SceneDef = {
   id: 'light-green', width: 300, height: 300, ...L,
   initialStates: { [LIGHT]: 'red' },
-  actors: [{ ...blue, start: stopPose('nb') }, { ...red, start: { x: 40, y: 165, heading: 90 } }],
+  actors: [{ ...blue, start: stopPose('nb') }, { ...red, start: MID_EB }],
   steps: [
     {
-      // Red clears the junction by ~1320 ms; the light turns green just after "means go" (ends 1346 ms), before "But yield" (1805 ms).
+      // Red clears the junction by ~950 ms; the light turns green on the word "go" (starts 1041 ms).
       id: 'green-go', duration: 6000,
-      states: [{ t: 1500, id: LIGHT, state: 'green' }],
+      states: [{ t: 1000, id: LIGHT, state: 'green' }],
       tracks: {
-        blue: [kf(stopPose('nb'), 1500), kf(FOURWAY.exit.nb, 6000, 'in')],
-        red: [kf(FOURWAY.exit.eb, 2500)],
+        blue: [kf(stopPose('nb'), 1000), kf(FOURWAY.exit.nb, 6000, 'in')],
+        red: [kf(FOURWAY.exit.eb, 2000)],
       },
       expect: [
-        { type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 1500 },
+        { type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 1000 },
         { type: 'entersAfter', actor: 'blue', other: 'red', zone: 'junction' },
       ],
     },
