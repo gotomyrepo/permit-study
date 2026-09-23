@@ -1,9 +1,10 @@
 import type { Pose, SceneDef } from '../types';
 import { fourWay, FOURWAY, SAMEWAY, sameWay, stopPose, twoLane } from '../layouts';
-import { kf } from '../paths';
+import { kf, laneChange } from '../paths';
 
 // Step durations and state times are sized to each card's narration (public/audio/card-markings-*.json).
-// Moving traffic runs at about 60 px/s, the same pace as cross traffic in the other lessons.
+// Moving cars run at a steady ~45 px/s so they stay on screen through the narration.
+// The only exception is the slow green car that blue passes in markings-broken (12 px/s).
 
 const LANE_LINE = SAMEWAY.laneLineId;
 const on = (id: string, t = 0) => ({ t, id, state: 'highlight' });
@@ -49,28 +50,33 @@ export const markingsWhite: SceneDef = {
 };
 
 // Word times in the 6.0 s clip: "A broken line has gaps" 0.1–1.6 s, "Do it only when it is safe" 4.5–6.0 s.
-// The lane line glows while "A broken line has gaps" is spoken; blue crosses it during "only when it is safe".
+// The lane line glows while "A broken line has gaps" is spoken. Blue drives at a steady 45 px/s; its lane change
+// starts on "Do it" and it finishes passing the slow green car (12 px/s) after the narration.
 const T_GAPS_END = 1700;
 const T_CROSS = 4500;
-const BROKEN_MS = 8500;
+const T_CROSSED = 8500;
+const BROKEN_MS = 9500;
+const BLUE_V = 45 / 1000;
+const GREEN_V = 12 / 1000;
+const CROSS_AT: Pose = { x: 105, y: 170, heading: 90 };
+const CROSS_LEN = BLUE_V * (T_CROSSED - T_CROSS);
 /** Blue follows a slow green car, then crosses the broken white line into the empty left lane and passes. */
 export const markingsBroken: SceneDef = {
   id: 'markings-broken', width: 300, height: 300, ...sameWay(),
   actors: [
-    { id: 'blue', kind: 'car', you: true, start: { x: 40, y: 170, heading: 90 } },
-    { id: 'green', kind: 'car', color: '#43a047', start: { x: 150, y: 170, heading: 90 } },
+    { id: 'blue', kind: 'car', you: true, start: { ...CROSS_AT, x: CROSS_AT.x - BLUE_V * T_CROSS } },
+    { id: 'green', kind: 'car', color: '#43a047', start: { x: 162, y: 170, heading: 90 } },
   ],
   steps: [
     {
       id: 'teach', duration: BROKEN_MS,
       states: [on(LANE_LINE), { t: T_GAPS_END, id: LANE_LINE, state: '' }],
       tracks: {
-        green: [kf({ x: 235, y: 170, heading: 90 }, BROKEN_MS)],
+        green: [kf({ x: 162 + GREEN_V * BROKEN_MS, y: 170, heading: 90 }, BROKEN_MS)],
         blue: [
-          kf({ x: 95, y: 170, heading: 90 }, T_CROSS),
-          kf({ x: 145, y: 150, heading: 72 }, T_CROSS + 700),
-          kf({ x: 195, y: 130, heading: 90 }, T_CROSS + 1400),
-          kf({ x: 300, y: 130, heading: 90 }, BROKEN_MS),
+          kf(CROSS_AT, T_CROSS),
+          ...laneChange(CROSS_AT, -40, CROSS_LEN, T_CROSS, T_CROSSED),
+          kf({ x: CROSS_AT.x + CROSS_LEN + BLUE_V * (BROKEN_MS - T_CROSSED), y: 130, heading: 90 }, BROKEN_MS),
         ],
       },
     },
@@ -85,8 +91,8 @@ export const markingsBroken: SceneDef = {
 export const markingsDouble: SceneDef = {
   id: 'markings-double', width: 300, height: 300, ...twoLane({ center: 'double-yellow' }),
   actors: [
-    { id: 'blue', kind: 'car', you: true, start: { x: 0, y: 170, heading: 90 } },
-    { id: 'green', kind: 'car', color: '#43a047', start: { x: 90, y: 170, heading: 90 } },
+    { id: 'blue', kind: 'car', you: true, start: { x: -20, y: 170, heading: 90 } },
+    { id: 'green', kind: 'car', color: '#43a047', start: { x: 60, y: 170, heading: 90 } },
     { id: 'red', kind: 'car', color: '#e53935', start: { x: 320, y: 130, heading: 270 } },
   ],
   steps: [
@@ -94,9 +100,9 @@ export const markingsDouble: SceneDef = {
       // Clip 5.2 s. Blue keeps the same gap behind the green car; all cars stay on screen through "behind the green car".
       id: 'teach', duration: 5700,
       tracks: {
-        blue: [kf({ x: 200, y: 170, heading: 90 }, 5700)],
-        green: [kf({ x: 290, y: 170, heading: 90 }, 5700)],
-        red: [kf({ x: 40, y: 130, heading: 270 }, 5700)],
+        blue: [kf({ x: 236, y: 170, heading: 90 }, 5700)],
+        green: [kf({ x: 316, y: 170, heading: 90 }, 5700)],
+        red: [kf({ x: 64, y: 130, heading: 270 }, 5700)],
       },
     },
     {

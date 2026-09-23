@@ -47,13 +47,12 @@ svg.scene { display: block; width: 100%; height: auto; }
 /* Highlight: thick bright-yellow ring with a dark edge, gently swelling about once a second. */
 .sign[data-state~="highlight"] { filter: drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); animation: sign-pulse 1s ease-in-out infinite alternate; }
 @keyframes sign-pulse { from { filter: drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(2.5px 0px 0 #ffeb3b) drop-shadow(-2.5px 0px 0 #ffeb3b) drop-shadow(0px 2.5px 0 #ffeb3b) drop-shadow(0px -2.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); } to { filter: drop-shadow(3.5px 0px 0 #ffeb3b) drop-shadow(-3.5px 0px 0 #ffeb3b) drop-shadow(0px 3.5px 0 #ffeb3b) drop-shadow(0px -3.5px 0 #ffeb3b) drop-shadow(3.5px 0px 0 #ffeb3b) drop-shadow(-3.5px 0px 0 #ffeb3b) drop-shadow(0px 3.5px 0 #ffeb3b) drop-shadow(0px -3.5px 0 #ffeb3b) drop-shadow(0 0 1.5px #212121); } }
-/* Road-marking highlight: a white glow, and the lines swell a little about once a second.
+/* Road-marking highlight: a white glow that swells about once a second (line widths never change).
    The glow is white, so use it only on white markings (a glow between two yellow lines looks like a white line). */
-.marking[data-state~="highlight"] { filter: drop-shadow(0 0 2.5px #fff) drop-shadow(0 0 2.5px #fff) drop-shadow(0 0 1.5px #fff); }
-.marking[data-state~="highlight"] line { animation: marking-pulse 1s ease-in-out infinite alternate; }
-@keyframes marking-pulse { to { stroke-width: 5.5; } }
+.marking[data-state~="highlight"] { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff); animation: marking-pulse 1s ease-in-out infinite alternate; }
+@keyframes marking-pulse { from { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff); } to { filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 4px #fff) drop-shadow(0 0 2px #fff); } }
 /* Any prop (e.g. a crosswalk-mode stop bar) can be hidden. */
-[data-prop][data-state~="hidden"] { display: none; }
+svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .light .lamp { fill: #424242; }
 .light .arrow { stroke: none; }
 .light[data-state~="red"] .lamp.red { fill: #f44336; }
@@ -76,7 +75,7 @@ svg.scene { display: block; width: 100%; height: auto; }
   .light[data-state~="flash-yellow"] .lamp.yellow,
   .actor[data-state~="flashing"] .beacon,
   .sign[data-state~="highlight"],
-  .marking[data-state~="highlight"] line { animation: none; }
+  .marking[data-state~="highlight"] { animation: none; }
 }
 /* ---- scene preview (dev) ---- */
 .preview-row { display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }

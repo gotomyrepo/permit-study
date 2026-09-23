@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { fourWay, sameWay, stopPose, twoLane, TWOLANE, type CenterLine } from '../src/scenes/layouts';
+import { laneChange } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
 function centerLines(bg: string, id = 'center-line'): string[] {
@@ -79,5 +80,36 @@ describe('fourWay crosswalks', () => {
     expect(L.props).toContain('bar-nb');
     expect(stopPose('nb', 'car', { crosswalks: true }).y).toBe(nb.y + 22);
     expect(stopPose('nb', 'car', { crosswalks: true, before: 'crosswalk' }).y).toBe(cw.y + 22);
+  });
+});
+
+describe('straight-road extras', () => {
+  test('lines and props pass through to twoLane and sameWay', () => {
+    const extras = { lines: [{ id: 'l1', x: 100, y: 170, heading: 90 }], props: [{ id: 'p1', svg: '<g data-prop="p1"/>' }] };
+    for (const L of [twoLane({ center: 'double-yellow', ...extras }), sameWay(extras)]) {
+      expect(L.lines).toEqual(extras.lines);
+      expect(L.props).toContain('p1');
+      expect(L.background).toContain('<g data-prop="p1"/>');
+    }
+  });
+  test('before: crosswalk implies crosswalks', () => {
+    expect(stopPose('nb', 'car', { before: 'crosswalk' })).toEqual(stopPose('nb', 'car', { crosswalks: true, before: 'crosswalk' }));
+  });
+});
+
+describe('laneChange', () => {
+  test('ends one lane over, heading straight, with headings that follow the path', () => {
+    const from = { x: 100, y: 170, heading: 90 };
+    const kfs = laneChange(from, -40, 180, 1000, 5000);
+    const last = kfs[kfs.length - 1];
+    expect(last.x).toBeCloseTo(280); expect(last.y).toBeCloseTo(130); expect(last.heading).toBeCloseTo(90); expect(last.t).toBe(5000);
+    let prev = from;
+    for (const k of kfs) {
+      const pathHeading = (Math.atan2(k.x - prev.x, -(k.y - prev.y)) * 180) / Math.PI;
+      expect(Math.abs(pathHeading - 90)).toBeLessThan(20);
+      expect(Math.abs(k.heading - pathHeading)).toBeLessThan(6);
+      expect(k.turning).toBeUndefined();
+      prev = k;
+    }
   });
 });

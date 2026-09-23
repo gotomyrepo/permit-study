@@ -28,3 +28,28 @@ export function turnPath(from: Pose, to: Pose, t0: number, t1: number, n = 8): K
   }
   return out;
 }
+
+/**
+ * Smooth S-curve lane change starting at `from` (the previous keyframe, at t0) and arriving at t1.
+ * Moves `forward` px along `from.heading` and `side` px sideways (positive = to the driver's right),
+ * at a steady forward speed. Each keyframe's heading follows the path's real angle, so the car never crabs.
+ * Keyframes are not `turning`, so the lane check still applies: keep the peak angle, atan(1.5 × |side| / forward),
+ * under 20° (e.g. forward ≥ 180 for a 40 px lane change).
+ */
+export function laneChange(from: Pose, side: number, forward: number, t0: number, t1: number, n = 12): Keyframe[] {
+  const d = dir(from.heading);
+  const r = { x: -d.y, y: d.x };
+  const out: Keyframe[] = [];
+  for (let k = 1; k <= n; k++) {
+    const u = k / n;
+    const s = u * u * (3 - 2 * u);
+    const slope = (side * 6 * u * (1 - u)) / forward;
+    out.push({
+      t: t0 + (t1 - t0) * u,
+      x: from.x + d.x * forward * u + r.x * side * s,
+      y: from.y + d.y * forward * u + r.y * side * s,
+      heading: normHeading(from.heading + (Math.atan(slope) * 180) / Math.PI),
+    });
+  }
+  return out;
+}
