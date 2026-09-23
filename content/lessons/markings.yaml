@@ -18,7 +18,7 @@ cards:
       page: 32
       quote: "Lines that separate lanes of traffic that move in the same direction are white."
   - id: markings-broken
-    say: "This white line is broken. It has gaps. You may cross it to pass the green car. Do it only when it is safe."
+    say: "A broken line has gaps. You may cross it to pass the green car. Do it only when it is safe."
     scene: markings-broken
     step: teach
     source:

@@ -1,10 +1,11 @@
 import type { Pose, SceneDef } from '../types';
-import { fourWay, FOURWAY, sameWay, stopPose, twoLane } from '../layouts';
+import { fourWay, FOURWAY, SAMEWAY, sameWay, stopPose, twoLane } from '../layouts';
 import { kf } from '../paths';
 
 // Step durations and state times are sized to each card's narration (public/audio/card-markings-*.json).
 // Moving traffic runs at about 60 px/s, the same pace as cross traffic in the other lessons.
 
+const LANE_LINE = SAMEWAY.laneLineId;
 const on = (id: string, t = 0) => ({ t, id, state: 'highlight' });
 
 /** Yellow center line: blue goes east while the red car comes the other way. */
@@ -47,9 +48,11 @@ export const markingsWhite: SceneDef = {
   ],
 };
 
-// Blue starts across the line on "cross" (3.5 s into the 7.1 s clip).
-const BROKEN_CROSS = 3500;
-const BROKEN_MS = 7700;
+// Word times in the 6.0 s clip: "A broken line has gaps" 0.1–1.6 s, "Do it only when it is safe" 4.5–6.0 s.
+// The lane line glows while "A broken line has gaps" is spoken; blue crosses it during "only when it is safe".
+const T_GAPS_END = 1700;
+const T_CROSS = 4500;
+const BROKEN_MS = 8500;
 /** Blue follows a slow green car, then crosses the broken white line into the empty left lane and passes. */
 export const markingsBroken: SceneDef = {
   id: 'markings-broken', width: 300, height: 300, ...sameWay(),
@@ -60,12 +63,13 @@ export const markingsBroken: SceneDef = {
   steps: [
     {
       id: 'teach', duration: BROKEN_MS,
+      states: [on(LANE_LINE), { t: T_GAPS_END, id: LANE_LINE, state: '' }],
       tracks: {
-        green: [kf({ x: 250, y: 170, heading: 90 }, BROKEN_MS)],
+        green: [kf({ x: 235, y: 170, heading: 90 }, BROKEN_MS)],
         blue: [
-          kf({ x: 80, y: 170, heading: 90 }, BROKEN_CROSS),
-          kf({ x: 130, y: 150, heading: 72 }, BROKEN_CROSS + 700),
-          kf({ x: 180, y: 130, heading: 90 }, BROKEN_CROSS + 1400),
+          kf({ x: 95, y: 170, heading: 90 }, T_CROSS),
+          kf({ x: 145, y: 150, heading: 72 }, T_CROSS + 700),
+          kf({ x: 195, y: 130, heading: 90 }, T_CROSS + 1400),
           kf({ x: 300, y: 130, heading: 90 }, BROKEN_MS),
         ],
       },
@@ -144,7 +148,7 @@ export const markingsStopLine: SceneDef = {
     },
     {
       id: 'freeze-line', duration: 500,
-      states: [{ t: 0, id: SIGN, state: '' }, { t: 0, id: BAR, state: '' }, { t: 0, id: WALK, state: '' }],
+      states: [{ t: 0, id: SIGN, state: '' }, on(BAR), { t: 0, id: WALK, state: '' }],
       at: { blue: APPROACH },
     },
     {

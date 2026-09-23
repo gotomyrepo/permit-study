@@ -1433,7 +1433,7 @@
  },
  {
   "id": "card-markings-broken",
-  "text": "This white line is broken. It has gaps. You may cross it to pass the green car. Do it only when it is safe."
+  "text": "A broken line has gaps. You may cross it to pass the green car. Do it only when it is safe."
  },
  {
   "id": "card-markings-double",

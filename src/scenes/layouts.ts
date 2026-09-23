@@ -30,13 +30,17 @@ const SIGN_POS: Record<Dir, [number, number]> = { nb: [198, 208], sb: [102, 92],
 
 /**
  * Crosswalk mode (`fourWay({ crosswalks: true })`): each approach gets a crosswalk (two parallel white
- * lines across the road, as the manual describes) 4 and 18 px outside the junction, and its stop bar,
- * yield teeth and `line-*` stop line all move 22 px further out, behind the crosswalk.
+ * lines across the road, as the manual describes, 5.5 px wide) 4 and 24 px outside the junction. Its stop
+ * bar (drawn 8 px thick, so it is clearly the thickest line) and yield teeth move 31 px further out,
+ * behind the crosswalk, and its `line-*` stop line moves 34 px out, to the bar's outer edge.
  * An extra `crosswalk-*` stop line sits just outside each crosswalk, for "no stop line" pictures.
  */
-const CW_SHIFT = 22;
-const CROSSWALK_AT = [4, 18];
-const CROSSWALK_STOP = 21;
+const CW_BAR_SHIFT = 31;
+const CW_LINE_SHIFT = 34;
+const CW_BAR_W = 8;
+const CROSSWALK_AT = [4, 24];
+const CROSSWALK_W = 5.5;
+const CROSSWALK_STOP = 29;
 const DIRS: Dir[] = ['nb', 'sb', 'eb', 'wb'];
 /** Unit vector pointing away from the junction along approach `d` (toward where its traffic comes from). */
 const OUT: Record<Dir, [number, number]> = { nb: [0, 1], sb: [0, -1], eb: [-1, 0], wb: [1, 0] };
@@ -83,7 +87,7 @@ export interface StopPoseOpts {
 /** Pose with the vehicle's front 4px behind the stop/yield line of approach `dir` (or its crosswalk). */
 export function stopPose(dir: Dir, kind: ActorKind = 'car', opts: StopPoseOpts = {}): Pose {
   const half = SIZES[kind].length / 2 + 4;
-  const l = !opts.crosswalks ? LINE[dir] : opts.before === 'crosswalk' ? crosswalkLine(dir) : shiftLine(LINE[dir], dir, CW_SHIFT);
+  const l = !opts.crosswalks ? LINE[dir] : opts.before === 'crosswalk' ? crosswalkLine(dir) : shiftLine(LINE[dir], dir, CW_LINE_SHIFT);
   switch (dir) {
     case 'nb': return { x: 165, y: l.y + half, heading: 0 };
     case 'sb': return { x: 135, y: l.y - half, heading: 180 };
@@ -100,11 +104,12 @@ export interface Layout { background: string; lanes: Lane[]; zones: Zone[]; line
  */
 export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crosswalks?: boolean } = {}): Layout {
   const cw = !!opts.crosswalks;
-  const shift = cw ? CW_SHIFT : 0;
+  const shift = cw ? CW_BAR_SHIFT : 0;
+  const barW = cw ? CW_BAR_W : 4;
   let bg = grass(300, 300) + road(0, 120, 300, 60) + road(120, 0, 60, 300);
   const y = { color: COLORS.yellow, dash: true };
   // In crosswalk mode the center lines stop short of the crosswalks.
-  const gap = cw ? CROSSWALK_AT[1] + 2 : 0;
+  const gap = cw ? CROSSWALK_AT[1] + CROSSWALK_W / 2 + 2 : 0;
   bg += line(150, 0, 150, 120 - gap, y) + line(150, 180 + gap, 150, 300, y) + line(0, 150, 120 - gap, 150, y) + line(180 + gap, 150, 300, 150, y);
   const props: string[] = [];
   let lines: StopLine[] = Object.values(LINE);
@@ -114,11 +119,11 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
       let walk = '';
       for (const at of CROSSWALK_AT) {
         const p = outside(d, at);
-        walk += d === 'nb' || d === 'sb' ? line(120, p.y, 180, p.y, { width: 3.5 }) : line(p.x, 120, p.x, 180, { width: 3.5 });
+        walk += d === 'nb' || d === 'sb' ? line(120, p.y, 180, p.y, { width: CROSSWALK_W }) : line(p.x, 120, p.x, 180, { width: CROSSWALK_W });
       }
       bg += `<g class="marking" data-prop="${FOURWAY.crosswalkId(d)}">${walk}</g>`;
       props.push(FOURWAY.crosswalkId(d));
-      lines.push(shiftLine(LINE[d], d, CW_SHIFT), crosswalkLine(d));
+      lines.push(shiftLine(LINE[d], d, CW_LINE_SHIFT), crosswalkLine(d));
     }
   }
   // In crosswalk mode each bar is its own prop, so a scene can hide it.
@@ -129,9 +134,9 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
   };
   for (const [d, c] of Object.entries(opts.controls ?? {}) as [Dir, Control][]) {
     const [sx, sy] = SIGN_POS[d];
-    if (c === 'stop') { bg += bar(d, stopBar(...shiftSeg(BAR[d], d, shift))) + sign('stop', sx, sy, { id: FOURWAY.signId(d) }); props.push(FOURWAY.signId(d)); }
+    if (c === 'stop') { bg += bar(d, stopBar(...shiftSeg(BAR[d], d, shift), barW)) + sign('stop', sx, sy, { id: FOURWAY.signId(d) }); props.push(FOURWAY.signId(d)); }
     if (c === 'yield') { bg += bar(d, yieldTeeth(...shiftSeg(TEETH[d].seg, d, shift), TEETH[d].point)) + sign('yield', sx, sy, { id: FOURWAY.signId(d) }); props.push(FOURWAY.signId(d)); }
-    if (c === 'light') { bg += bar(d, stopBar(...shiftSeg(BAR[d], d, shift))) + trafficLight(FOURWAY.lightId(d), sx, sy); props.push(FOURWAY.lightId(d)); }
+    if (c === 'light') { bg += bar(d, stopBar(...shiftSeg(BAR[d], d, shift), barW)) + trafficLight(FOURWAY.lightId(d), sx, sy); props.push(FOURWAY.lightId(d)); }
   }
   return {
     background: bg,

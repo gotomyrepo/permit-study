@@ -24,8 +24,8 @@ export function doubleYellow(x1: number, y1: number, x2: number, y2: number): st
     line(x1 + dx, y1 + dy, x2 + dx, y2 + dy, { color: COLORS.yellow, width: 2 });
 }
 
-export function stopBar(x1: number, y1: number, x2: number, y2: number): string {
-  return line(x1, y1, x2, y2, { width: 4 });
+export function stopBar(x1: number, y1: number, x2: number, y2: number, width = 4): string {
+  return line(x1, y1, x2, y2, { width });
 }
 
 /** "Shark teeth" yield line. `point` is the direction the teeth point: toward approaching traffic. */
