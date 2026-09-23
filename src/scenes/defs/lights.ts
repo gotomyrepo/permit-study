@@ -9,6 +9,11 @@ const LINE = FOURWAY.lineId('nb');
 const APPROACH: Pose = { x: 165, y: 245, heading: 0 };
 /** End of the green-arrow left turn: in the westbound lane, just past the junction. */
 const WEST: Pose = { x: 100, y: 135, heading: 270 };
+/** The red car frozen mid-way along the eastbound lane, left of the junction. */
+const MID_EB: Pose = { x: 70, y: 165, heading: 90 };
+const ARROW = 'red green-arrow';
+
+// Question-freeze `states` below restate the light for clarity; they are harmless. Only lightYellow's is required (its teach step ends on red).
 
 const blue = { id: 'blue', kind: 'car' as const, you: true, start: FOURWAY.start.nb };
 const red = { id: 'red', kind: 'car' as const, color: '#e53935', start: FOURWAY.start.eb };
@@ -30,7 +35,7 @@ export const lightRed: SceneDef = {
     {
       id: 'question-freeze', duration: 500,
       states: [{ t: 0, id: LIGHT, state: 'red' }],
-      at: { blue: stopPose('nb'), red: { x: 70, y: 165, heading: 90 } },
+      at: { blue: stopPose('nb'), red: MID_EB },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 500 }],
     },
   ],
@@ -43,15 +48,15 @@ export const lightGreen: SceneDef = {
   actors: [{ ...blue, start: stopPose('nb') }, { ...red, start: { x: 40, y: 165, heading: 90 } }],
   steps: [
     {
-      // Timed to the narration: the light turns green as "means go" is spoken.
+      // Red clears the junction by ~1320 ms; the light turns green just after "means go" (ends 1346 ms), before "But yield" (1805 ms).
       id: 'green-go', duration: 6000,
-      states: [{ t: 1000, id: LIGHT, state: 'green' }],
+      states: [{ t: 1500, id: LIGHT, state: 'green' }],
       tracks: {
-        blue: [kf(stopPose('nb'), 1000), kf(FOURWAY.exit.nb, 6000, 'in')],
-        red: [kf(FOURWAY.exit.eb, 1500)],
+        blue: [kf(stopPose('nb'), 1500), kf(FOURWAY.exit.nb, 6000, 'in')],
+        red: [kf(FOURWAY.exit.eb, 2500)],
       },
       expect: [
-        { type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 1000 },
+        { type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 1500 },
         { type: 'entersAfter', actor: 'blue', other: 'red', zone: 'junction' },
       ],
     },
@@ -104,7 +109,7 @@ export const lightFlashRed: SceneDef = {
     {
       id: 'question-freeze', duration: 500,
       states: [{ t: 0, id: LIGHT, state: 'flash-red' }],
-      at: { blue: stopPose('nb'), red: { x: 70, y: 165, heading: 90 } },
+      at: { blue: stopPose('nb'), red: MID_EB },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 500 }],
     },
   ],
@@ -113,7 +118,7 @@ export const lightFlashRed: SceneDef = {
 /** Red with a green left arrow: blue waits behind the line, then turns left into the westbound lane. */
 export const lightArrow: SceneDef = {
   id: 'light-arrow', width: 300, height: 300, ...L,
-  initialStates: { [LIGHT]: 'red green-arrow' },
+  initialStates: { [LIGHT]: ARROW },
   actors: [{ ...blue, start: stopPose('nb') }],
   steps: [
     {
@@ -126,7 +131,7 @@ export const lightArrow: SceneDef = {
     },
     {
       id: 'question-freeze', duration: 500,
-      states: [{ t: 0, id: LIGHT, state: 'red green-arrow' }],
+      states: [{ t: 0, id: LIGHT, state: ARROW }],
       at: { blue: stopPose('nb') },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: LINE, from: 0, to: 500 }],
     },
