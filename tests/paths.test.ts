@@ -1,0 +1,98 @@
+import { describe, test, expect } from 'vitest';
+import { frameAt } from '../src/scenes/engine';
+import { drive, driveUntil, SPEED, turnMs, turnPath } from '../src/scenes/paths';
+import type { Keyframe, Pose, SceneDef } from '../src/scenes/types';
+
+/** One car following `track` in a single step, so speeds can be measured with the real engine. */
+function sceneWith(start: Pose, track: Keyframe[]): SceneDef {
+  return {
+    id: 't', width: 300, height: 300, background: '', lanes: [], zones: [], lines: [], props: [],
+    actors: [{ id: 'a', kind: 'car', start }],
+    steps: [{ id: 's', duration: track[track.length - 1].t, tracks: { a: track } }],
+  };
+}
+/** Speed in px/s around time t, measured over ±5 ms. */
+function speedAt(scene: SceneDef, t: number): number {
+  const a = frameAt(scene, 0, t - 5).poses.a, b = frameAt(scene, 0, t + 5).poses.a;
+  return Math.hypot(b.x - a.x, b.y - a.y) * 100;
+}
+
+const FROM: Pose = { x: 165, y: 290, heading: 0 };
+
+describe('drive', () => {
+  test('steady drive: arrives after dist / SPEED and ends dist px ahead', () => {
+    const kfs = drive(FROM, 90, 1000);
+    expect(kfs).toHaveLength(1);
+    expect(kfs[0]).toMatchObject({ x: 165, y: 200, heading: 0, t: 3000 });
+  });
+  test('from a stop: eases in over 25 px, then holds SPEED', () => {
+    const kfs = drive(FROM, 90, 0, { fromStop: true });
+    // 25 px easing in takes 2 × 25 / 45 s; the other 65 px take 65 / 45 s.
+    expect(kfs.map((k) => k.t)).toEqual([Math.round(50000 / 45), Math.round(115000 / 45)]);
+    expect(kfs[0].ease).toBe('in');
+    const scene = sceneWith(FROM, kfs);
+    expect(speedAt(scene, 20)).toBeLessThan(5);
+    expect(speedAt(scene, kfs[0].t + 50)).toBeCloseTo(SPEED, 0);
+    expect(speedAt(scene, kfs[0].t - 10)).toBeCloseTo(SPEED, -1); // no jump in speed where the ramp ends
+  });
+  test('to a stop: holds SPEED, then eases out over the last 25 px', () => {
+    const kfs = drive(FROM, 90, 0, { toStop: true });
+    const end = kfs[kfs.length - 1];
+    expect(end).toMatchObject({ y: 200, ease: 'out', t: Math.round(115000 / 45) });
+    const scene = sceneWith(FROM, kfs);
+    expect(speedAt(scene, kfs[0].t - 50)).toBeCloseTo(SPEED, 0);
+    expect(speedAt(scene, end.t - 5)).toBeLessThan(1);
+  });
+  test('a short drive from a stop to a stop splits the distance between the two ramps', () => {
+    const kfs = drive(FROM, 20, 0, { fromStop: true, toStop: true });
+    expect(kfs).toHaveLength(2);
+    expect(kfs[0].y).toBe(280);
+    expect(kfs[1].y).toBe(270);
+  });
+});
+
+describe('driveUntil', () => {
+  test('arrives exactly at t1, SPEED × time ahead', () => {
+    const kfs = driveUntil(FROM, 1000, 3000);
+    expect(kfs[kfs.length - 1]).toMatchObject({ y: 200, t: 3000 });
+  });
+  test('from a stop: reaches SPEED after the ramp and still lands on t1', () => {
+    const kfs = driveUntil(FROM, 0, 4000, { fromStop: true });
+    expect(kfs[kfs.length - 1].t).toBe(4000);
+    expect(speedAt(sceneWith(FROM, kfs), 3000)).toBeCloseTo(SPEED, 0);
+  });
+  test('takes a custom speed', () => {
+    const kfs = driveUntil(FROM, 0, 2000, { speed: 15 });
+    expect(kfs[kfs.length - 1].y).toBeCloseTo(260);
+  });
+  test('throws a clear error when the time is too short', () => {
+    expect(() => driveUntil(FROM, 0, 0)).toThrow(/too short/);
+    expect(() => driveUntil(FROM, 0, 1000, { fromStop: true })).toThrow(/too short/);
+  });
+});
+
+describe('turnMs', () => {
+  test('90° turn: arc length / SPEED, between the chord and the two legs', () => {
+    const from: Pose = { x: 0, y: 0, heading: 0 };
+    const to: Pose = { x: 30, y: -30, heading: 90 };
+    // Fine-grained length of the same curve turnPath follows (control point at the corner, (0, -30)).
+    let len = 0, px = 0, py = 0;
+    for (let k = 1; k <= 10000; k++) {
+      const u = k / 10000;
+      const x = u * u * 30, y = -(2 * (1 - u) * u * 30 + u * u * 30);
+      len += Math.hypot(x - px, y - py); px = x; py = y;
+    }
+    expect(len).toBeGreaterThan(Math.hypot(30, 30));
+    expect(len).toBeLessThan(60);
+    expect(Math.abs(turnMs(from, to) - (len / SPEED) * 1000)).toBeLessThanOrEqual(1);
+    expect(turnMs(from, to, 15)).toBe(Math.round((len / 15) * 1000));
+  });
+  test('turnPath over turnMs keeps the average speed at SPEED', () => {
+    const from: Pose = { x: 165, y: 190, heading: 0 };
+    const to: Pose = { x: 110, y: 135, heading: 270 };
+    const kfs = turnPath(from, to, 0, turnMs(from, to), 64);
+    let len = 0, prev: Pose = from;
+    for (const k of kfs) { len += Math.hypot(k.x - prev.x, k.y - prev.y); prev = k; }
+    expect((len / kfs[kfs.length - 1].t) * 1000).toBeCloseTo(SPEED, 0);
+  });
+});

@@ -85,7 +85,11 @@ export function drive(from: Pose, dist: number, t0: number, o: { fromStop?: bool
   return out;
 }
 
-/** Time (ms) a `turnPath` from `from` to `to` should take to hold a steady `speed` (default `SPEED`). */
+/**
+ * Time (ms) a `turnPath` from `from` to `to` should take for an average `speed` (default `SPEED`): the curve's arc
+ * length / speed. `turnPath` spaces its keyframes evenly in the curve parameter, not in distance, so the speed along
+ * the curve is only roughly steady: close for a symmetric 90° turn, less so when the turn's two legs differ a lot.
+ */
 export function turnMs(from: Pose, to: Pose, speed = SPEED): number {
   const c = turnControl(from, to);
   let len = 0, px = from.x, py = from.y;
@@ -105,6 +109,10 @@ export function turnMs(from: Pose, to: Pose, speed = SPEED): number {
  */
 export function driveUntil(from: Pose, t0: number, t1: number, o: { fromStop?: boolean; speed?: number } = {}): Keyframe[] {
   const dist = ((o.speed ?? SPEED) * (t1 - t0)) / 1000 - (o.fromStop ? RAMP : 0);
+  // With fromStop, the 25 px ramp alone takes 2 x 25 px / speed; a shorter time can't reach full speed.
+  if (dist <= (o.fromStop ? RAMP : 0)) {
+    throw new Error(`driveUntil: ${t1 - t0} ms (from t=${t0}) is too short${o.fromStop ? ' to speed up from a stop and drive on' : ' to drive'}`);
+  }
   const out = drive(from, dist, t0, o);
   out[out.length - 1].t = t1; // absorb rounding so the last keyframe lands exactly on t1
   return out;

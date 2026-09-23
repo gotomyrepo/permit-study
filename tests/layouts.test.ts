@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { fourWay, sameWay, stopPose, twoLane, TWOLANE, type CenterLine } from '../src/scenes/layouts';
+import { driveway, DRIVEWAY, FOURWAY, fourWay, sameWay, stopPose, twoLane, TWOLANE, walkBand, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -111,5 +111,62 @@ describe('laneChange', () => {
       expect(k.turning).toBeUndefined();
       prev = k;
     }
+  });
+});
+
+describe('withExtras', () => {
+  const base = fourWay({ controls: { nb: 'light' } });
+  test('no extras leaves the layout unchanged', () => {
+    expect(withExtras(base, {})).toEqual(base);
+  });
+  test('appends props, lanes, zones and lines after the base ones, without changing the base', () => {
+    const before = JSON.stringify(base);
+    const lane = { id: 'x-lane', x: 0, y: 0, w: 10, h: 10, heading: 'any' as const };
+    const zone = { id: 'x-zone', x: 0, y: 0, w: 10, h: 10 };
+    const line = { id: 'x-line', x: 5, y: 5, heading: 0 };
+    const L = withExtras(base, { props: [{ id: 'p1', svg: '<g data-prop="p1"/>' }], lanes: [lane], zones: [zone], lines: [line] });
+    expect(L.background).toBe(base.background + '<g data-prop="p1"/>');
+    expect(L.props).toEqual([...base.props, 'p1']);
+    expect(L.lanes).toEqual([...base.lanes, lane]);
+    expect(L.zones).toEqual([...base.zones, zone]);
+    expect(L.lines).toEqual([...base.lines, line]);
+    expect(JSON.stringify(base)).toBe(before);
+  });
+  test('twoLane and sameWay add their extras the same way', () => {
+    const extras = { props: [{ id: 'p1', svg: '<g data-prop="p1"/>' }] };
+    expect(twoLane(extras)).toEqual(withExtras(twoLane(), extras));
+    expect(sameWay(extras)).toEqual(withExtras(sameWay(), extras));
+  });
+});
+
+describe('crosswalk walking lanes', () => {
+  // Crosswalk lines sit 4 and 24 px outside the junction and are 5.5 px wide.
+  test('walkBand covers the crosswalk band, across the road plus `extra` each side', () => {
+    expect(walkBand('nb', 30)).toEqual({ x: 90, y: 181.25, w: 120, h: 25.5 });
+    expect(walkBand('sb', 0)).toEqual({ x: 120, y: 93.25, w: 60, h: 25.5 });
+    expect(walkBand('eb', 0)).toEqual({ x: 93.25, y: 120, w: 25.5, h: 60 });
+    expect(walkBand('wb', 30)).toEqual({ x: 181.25, y: 90, w: 25.5, h: 120 });
+  });
+  test('walkLane allows any heading; walkZone is the on-road part', () => {
+    expect(FOURWAY.walkLane('nb')).toEqual({ id: 'walk-lane-nb', x: 90, y: 181.25, w: 120, h: 25.5, heading: 'any' });
+    expect(FOURWAY.walkZone('nb')).toEqual({ id: 'walk-zone-nb', x: 120, y: 181.25, w: 60, h: 25.5 });
+  });
+});
+
+describe('driveway', () => {
+  test('street lanes match fourWay, plus a northbound driveway lane', () => {
+    const L = driveway();
+    const four = fourWay();
+    expect(L.lanes).toEqual([
+      four.lanes.find((l) => l.id === 'eb'),
+      four.lanes.find((l) => l.id === 'wb'),
+      { id: 'drive', x: 150, y: 180, w: 30, h: 140, heading: 0 },
+    ]);
+    expect(L.zones).toEqual([{ id: DRIVEWAY.zoneId, x: 130, y: 150, w: 100, h: 30 }]);
+    expect(L.lines).toEqual([{ id: DRIVEWAY.lineId, x: 165, y: 182, heading: 0 }]);
+  });
+  test('DRIVEWAY.stop puts the front 4 px behind the stop line', () => {
+    expect(DRIVEWAY.stop()).toEqual({ x: 165, y: 204, heading: 0 });
+    expect(DRIVEWAY.stop('bus').y).toBe(182 + 32 + 4);
   });
 });

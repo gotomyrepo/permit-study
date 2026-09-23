@@ -12,6 +12,8 @@ export type Control = 'stop' | 'yield' | 'light';
  * Horizontal road y 120–180, vertical road x 120–180, junction box 120–180 both ways.
  * Lane centers: nb x=165, sb x=135, eb y=165, wb y=135 (US right-hand traffic).
  */
+/** Junction box edges: both roads run from BOX.min to BOX.max (60 px wide), centered on BOX.mid. */
+const BOX = { min: 120, max: 180, mid: 150, size: 60 };
 const LINE: Record<Dir, StopLine> = {
   nb: { id: 'line-nb', x: 165, y: 188, heading: 0 },
   sb: { id: 'line-sb', x: 135, y: 112, heading: 180 },
@@ -84,18 +86,20 @@ export const FOURWAY = {
   walkLane: (d: Dir): Lane => ({ id: `walk-lane-${d}`, ...walkBand(d, 30), heading: 'any' }),
   /** Crosswalk mode only: a zone over the part of approach `d`'s crosswalk that is on the road (for `entersAfter`). */
   walkZone: (d: Dir): Zone => ({ id: `walk-zone-${d}`, ...walkBand(d, 0) }),
+  /** Junction box edges: both roads run from `box.min` to `box.max`. */
+  box: BOX,
 };
 
 /** Rectangle over approach `d`'s crosswalk band, reaching `extra` px past each side of the road. */
-function walkBand(d: Dir, extra: number): { x: number; y: number; w: number; h: number } {
+export function walkBand(d: Dir, extra: number): { x: number; y: number; w: number; h: number } {
   const a = outside(d, CROSSWALK_AT[0]), b = outside(d, CROSSWALK_AT[1]);
   const half = CROSSWALK_W / 2;
   if (d === 'nb' || d === 'sb') {
     const y = Math.min(a.y, b.y) - half;
-    return { x: 120 - extra, y, w: 60 + 2 * extra, h: Math.abs(a.y - b.y) + 2 * half };
+    return { x: BOX.min - extra, y, w: BOX.size + 2 * extra, h: Math.abs(a.y - b.y) + 2 * half };
   }
   const x = Math.min(a.x, b.x) - half;
-  return { x, y: 120 - extra, w: Math.abs(a.x - b.x) + 2 * half, h: 60 + 2 * extra };
+  return { x, y: BOX.min - extra, w: Math.abs(a.x - b.x) + 2 * half, h: BOX.size + 2 * extra };
 }
 
 export interface StopPoseOpts {
@@ -177,10 +181,22 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
 /** A prop to draw on top of a layout: `svg` should carry `data-prop="<id>"` so steps can set its state. */
 export interface ExtraProp { id: string; svg: string }
 
-/** Adds props (drawn on top of the road, under the cars), lanes, zones and stop lines to any layout. */
-export function withExtras(
-  base: Layout, o: { props?: ExtraProp[]; lanes?: Lane[]; zones?: Zone[]; lines?: StopLine[] },
-): Layout {
+/**
+ * Extra things a lesson can add to any layout: props drawn on top of the road (under the cars, e.g. a sign or a
+ * `planArrow`), lanes (e.g. `FOURWAY.walkLane`), zones, and stop lines for `stopsBehind`.
+ */
+export interface LayoutExtras {
+  props?: ExtraProp[];
+  lanes?: Lane[];
+  zones?: Zone[];
+  lines?: StopLine[];
+}
+
+/**
+ * The one way to add `LayoutExtras` to a layout. Each prop's svg is appended to the background and its id to `props`,
+ * so steps can set its state. `twoLane()` and `sameWay()` take the same extras as options and use this.
+ */
+export function withExtras(base: Layout, o: LayoutExtras): Layout {
   return {
     background: base.background + (o.props ?? []).map((p) => p.svg).join(''),
     lanes: [...base.lanes, ...(o.lanes ?? [])],
@@ -218,16 +234,19 @@ export function planArrow(id: string, from: Pose, to: Pose, color: string): Extr
  * The driveway (x 140–190) runs from the lot (y 228–300) up to the street; its lane `drive` (center x 165) heads north.
  * `DRIVEWAY.lineId` is an unpainted stop line at the street's edge; `DRIVEWAY.zoneId` is the near street lane in front of the driveway.
  */
+/** Driveway lane center (the same x as the `nb` lane) and its stop line, 2 px below the street's edge. */
+const DRIVE_X = LINE.nb.x;
+const DRIVE_LINE_Y = BOX.max + 2;
 export const DRIVEWAY = {
   lineId: 'line-drive',
   zoneId: 'street',
-  /** Pose with the vehicle's front 4 px behind the street's edge, at the end of the driveway. */
-  stop: (kind: ActorKind = 'car'): Pose => ({ x: 165, y: 182 + SIZES[kind].length / 2 + 4, heading: 0 }),
+  /** Pose with the vehicle's front 4 px behind `DRIVEWAY.lineId` (y 182, 2 px below the street's edge at y 180). */
+  stop: (kind: ActorKind = 'car'): Pose => ({ x: DRIVE_X, y: DRIVE_LINE_Y + SIZES[kind].length / 2 + 4, heading: 0 }),
 };
 
 export function driveway(): Layout {
   const lot = '#8d8d8d';
-  let bg = grass(300, 300) + road(0, 120, 300, 60) + line(0, 150, 300, 150, { color: COLORS.yellow, dash: true });
+  let bg = grass(300, 300) + road(0, BOX.min, 300, BOX.size) + line(0, BOX.mid, 300, BOX.mid, { color: COLORS.yellow, dash: true });
   bg += `<rect x="140" y="180" width="50" height="50" fill="${lot}"/><rect x="40" y="228" width="250" height="72" fill="${lot}"/>`;
   for (const x of [40, 70, 100, 130, 200, 230, 260, 290]) bg += line(x, 250, x, 300, { width: 2 });
   // Two parked grey cars, so the lot reads as a parking lot.
@@ -235,12 +254,12 @@ export function driveway(): Layout {
   return {
     background: bg,
     lanes: [
-      { id: 'eb', x: -100, y: 150, w: 500, h: 30, heading: 90 },
-      { id: 'wb', x: -100, y: 120, w: 500, h: 30, heading: 270 },
-      { id: 'drive', x: 150, y: 180, w: 30, h: 140, heading: 0 },
+      { id: 'eb', x: -100, y: BOX.mid, w: 500, h: BOX.size / 2, heading: 90 },
+      { id: 'wb', x: -100, y: BOX.min, w: 500, h: BOX.size / 2, heading: 270 },
+      { id: 'drive', x: BOX.mid, y: BOX.max, w: BOX.size / 2, h: 140, heading: 0 },
     ],
-    zones: [{ id: DRIVEWAY.zoneId, x: 130, y: 150, w: 100, h: 30 }],
-    lines: [{ id: DRIVEWAY.lineId, x: 165, y: 182, heading: 0 }],
+    zones: [{ id: DRIVEWAY.zoneId, x: 130, y: BOX.mid, w: 100, h: BOX.size / 2 }],
+    lines: [{ id: DRIVEWAY.lineId, x: DRIVE_X, y: DRIVE_LINE_Y, heading: 0 }],
     props: [],
   };
 }
@@ -253,13 +272,6 @@ const MARK_DASH = '18 12';
 /** Offset of each line of a pair (double / solid-and-broken) from y 150, leaving a clear gap between them. */
 const PAIR = 3.5;
 
-/** Extra things a lesson can add to a straight road: stop lines for `stopsBehind`, and props (e.g. a sign) drawn on top. */
-export interface StraightRoadExtras {
-  lines?: StopLine[];
-  /** Each prop's `svg` is drawn after the road; its `id` is listed in the layout's props so steps can set its state. */
-  props?: { id: string; svg: string }[];
-}
-
 /**
  * Shared base for `twoLane()` and `sameWay()`: 300×300 grass, road y 110–190, the divider line(s) at y 150
  * wrapped as the `marking` prop `dividerId`, and a far lane (y 110–150) and near lane (y 150–190), 500 px long.
@@ -267,16 +279,15 @@ export interface StraightRoadExtras {
 function straightRoad(o: {
   dividerId: string; divider: string;
   far: { id: string; heading: number }; near: { id: string; heading: number };
-} & StraightRoadExtras): Layout {
-  const extra = o.props ?? [];
+}): Layout {
   return {
     background: grass(300, 300) + road(0, 110, 300, 80) +
-      `<g class="marking" data-prop="${o.dividerId}">${o.divider}</g>` + extra.map((p) => p.svg).join(''),
+      `<g class="marking" data-prop="${o.dividerId}">${o.divider}</g>`,
     lanes: [
       { id: o.near.id, x: -100, y: 150, w: 500, h: 40, heading: o.near.heading },
       { id: o.far.id, x: -100, y: 110, w: 500, h: 40, heading: o.far.heading },
     ],
-    zones: [], lines: [...(o.lines ?? [])], props: [o.dividerId, ...extra.map((p) => p.id)],
+    zones: [], lines: [], props: [o.dividerId],
   };
 }
 
@@ -286,7 +297,7 @@ function straightRoad(o: {
  * `center` picks the yellow center line at y 150 (default `broken-yellow`). For `solid-and-broken`,
  * the solid line is on the eastbound side (y 153.5) and the broken line on the westbound side (y 146.5).
  * The center line is the prop `center-line`. Don't give it `highlight`: the white glow makes yellow lines look white.
- * `lines` / `props` add stop lines and props (see `StraightRoadExtras`).
+ * The other options are `LayoutExtras` (props, lanes, zones, stop lines), added with `withExtras`.
  */
 export const TWOLANE = {
   start: { eb: { x: -40, y: 170, heading: 90 }, wb: { x: 340, y: 130, heading: 270 } } satisfies Record<'eb' | 'wb', Pose>,
@@ -294,26 +305,25 @@ export const TWOLANE = {
   centerId: 'center-line',
 };
 
-export function twoLane(opts: { center?: CenterLine } & StraightRoadExtras = {}): Layout {
-  const center = opts.center ?? 'broken-yellow';
+export function twoLane(opts: { center?: CenterLine } & LayoutExtras = {}): Layout {
+  const { center = 'broken-yellow', ...extras } = opts;
   const y = (at: number, broken: boolean) => line(0, at, 300, at, { color: COLORS.yellow, width: MARK_W, dash: broken ? MARK_DASH : false });
   const divider =
     center === 'broken-yellow' ? y(150, true) :
     center === 'solid-yellow' ? y(150, false) :
     center === 'double-yellow' ? y(150 - PAIR, false) + y(150 + PAIR, false) :
     y(150 + PAIR, false) + y(150 - PAIR, true);
-  return straightRoad({
+  return withExtras(straightRoad({
     dividerId: TWOLANE.centerId, divider,
     near: { id: 'eb', heading: 90 }, far: { id: 'wb', heading: 270 },
-    lines: opts.lines, props: opts.props,
-  });
+  }), extras);
 }
 
 /**
  * 300×300 road with two lanes both going east (right), split by a broken white lane line at y 150.
  * Same size as `twoLane()`: right lane `eb-right` y 150–190 (center 170), left lane `eb-left` y 110–150 (center 130).
  * The lane line is the prop `lane-line` (state `highlight` gives it a white glow).
- * `lines` / `props` add stop lines and props (see `StraightRoadExtras`).
+ * The other options are `LayoutExtras` (props, lanes, zones, stop lines), added with `withExtras`.
  */
 export const SAMEWAY = {
   start: { right: { x: -40, y: 170, heading: 90 }, left: { x: -40, y: 130, heading: 90 } } satisfies Record<'right' | 'left', Pose>,
@@ -321,12 +331,11 @@ export const SAMEWAY = {
   laneLineId: 'lane-line',
 };
 
-export function sameWay(opts: StraightRoadExtras = {}): Layout {
-  return straightRoad({
+export function sameWay(opts: LayoutExtras = {}): Layout {
+  return withExtras(straightRoad({
     dividerId: SAMEWAY.laneLineId, divider: line(0, 150, 300, 150, { width: MARK_W, dash: MARK_DASH }),
     near: { id: 'eb-right', heading: 90 }, far: { id: 'eb-left', heading: 90 },
-    lines: opts.lines, props: opts.props,
-  });
+  }), opts);
 }
 
 /** Plain light backdrop used behind sign close-ups. */

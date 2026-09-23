@@ -33,21 +33,26 @@ const BLUE_UP = planArrow('plan-blue-straight', { x: 165, y: 197, heading: 0 }, 
 // 1. Traffic already in the intersection goes first.
 // "Your light is green" 111–1152, "The red car" 1694, "already in the middle, turning" 2388–4290,
 // "Let it finish its turn" 4750–5902, "Then you go" 6361.
-// The red car is inside the junction from t=0 and turns slowly (19 px/s, the same speed the whole step)
+// The red car is inside the junction from t=0 and turns slowly (15 px/s, the same speed the whole step)
 // so it is still in the middle, turning, while that is said, and clears the junction as "Let it finish" starts.
 const IN_RED_ON = 1694;
 const IN_RED_OFF = 5902;
 const IN_TURN_AT = 300;
-const IN_RED_SPEED = 19;
+const IN_RED_SPEED = 15;
 const IN_GO = 6361;
 const IN_MS = 8000;
 /** The red car's left turn: from the southbound lane into the eastbound lane. */
-const IN_TURN_FROM: Pose = { x: 135, y: 128, heading: 180 };
+const IN_TURN_FROM: Pose = { x: 135, y: 140, heading: 180 };
 const IN_TURN_TO: Pose = { x: 185, y: 165, heading: 90 };
 const IN_TURN_END = IN_TURN_AT + turnMs(IN_TURN_FROM, IN_TURN_TO, IN_RED_SPEED);
 const IN_RED_START: Pose = { ...IN_TURN_FROM, y: IN_TURN_FROM.y - (IN_RED_SPEED / 1000) * IN_TURN_AT };
 /** The red car half-way through its turn, for the question picture. */
-const IN_RED_MID: Pose = (() => { const k = turnPath(IN_TURN_FROM, IN_TURN_TO, 0, 1)[3]; return { x: k.x, y: k.y, heading: k.heading }; })();
+const IN_RED_MID: Pose = (() => {
+  // turnPath returns 8 keyframes at u = 1/8 … 8/8; index 3 is u = 4/8, half-way along the curve.
+  const HALF_WAY = 3;
+  const k = turnPath(IN_TURN_FROM, IN_TURN_TO, 0, 1)[HALF_WAY];
+  return { x: k.x, y: k.y, heading: k.heading };
+})();
 const IN_BLUE_START: Pose = { x: 165, y: 290, heading: 0 };
 const IN_BLUE_STOP = drive(IN_BLUE_START, IN_BLUE_START.y - STOP_NB.y, 0, { toStop: true });
 const IN_RED_TURN = planArrow('plan-red-turn', IN_RED_MID, { x: 200, y: 165, heading: 90 }, RED);
@@ -101,7 +106,7 @@ const LT_BLUE_START: Pose = { x: 165, y: 300, heading: 0 };
 const LT_BLUE_STOP = drive(LT_BLUE_START, LT_BLUE_START.y - STOP_NB.y, 0, { toStop: true });
 /** Blue pulls 20 px forward (speeding up), then turns left into the westbound lane. */
 const LT_PULL = drive(STOP_NB, 20, LT_GO, { fromStop: true });
-const LT_TURN_FROM: Pose = { x: 165, y: STOP_NB.y - 20, heading: 0 };
+const LT_TURN_FROM: Pose = last(LT_PULL);
 const LT_TURN_TO: Pose = { x: 110, y: 135, heading: 270 };
 const LT_TURN_END = last(LT_PULL).t + turnMs(LT_TURN_FROM, LT_TURN_TO);
 const LT_BLUE_LEFT = planArrow('plan-blue-left', { x: 165, y: 197, heading: 0 }, { x: 100, y: 135, heading: 270 }, COLORS.you);
@@ -226,7 +231,7 @@ const DW_RED_PASS = 5500;
 const DW_RED_START: Pose = { x: 165 - V * DW_RED_PASS, y: 165, heading: 90 };
 /** Blue edges 12 px forward (speeding up), then turns right into the near (eastbound) lane. */
 const DW_PULL = drive(DW_STOP, 12, DW_GO, { fromStop: true });
-const DW_TURN_FROM: Pose = { x: 165, y: DW_STOP.y - 12, heading: 0 };
+const DW_TURN_FROM: Pose = last(DW_PULL);
 const DW_TURN_TO: Pose = { x: 200, y: 165, heading: 90 };
 const DW_TURN_END = last(DW_PULL).t + turnMs(DW_TURN_FROM, DW_TURN_TO);
 const DW_BLUE_RIGHT = planArrow('plan-blue-right', { x: 165, y: 186, heading: 0 }, { x: 215, y: 165, heading: 90 }, COLORS.you);
