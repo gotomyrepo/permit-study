@@ -3,10 +3,29 @@ import { test, expect, type Page } from '@playwright/test';
 /** Records every clip that starts playing, in order. */
 const hook = () => {
   (window as any).plays = [];
+  (window as any).ended = [];
   const op = HTMLMediaElement.prototype.play;
-  HTMLMediaElement.prototype.play = function () { (window as any).plays.push(this.src.split('/').pop()); return op.call(this); };
+  HTMLMediaElement.prototype.play = function () {
+    if (!(this as any).hooked) {
+      (this as any).hooked = true;
+      this.addEventListener('ended', () => (window as any).ended.push(this.src.split('/').pop()));
+    }
+    (window as any).plays.push(this.src.split('/').pop());
+    return op.call(this);
+  };
 };
 const plays = (page: Page): Promise<string[]> => page.evaluate(() => (window as any).plays.slice());
+/** Clips that played to their end, in order. */
+const ended = (page: Page): Promise<string[]> => page.evaluate(() => (window as any).ended.slice());
+
+const toFirstQuestion = async (page: Page) => {
+  await page.getByRole('button', { name: /Yield/ }).click();
+  for (let i = 0; i < 3; i++) {
+    const next = page.getByRole('button', { name: /Next/ });
+    await expect(next).toBeEnabled({ timeout: 30_000 });
+    await next.click();
+  }
+};
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(hook);
@@ -19,13 +38,22 @@ test('home focuses the main button', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Keep going/ })).toBeFocused();
 });
 
+test('question and answer choices are spoken, not just the numbers', async ({ page }) => {
+  await toFirstQuestion(page);
+  // Each clip must play to its end, in order (a missing file errors instead of ending).
+  const want = ['q-yield-q1.mp3', 'phrase-num-1.mp3', 'q-yield-q1-c0.mp3'];
+  await expect.poll(async () => {
+    const e = await ended(page);
+    const at = e.indexOf('q-yield-q1.mp3');
+    return at < 0 ? [] : e.slice(at, at + 3);
+  }, { timeout: 30_000 }).toEqual(want);
+  const p = await plays(page);
+  const at = p.indexOf('q-yield-q1.mp3');
+  expect(p.slice(at, at + 3)).toEqual(want);
+});
+
 test('question 🔊 is locked during the replay, then works again', async ({ page }) => {
-  await page.getByRole('button', { name: /Yield/ }).click();
-  for (let i = 0; i < 3; i++) {
-    const next = page.getByRole('button', { name: /Next/ });
-    await expect(next).toBeEnabled({ timeout: 30_000 });
-    await next.click();
-  }
+  await toFirstQuestion(page);
   await page.locator('.tile', { hasText: 'The blue car' }).click();
   await expect(page.locator('.feedback')).toContainText('Not quite');
   const askSay = page.getByRole('button', { name: 'Hear the question' });
