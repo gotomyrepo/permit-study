@@ -1,0 +1,101 @@
+id: right-of-way
+order: 5
+title: Right-of-way
+icon: "🤝"
+cards:
+  - id: row-inside
+    say: "Your light is green. The red car is already in the middle, turning. Let it finish its turn. Then you go."
+    scene: row-inside
+    step: teach
+    source:
+      page: 34
+      quote: "The traffic light is green and you want to drive straight through. Another vehicle, is already in the intersection making a left turn. You must let that vehicle complete its turn before you enter the intersection."
+  - id: row-left-turn
+    say: "You want to turn left. The red car comes toward you, going straight. Let it go first. Then you turn left."
+    scene: row-left-turn
+    step: teach
+    source:
+      page: 34
+      quote: "If drivers approaching from opposite directions reach an intersection at about the same time, a driver that turns left must yield to traffic that moves straight or turns right."
+  - id: row-on-right
+    say: "You and the red car stop at stop signs at the same time. The red car is on your right. The car on the right goes first. Then you go."
+    scene: row-on-right
+    step: teach
+    source:
+      page: 34
+      quote: "where two or more drivers stop at STOP signs at the same time and they are at right angles, the driver on the left must yield the right-of-way to the driver on the right."
+  - id: row-driveway
+    say: "You are leaving a parking lot. Stop before the street. A red car comes from your left. Wait for it to pass. Then turn right."
+    scene: row-driveway
+    step: teach
+    source:
+      page: 34
+      quote: "You are driving out of a parking lot and turn right as you enter a street. A vehicle approaches from your left. You must stop and wait for the vehicle to pass before you enter the street."
+  - id: row-walker
+    say: "Your light is red. A person steps into the crosswalk. Now your light turns green. Wait for the person to cross. Then go."
+    scene: row-walker
+    step: teach
+    source:
+      page: 34
+      quote: "You are stopped at a red light. A pedestrian steps into the crosswalk, and then the light turns green. You must wait for the pedestrian to go across."
+questions:
+  - id: row-q1
+    ask: "You are the blue car. Who goes first?"
+    scene: row-inside
+    step: question-freeze
+    choices: ["You, the blue car.", "The red car.", "You both go at once.", "The faster car."]
+    answer: 1
+    explainCard: row-inside
+    source:
+      page: 34
+      quote: "A driver who approaches an intersection must yield the right-of-way to traffic that is in the intersection."
+  - id: row-q2
+    ask: "You are the blue car. Who goes first?"
+    scene: row-left-turn
+    step: question-you-turn
+    choices: ["The red car.", "You, the blue car.", "The faster car.", "You both go at once."]
+    answer: 0
+    explainCard: row-left-turn
+    source:
+      page: 34
+      quote: "a driver that turns left must yield to traffic that moves straight or turns right."
+  - id: row-q3
+    ask: "You are the blue car. Who goes first?"
+    scene: row-left-turn
+    step: question-red-turns
+    choices: ["The red car.", "The faster car.", "You, the blue car.", "You both go at once."]
+    answer: 2
+    explainCard: row-left-turn
+    source:
+      page: 34
+      quote: "a driver that turns left must yield to traffic that moves straight or turns right."
+  - id: row-q4
+    ask: "You are the blue car. Who goes first?"
+    scene: row-on-right
+    step: question-freeze
+    choices: ["You both go at once.", "The red car.", "The faster car.", "You, the blue car."]
+    answer: 3
+    explainCard: row-on-right
+    source:
+      page: 34
+      quote: "where two or more drivers stop at STOP signs at the same time and they are at right angles, the driver on the left must yield the right-of-way to the driver on the right."
+  - id: row-q5
+    ask: "You are the blue car. Who goes first?"
+    scene: row-driveway
+    step: question-freeze
+    choices: ["You, the blue car.", "You both go at once.", "The red car.", "The faster car."]
+    answer: 2
+    explainCard: row-driveway
+    source:
+      page: 34
+      quote: "A vehicle that enters a roadway from a driveway, private road or another place that is not a roadway, must stop and yield the right-of-way to traffic on the roadway and to pedestrians."
+  - id: row-q6
+    ask: "You are the blue car. Who goes first?"
+    scene: row-walker
+    step: question-freeze
+    choices: ["The person walking.", "You, the blue car.", "You both go at once.", "The bigger one."]
+    answer: 0
+    explainCard: row-walker
+    source:
+      page: 34
+      quote: "Drivers must yield to pedestrians who legally use marked or unmarked crosswalks."

@@ -1,5 +1,7 @@
 import type { ActorKind, Lane, Pose, SceneDef, StopLine, Zone } from './types';
 import { SIZES } from './engine';
+import { dir } from './geometry';
+import { turnControl } from './paths';
 import { grass, line, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
 
 export type Dir = 'nb' | 'sb' | 'eb' | 'wb';
@@ -75,7 +77,26 @@ export const FOURWAY = {
   crosswalkId: (d: Dir) => `walk-${d}`,
   /** Crosswalk mode only: the stop line just outside the crosswalk. */
   crosswalkLineId: (d: Dir) => `crosswalk-${d}`,
+  /**
+   * Crosswalk mode only: a lane (`heading: 'any'`) for people walking across approach `d`'s crosswalk.
+   * It covers the crosswalk band and 30 px of grass on each side of the road. Add it with `withExtras`.
+   */
+  walkLane: (d: Dir): Lane => ({ id: `walk-lane-${d}`, ...walkBand(d, 30), heading: 'any' }),
+  /** Crosswalk mode only: a zone over the part of approach `d`'s crosswalk that is on the road (for `entersAfter`). */
+  walkZone: (d: Dir): Zone => ({ id: `walk-zone-${d}`, ...walkBand(d, 0) }),
 };
+
+/** Rectangle over approach `d`'s crosswalk band, reaching `extra` px past each side of the road. */
+function walkBand(d: Dir, extra: number): { x: number; y: number; w: number; h: number } {
+  const a = outside(d, CROSSWALK_AT[0]), b = outside(d, CROSSWALK_AT[1]);
+  const half = CROSSWALK_W / 2;
+  if (d === 'nb' || d === 'sb') {
+    const y = Math.min(a.y, b.y) - half;
+    return { x: 120 - extra, y, w: 60 + 2 * extra, h: Math.abs(a.y - b.y) + 2 * half };
+  }
+  const x = Math.min(a.x, b.x) - half;
+  return { x, y: 120 - extra, w: Math.abs(a.x - b.x) + 2 * half, h: 60 + 2 * extra };
+}
 
 export interface StopPoseOpts {
   /** Match a `fourWay({ crosswalks: true })` layout (implied by `before: 'crosswalk'`). */
@@ -150,6 +171,77 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
     zones: [{ id: 'junction', x: 120, y: 120, w: 60, h: 60 }],
     lines,
     props,
+  };
+}
+
+/** A prop to draw on top of a layout: `svg` should carry `data-prop="<id>"` so steps can set its state. */
+export interface ExtraProp { id: string; svg: string }
+
+/** Adds props (drawn on top of the road, under the cars), lanes, zones and stop lines to any layout. */
+export function withExtras(
+  base: Layout, o: { props?: ExtraProp[]; lanes?: Lane[]; zones?: Zone[]; lines?: StopLine[] },
+): Layout {
+  return {
+    background: base.background + (o.props ?? []).map((p) => p.svg).join(''),
+    lanes: [...base.lanes, ...(o.lanes ?? [])],
+    zones: [...base.zones, ...(o.zones ?? [])],
+    lines: [...base.lines, ...(o.lines ?? [])],
+    props: [...base.props, ...(o.props ?? []).map((p) => p.id)],
+  };
+}
+
+/**
+ * "Where this car will go" arrow: a thick line in the car's `color` with a dark edge and an arrowhead,
+ * from `from` to `to`. If the headings differ it follows the same curve as `turnPath(from, to)`.
+ * It is a prop: give it state `hidden` to hide it (e.g. set `hidden` in `initialStates` and '' in a question step).
+ */
+export function planArrow(id: string, from: Pose, to: Pose, color: string): ExtraProp {
+  const c = turnControl(from, to);
+  const d = dir(to.heading);
+  const r = { x: -d.y, y: d.x };
+  const tip = { x: to.x + d.x * 10, y: to.y + d.y * 10 };
+  const f = (v: number) => +v.toFixed(2);
+  const path = `M${f(from.x)} ${f(from.y)} Q${f(c.x)} ${f(c.y)} ${f(to.x)} ${f(to.y)}`;
+  const head = `${f(tip.x)},${f(tip.y)} ${f(to.x + r.x * 8)},${f(to.y + r.y * 8)} ${f(to.x - r.x * 8)},${f(to.y - r.y * 8)}`;
+  return {
+    id,
+    svg: `<g class="plan" data-prop="${id}">` +
+      `<path d="${path}" fill="none" stroke="#212121" stroke-width="8" stroke-linecap="round"/>` +
+      `<path d="${path}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round"/>` +
+      `<polygon points="${head}" fill="${color}" stroke="#212121" stroke-width="1.5" stroke-linejoin="round"/></g>`,
+  };
+}
+
+/**
+ * 300×300 street with a parking lot below it. The street is the same as `fourWay()`'s horizontal road
+ * (y 120–180, lanes `eb` center y 165 and `wb` center y 135, so `FOURWAY.start/exit.eb/wb` work).
+ * The driveway (x 140–190) runs from the lot (y 228–300) up to the street; its lane `drive` (center x 165) heads north.
+ * `DRIVEWAY.lineId` is an unpainted stop line at the street's edge; `DRIVEWAY.zoneId` is the near street lane in front of the driveway.
+ */
+export const DRIVEWAY = {
+  lineId: 'line-drive',
+  zoneId: 'street',
+  /** Pose with the vehicle's front 4 px behind the street's edge, at the end of the driveway. */
+  stop: (kind: ActorKind = 'car'): Pose => ({ x: 165, y: 182 + SIZES[kind].length / 2 + 4, heading: 0 }),
+};
+
+export function driveway(): Layout {
+  const lot = '#8d8d8d';
+  let bg = grass(300, 300) + road(0, 120, 300, 60) + line(0, 150, 300, 150, { color: COLORS.yellow, dash: true });
+  bg += `<rect x="140" y="180" width="50" height="50" fill="${lot}"/><rect x="40" y="228" width="250" height="72" fill="${lot}"/>`;
+  for (const x of [40, 70, 100, 130, 200, 230, 260, 290]) bg += line(x, 250, x, 300, { width: 2 });
+  // Two parked grey cars, so the lot reads as a parking lot.
+  for (const x of [85, 245]) bg += `<rect x="${x - 9}" y="258" width="18" height="36" rx="5" fill="#b0bec5" stroke="#0004"/>`;
+  return {
+    background: bg,
+    lanes: [
+      { id: 'eb', x: -100, y: 150, w: 500, h: 30, heading: 90 },
+      { id: 'wb', x: -100, y: 120, w: 500, h: 30, heading: 270 },
+      { id: 'drive', x: 150, y: 180, w: 30, h: 140, heading: 0 },
+    ],
+    zones: [{ id: DRIVEWAY.zoneId, x: 130, y: 150, w: 100, h: 30 }],
+    lines: [{ id: DRIVEWAY.lineId, x: 165, y: 182, heading: 0 }],
+    props: [],
   };
 }
 

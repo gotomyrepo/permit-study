@@ -7,7 +7,8 @@ export const SIZES: Record<ActorKind, { length: number; width: number }> = {
   ambulance: { length: 40, width: 20 },
   truck: { length: 60, width: 22 },
   bike: { length: 16, width: 6 },
-  pedestrian: { length: 8, width: 8 },
+  // Seen from above: shoulders across (width), head in the middle.
+  pedestrian: { length: 12, width: 16 },
 };
 
 function ease(e: Ease | undefined, u: number): number {
