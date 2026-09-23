@@ -55,7 +55,7 @@ export const signGuide: SceneDef = {
 export const signsScenes: SceneDef[] = [
   stopIntersection,
   signCloseup('sign-stop', 'stop'),
-  teachCloseup('sign-speed', 'speed', 5000),
+  teachCloseup('sign-speed', 'speed', 5000, '55'),
   teachCloseup('sign-warning', 'warning', 6000),
   teachCloseup('sign-work-zone', 'work-zone', 4200, 'WORK'),
   signCloseup('sign-destination', 'destination', { text: 'ALBANY' }),

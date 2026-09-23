@@ -4,19 +4,19 @@ title: Signs
 icon: "🛑"
 cards:
   - id: signs-stop
-    say: "A stop sign is red. Stop all the way, before the white line. Let other cars go first. Then go when it is safe."
+    say: "A stop sign is red. Stop all the way, before the stop line. Let other cars go first. Then go when it is safe."
     scene: stop-intersection
     step: stop-then-go
     source:
       page: 29
-      quote: "Go when it is safe. You must come to a stop before the stop line, if there is one."
+      quote: "Come to a full stop, yield the right-of-way to vehicles and pedestrians in or heading toward the intersection. Go when it is safe. You must come to a stop before the stop line, if there is one."
   - id: signs-rules
     say: "White signs with black letters tell you the rules. This one is about speed."
     scene: sign-speed
     step: teach
     source:
       page: 29
-      quote: "REGULATION SIGNS normally are white rectangles with black letters or symbols"
+      quote: "White, with black and/or red letters or symbols MEANING: These signs give information about rules for traffic direction, lane use, turns, speed"
   - id: signs-warning
     say: "A yellow diamond sign is a warning sign. It means danger or a special rule is ahead."
     scene: sign-warning
@@ -98,7 +98,7 @@ questions:
     ask: "You are the blue car. There is a stop sign. Where do you stop?"
     scene: stop-intersection
     step: question-freeze
-    choices: ["In the middle of the crossing.", "Before the white line.", "Past the white line.", "Anywhere you like."]
+    choices: ["In the middle of the crossing.", "Before the stop line.", "Past the stop line.", "Anywhere you like."]
     answer: 1
     explainCard: signs-stop
     source:

@@ -965,7 +965,7 @@
  },
  {
   "id": "card-signs-stop",
-  "text": "A stop sign is red. Stop all the way, before the white line. Let other cars go first. Then go when it is safe."
+  "text": "A stop sign is red. Stop all the way, before the stop line. Let other cars go first. Then go when it is safe."
  },
  {
   "id": "card-signs-rules",
@@ -1125,11 +1125,11 @@
  },
  {
   "id": "q-signs-q6-c1",
-  "text": "Before the white line."
+  "text": "Before the stop line."
  },
  {
   "id": "q-signs-q6-c2",
-  "text": "Past the white line."
+  "text": "Past the stop line."
  },
  {
   "id": "q-signs-q6-c3",
@@ -1137,11 +1137,11 @@
  },
  {
   "id": "q-signs-q6-yes",
-  "text": "Yes! Before the white line."
+  "text": "Yes! Before the stop line."
  },
  {
   "id": "q-signs-q6-answer",
-  "text": "The answer is: Before the white line."
+  "text": "The answer is: Before the stop line."
  },
  {
   "id": "end-yield",
