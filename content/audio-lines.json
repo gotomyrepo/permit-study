@@ -1390,5 +1390,33 @@
  {
   "id": "q-lights-q5-answer",
   "text": "The answer is: Only the way the arrow points."
+ },
+ {
+  "id": "q-lights-q6",
+  "text": "The traffic light is not working. What do you do?"
+ },
+ {
+  "id": "q-lights-q6-c0",
+  "text": "Stop, like at a stop sign."
+ },
+ {
+  "id": "q-lights-q6-c1",
+  "text": "Go fast."
+ },
+ {
+  "id": "q-lights-q6-c2",
+  "text": "Honk and go."
+ },
+ {
+  "id": "q-lights-q6-c3",
+  "text": "Turn around."
+ },
+ {
+  "id": "q-lights-q6-yes",
+  "text": "Yes! Stop, like at a stop sign."
+ },
+ {
+  "id": "q-lights-q6-answer",
+  "text": "The answer is: Stop, like at a stop sign."
  }
 ]

@@ -139,7 +139,7 @@ export function trafficLight(id: string, x: number, y: number): string {
     `<circle class="lamp red" cx="0" cy="-12" r="5"/>` +
     `<circle class="lamp yellow" cx="0" cy="0" r="5"/>` +
     `<circle class="lamp green" cx="0" cy="12" r="5"/>` +
-    `<path class="arrow" d="M4 12 H-4 M-4 12 l3 -3 M-4 12 l3 3" stroke-width="2" fill="none"/>` +
+    `<path class="arrow" d="M5 12 H-5 M-5 12 l4 -4 M-5 12 l4 4" stroke-width="2" fill="none"/>` +
     `</g>`;
 }
 

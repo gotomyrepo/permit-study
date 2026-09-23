@@ -52,7 +52,8 @@ svg.scene { display: block; width: 100%; height: auto; }
 .light[data-state~="red"] .lamp.red { fill: #f44336; }
 .light[data-state~="yellow"] .lamp.yellow { fill: #ffc107; }
 .light[data-state~="green"] .lamp.green { fill: #4caf50; }
-.light[data-state~="green-arrow"] .arrow { stroke: #4caf50; stroke-width: 3; }
+.light[data-state~="green-arrow"] .arrow { stroke: #76ff03; stroke-width: 3.5; stroke-linecap: round; }
+.light[data-state~="green-arrow"] .lamp.green { fill: #111; }
 .light[data-state~="flash-red"] .lamp.red { fill: #f44336; animation: flash 1s steps(2) infinite; }
 .light[data-state~="flash-yellow"] .lamp.yellow { fill: #ffc107; animation: flash 1s steps(2) infinite; }
 .actor .stop-arm { display: none; }

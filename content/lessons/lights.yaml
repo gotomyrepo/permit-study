@@ -89,3 +89,13 @@ questions:
     source:
       page: 31
       quote: "If a green arrow is shown with the red light, you can go only toward the arrow and only if the intersection is clear."
+  - id: lights-q6
+    ask: "The traffic light is not working. What do you do?"
+    scene: light-flash-red
+    step: question-freeze
+    choices: ["Stop, like at a stop sign.", "Go fast.", "Honk and go.", "Turn around."]
+    answer: 0
+    explainCard: lights-flash-red
+    source:
+      page: 30
+      quote: "if the traffic lights or controls are out of service or do not operate correctly when you approach an intersection, you must come to a stop as you would for a stop sign"
