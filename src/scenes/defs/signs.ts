@@ -1,6 +1,5 @@
 import type { SceneDef } from '../types';
-import { fourWay, FOURWAY, signCloseup, stopPose } from '../layouts';
-import { sign, type SignKind } from '../parts';
+import { fourWay, FOURWAY, signCloseup, signPair, stopPose } from '../layouts';
 import { kf } from '../paths';
 
 const L = fourWay({ controls: { nb: 'stop' } });
@@ -36,29 +35,15 @@ export const stopIntersection: SceneDef = {
   ],
 };
 
-/** A sign close-up with an extra still step long enough for its card's narration. */
-function teachCloseup(id: string, kind: SignKind, teachMs: number, text?: string): SceneDef {
-  const s = signCloseup(id, kind, text ? { text } : {});
-  return { ...s, steps: [...s.steps, { id: 'teach', duration: teachMs }] };
-}
-
-/** Green destination sign and blue service sign side by side. */
-export const signGuide: SceneDef = {
-  id: 'sign-guide', width: 300, height: 300,
-  background: `<rect x="0" y="0" width="300" height="300" fill="#eceff1"/>` +
-    sign('destination', 80, 150, { size: 120, post: false, text: 'ALBANY' }) +
-    sign('service', 220, 150, { size: 120, post: false, text: 'GAS' }),
-  lanes: [], zones: [], lines: [], props: [], actors: [],
-  steps: [{ id: 'teach', duration: 5300 }],
-};
-
 export const signsScenes: SceneDef[] = [
   stopIntersection,
   signCloseup('sign-stop', 'stop'),
-  teachCloseup('sign-speed', 'speed', 5000, '55'),
-  teachCloseup('sign-warning', 'warning', 6000),
-  teachCloseup('sign-work-zone', 'work-zone', 4200, 'WORK'),
+  // teachMs values are hand-sized to each card's narration clip (see public/audio/card-signs-*.json), plus a little slack.
+  signCloseup('sign-speed', 'speed', { text: '55', teachMs: 5000 }),
+  signCloseup('sign-warning', 'warning', { teachMs: 6000 }),
+  signCloseup('sign-work-zone', 'work-zone', { text: 'WORK', teachMs: 4200 }),
   signCloseup('sign-destination', 'destination', { text: 'ALBANY' }),
   signCloseup('sign-service', 'service', { text: 'GAS' }),
-  signGuide,
+  // Green destination and blue service signs side by side; 5700 ms fits the 5.3 s narration.
+  signPair('sign-guide', { kind: 'destination', text: 'ALBANY' }, { kind: 'service', text: 'GAS' }, 5700),
 ];

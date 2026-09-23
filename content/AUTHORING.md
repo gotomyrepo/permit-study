@@ -34,6 +34,7 @@ The learner is 18, autistic, and reads at a 1st–2nd grade level. Everything is
 
 ## Scenes
 - Reuse `fourWay()` / `stopPose()` / `FOURWAY` / `signCloseup()` from `src/scenes/layouts.ts`, and build new layouts there when a lesson needs a different road.
+- For a card narrated over a sign close-up, pass `teachMs` to `signCloseup()` to add a `teach` still step sized to the narration. Use `signPair()` to show two signs side by side.
 - Every step that shows waiting or stopping must have `expect` entries (`stopsBehind`, `entersAfter`) so the checker proves the behavior.
 - Steps play while the matching card is spoken. Make each step about as long as its narration (about 350 ms per word, at least 2500 ms).
 - Question steps are usually a still frame: use `at` to place cars, with a short `duration` (500 ms).

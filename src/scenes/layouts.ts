@@ -81,12 +81,40 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>> } = {})
   };
 }
 
-/** A single large sign on a plain background, for "what does this sign mean?" questions. */
-export function signCloseup(id: string, kind: SignKind, opts: Omit<SignOpts, 'size' | 'post' | 'id'> = {}): SceneDef {
+/** Plain light backdrop used behind sign close-ups. */
+const CLOSEUP_BG = `<rect x="0" y="0" width="300" height="300" fill="#eceff1"/>`;
+
+/** Still steps for a close-up: `show` (500 ms, for questions) plus an optional `teach` step for a card's narration. */
+function closeupSteps(teachMs?: number): SceneDef['steps'] {
+  return teachMs ? [{ id: 'show', duration: 500 }, { id: 'teach', duration: teachMs }] : [{ id: 'show', duration: 500 }];
+}
+
+/**
+ * A single large sign on a plain background, for "what does this sign mean?" questions.
+ * Pass `teachMs` to add a `teach` still step sized to a card's narration clip.
+ */
+export function signCloseup(
+  id: string, kind: SignKind,
+  opts: Omit<SignOpts, 'size' | 'post' | 'id'> & { teachMs?: number } = {},
+): SceneDef {
+  const { teachMs, ...signOpts } = opts;
   return {
     id, width: 300, height: 300,
-    background: `<rect x="0" y="0" width="300" height="300" fill="#eceff1"/>` + sign(kind, 150, 150, { ...opts, size: 170, post: false }),
+    background: CLOSEUP_BG + sign(kind, 150, 150, { ...signOpts, size: 170, post: false }),
     lanes: [], zones: [], lines: [], props: [], actors: [],
-    steps: [{ id: 'show', duration: 500 }],
+    steps: closeupSteps(teachMs),
+  };
+}
+
+export interface PairSign { kind: SignKind; text?: string }
+
+/** Two signs side by side on the close-up background, with a single `teach` still step of `teachMs`. */
+export function signPair(id: string, left: PairSign, right: PairSign, teachMs: number): SceneDef {
+  const one = (p: PairSign, x: number) => sign(p.kind, x, 150, { size: 120, post: false, ...(p.text ? { text: p.text } : {}) });
+  return {
+    id, width: 300, height: 300,
+    background: CLOSEUP_BG + one(left, 80) + one(right, 220),
+    lanes: [], zones: [], lines: [], props: [], actors: [],
+    steps: [{ id: 'teach', duration: teachMs }],
   };
 }
