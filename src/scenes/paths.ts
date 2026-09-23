@@ -103,8 +103,8 @@ export function turnMs(from: Pose, to: Pose, speed = SPEED): number {
  * Keyframes for driving straight ahead from `from` (at t0) until t1 at a steady `SPEED`, e.g. to keep a car moving
  * to the end of a step. With `fromStop` the first 25 px ease in from a standstill (as in `drive`).
  */
-export function driveUntil(from: Pose, t0: number, t1: number, o: { fromStop?: boolean } = {}): Keyframe[] {
-  const dist = (SPEED * (t1 - t0)) / 1000 - (o.fromStop ? RAMP : 0);
+export function driveUntil(from: Pose, t0: number, t1: number, o: { fromStop?: boolean; speed?: number } = {}): Keyframe[] {
+  const dist = ((o.speed ?? SPEED) * (t1 - t0)) / 1000 - (o.fromStop ? RAMP : 0);
   const out = drive(from, dist, t0, o);
   out[out.length - 1].t = t1; // absorb rounding so the last keyframe lands exactly on t1
   return out;

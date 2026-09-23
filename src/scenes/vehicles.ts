@@ -32,6 +32,6 @@ export function vehicleSvg(a: ActorDef): string {
       return `<rect x="-1.5" y="${y}" width="3" height="${L}" fill="#212121"/><circle r="3.5" fill="${color}"/>`;
     case 'pedestrian':
       // A person seen from above: shoulders (in the shirt color) and a dark head.
-      return `<ellipse rx="${W / 2}" ry="${L / 2 - 0.5}" fill="${color}" stroke="#fff" stroke-width="1.5"/><circle r="3.5" fill="#3e2723"/>`;
+      return `<ellipse rx="${W / 2}" ry="${L / 2 - 0.5}" fill="${color}" stroke="#212121" stroke-width="1.5"/><circle r="5.5" fill="#3e2723" stroke="#212121"/>`;
   }
 }

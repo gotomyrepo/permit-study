@@ -31,18 +31,21 @@ const BLUE_UP = planArrow('plan-blue-straight', { x: 165, y: 197, heading: 0 }, 
 
 // ---------------------------------------------------------------------------------------------
 // 1. Traffic already in the intersection goes first.
-// "The red car" 1694, "already in the middle, turning" 2388–4290, "Let it finish its turn" 4750–5902, "Then you go" 6361.
+// "Your light is green" 111–1152, "The red car" 1694, "already in the middle, turning" 2388–4290,
+// "Let it finish its turn" 4750–5902, "Then you go" 6361.
+// The red car is inside the junction from t=0 and turns slowly (19 px/s, the same speed the whole step)
+// so it is still in the middle, turning, while that is said, and clears the junction as "Let it finish" starts.
 const IN_RED_ON = 1694;
-const IN_RED_OFF = 4290;
-const IN_TURN_AT = 2300;
+const IN_RED_OFF = 5902;
+const IN_TURN_AT = 300;
+const IN_RED_SPEED = 19;
 const IN_GO = 6361;
 const IN_MS = 8000;
 /** The red car's left turn: from the southbound lane into the eastbound lane. */
-const IN_TURN_FROM: Pose = { x: 135, y: 120, heading: 180 };
+const IN_TURN_FROM: Pose = { x: 135, y: 128, heading: 180 };
 const IN_TURN_TO: Pose = { x: 185, y: 165, heading: 90 };
-/** Turning is a little slower (36 px/s) than straight driving. */
-const IN_TURN_END = IN_TURN_AT + turnMs(IN_TURN_FROM, IN_TURN_TO, 36);
-const IN_RED_START: Pose = { ...IN_TURN_FROM, y: IN_TURN_FROM.y - V * IN_TURN_AT };
+const IN_TURN_END = IN_TURN_AT + turnMs(IN_TURN_FROM, IN_TURN_TO, IN_RED_SPEED);
+const IN_RED_START: Pose = { ...IN_TURN_FROM, y: IN_TURN_FROM.y - (IN_RED_SPEED / 1000) * IN_TURN_AT };
 /** The red car half-way through its turn, for the question picture. */
 const IN_RED_MID: Pose = (() => { const k = turnPath(IN_TURN_FROM, IN_TURN_TO, 0, 1)[3]; return { x: k.x, y: k.y, heading: k.heading }; })();
 const IN_BLUE_START: Pose = { x: 165, y: 290, heading: 0 };
@@ -64,7 +67,7 @@ export const rowInside: SceneDef = {
         red: [
           kf(IN_TURN_FROM, IN_TURN_AT),
           ...turnPath(IN_TURN_FROM, IN_TURN_TO, IN_TURN_AT, IN_TURN_END),
-          ...driveUntil(IN_TURN_TO, IN_TURN_END, IN_MS),
+          ...driveUntil(IN_TURN_TO, IN_TURN_END, IN_MS, { speed: IN_RED_SPEED }),
         ],
       },
       expect: [
@@ -273,8 +276,9 @@ const WK_GREEN = 5250;
 const WK_GO = 8111;
 const WK_MS = 10000;
 /** The person starts walking as they are named and reaches the far corner as "cross" ends. */
-const WK_WALK_FROM: Pose = { x: 106, y: 194, heading: 90 };
-const WK_WALK_TO: Pose = { x: 187, y: 194, heading: 90 };
+const WK_WALK_FROM: Pose = { x: 104, y: 194, heading: 90 };
+/** Far enough that the person (18 px long) is fully off the road, next to the light pole. */
+const WK_WALK_TO: Pose = { x: 192, y: 194, heading: 90 };
 const WK_ARRIVE = 7600;
 const WK_STOP = stopPose('nb', 'car', { crosswalks: true });
 const WALK = FOURWAY.crosswalkId('nb');
