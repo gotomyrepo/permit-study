@@ -960,6 +960,190 @@
   "text": "You got 20 out of 20."
  },
  {
+  "id": "end-signs",
+  "text": "Great job! You're done with Signs."
+ },
+ {
+  "id": "card-signs-stop",
+  "text": "A stop sign is red. Stop all the way, before the white line. Let other cars go first. Then go when it is safe."
+ },
+ {
+  "id": "card-signs-rules",
+  "text": "White signs with black letters tell you the rules. This one is about speed."
+ },
+ {
+  "id": "card-signs-warning",
+  "text": "A yellow diamond sign is a warning sign. It means danger or a special rule is ahead."
+ },
+ {
+  "id": "card-signs-work",
+  "text": "An orange sign means people are working on or near the road."
+ },
+ {
+  "id": "card-signs-guide",
+  "text": "Green signs help you find places. Blue signs show services, like gas stations."
+ },
+ {
+  "id": "q-signs-q1",
+  "text": "What does this sign mean?"
+ },
+ {
+  "id": "q-signs-q1-c0",
+  "text": "Come to a full stop."
+ },
+ {
+  "id": "q-signs-q1-c1",
+  "text": "Slow down, but keep going."
+ },
+ {
+  "id": "q-signs-q1-c2",
+  "text": "Go faster."
+ },
+ {
+  "id": "q-signs-q1-c3",
+  "text": "Park here."
+ },
+ {
+  "id": "q-signs-q1-yes",
+  "text": "Yes! Come to a full stop."
+ },
+ {
+  "id": "q-signs-q1-answer",
+  "text": "The answer is: Come to a full stop."
+ },
+ {
+  "id": "q-signs-q2",
+  "text": "What does this yellow diamond sign mean?"
+ },
+ {
+  "id": "q-signs-q2-c0",
+  "text": "A gas station is near."
+ },
+ {
+  "id": "q-signs-q2-c1",
+  "text": "Danger or a special rule is ahead."
+ },
+ {
+  "id": "q-signs-q2-c2",
+  "text": "Stop here."
+ },
+ {
+  "id": "q-signs-q2-c3",
+  "text": "Turn around."
+ },
+ {
+  "id": "q-signs-q2-yes",
+  "text": "Yes! Danger or a special rule is ahead."
+ },
+ {
+  "id": "q-signs-q2-answer",
+  "text": "The answer is: Danger or a special rule is ahead."
+ },
+ {
+  "id": "q-signs-q3",
+  "text": "You see an orange sign. What does it mean?"
+ },
+ {
+  "id": "q-signs-q3-c0",
+  "text": "A gas station is near."
+ },
+ {
+  "id": "q-signs-q3-c1",
+  "text": "You may go faster."
+ },
+ {
+  "id": "q-signs-q3-c2",
+  "text": "Park here."
+ },
+ {
+  "id": "q-signs-q3-c3",
+  "text": "People are working near the road."
+ },
+ {
+  "id": "q-signs-q3-yes",
+  "text": "Yes! People are working near the road."
+ },
+ {
+  "id": "q-signs-q3-answer",
+  "text": "The answer is: People are working near the road."
+ },
+ {
+  "id": "q-signs-q4",
+  "text": "What does a blue sign show you?"
+ },
+ {
+  "id": "q-signs-q4-c0",
+  "text": "Danger ahead."
+ },
+ {
+  "id": "q-signs-q4-c1",
+  "text": "Services, like gas stations."
+ },
+ {
+  "id": "q-signs-q4-c2",
+  "text": "Stop here."
+ },
+ {
+  "id": "q-signs-q4-yes",
+  "text": "Yes! Services, like gas stations."
+ },
+ {
+  "id": "q-signs-q4-answer",
+  "text": "The answer is: Services, like gas stations."
+ },
+ {
+  "id": "q-signs-q5",
+  "text": "What does a green sign show you?"
+ },
+ {
+  "id": "q-signs-q5-c0",
+  "text": "The way to places."
+ },
+ {
+  "id": "q-signs-q5-c1",
+  "text": "People are working."
+ },
+ {
+  "id": "q-signs-q5-c2",
+  "text": "Stop here."
+ },
+ {
+  "id": "q-signs-q5-yes",
+  "text": "Yes! The way to places."
+ },
+ {
+  "id": "q-signs-q5-answer",
+  "text": "The answer is: The way to places."
+ },
+ {
+  "id": "q-signs-q6",
+  "text": "You are the blue car. There is a stop sign. Where do you stop?"
+ },
+ {
+  "id": "q-signs-q6-c0",
+  "text": "In the middle of the crossing."
+ },
+ {
+  "id": "q-signs-q6-c1",
+  "text": "Before the white line."
+ },
+ {
+  "id": "q-signs-q6-c2",
+  "text": "Past the white line."
+ },
+ {
+  "id": "q-signs-q6-c3",
+  "text": "Anywhere you like."
+ },
+ {
+  "id": "q-signs-q6-yes",
+  "text": "Yes! Before the white line."
+ },
+ {
+  "id": "q-signs-q6-answer",
+  "text": "The answer is: Before the white line."
+ },
+ {
   "id": "end-yield",
   "text": "Great job! You're done with Yield."
  },

@@ -1,0 +1,106 @@
+id: signs
+order: 1
+title: Signs
+icon: "🛑"
+cards:
+  - id: signs-stop
+    say: "A stop sign is red. Stop all the way, before the white line. Let other cars go first. Then go when it is safe."
+    scene: stop-intersection
+    step: stop-then-go
+    source:
+      page: 29
+      quote: "Go when it is safe. You must come to a stop before the stop line, if there is one."
+  - id: signs-rules
+    say: "White signs with black letters tell you the rules. This one is about speed."
+    scene: sign-speed
+    step: teach
+    source:
+      page: 29
+      quote: "REGULATION SIGNS normally are white rectangles with black letters or symbols"
+  - id: signs-warning
+    say: "A yellow diamond sign is a warning sign. It means danger or a special rule is ahead."
+    scene: sign-warning
+    step: teach
+    source:
+      page: 29
+      quote: "WARNING SIGNS normally are yellow and diamond-shaped, with black letters or symbols."
+  - id: signs-work
+    say: "An orange sign means people are working on or near the road."
+    scene: sign-work-zone
+    step: teach
+    source:
+      page: 30
+      quote: "Orange, with black letters or symbols MEANING: People are at work on or near the roadway"
+  - id: signs-guide
+    say: "Green signs help you find places. Blue signs show services, like gas stations."
+    scene: sign-guide
+    step: teach
+    source:
+      page: 29
+      quote: "DESTINATION SIGNS are green with white letters and symbols. SERVICE SIGNS are blue with white letters and symbols."
+questions:
+  - id: signs-q1
+    ask: "What does this sign mean?"
+    scene: sign-stop
+    step: show
+    choices: ["Come to a full stop.", "Slow down, but keep going.", "Go faster.", "Park here."]
+    answer: 0
+    explainCard: signs-stop
+    signQuestion: true
+    source:
+      page: 29
+      quote: "Red, with white letters MEANING: Come to a full stop"
+  - id: signs-q2
+    ask: "What does this yellow diamond sign mean?"
+    scene: sign-warning
+    step: show
+    choices: ["A gas station is near.", "Danger or a special rule is ahead.", "Stop here.", "Turn around."]
+    answer: 1
+    explainCard: signs-warning
+    signQuestion: true
+    source:
+      page: 30
+      quote: "You are approaching a hazardous location or a location where there is a special rule"
+  - id: signs-q3
+    ask: "You see an orange sign. What does it mean?"
+    scene: sign-work-zone
+    step: show
+    choices: ["A gas station is near.", "You may go faster.", "Park here.", "People are working near the road."]
+    answer: 3
+    explainCard: signs-work
+    signQuestion: true
+    source:
+      page: 30
+      quote: "Orange, with black letters or symbols MEANING: People are at work on or near the roadway"
+  - id: signs-q4
+    ask: "What does a blue sign show you?"
+    scene: sign-service
+    step: show
+    choices: ["Danger ahead.", "Services, like gas stations.", "Stop here."]
+    answer: 1
+    explainCard: signs-guide
+    signQuestion: true
+    source:
+      page: 30
+      quote: "Show the location of services, like rest areas, gas stations, camping or medical facilities."
+  - id: signs-q5
+    ask: "What does a green sign show you?"
+    scene: sign-destination
+    step: show
+    choices: ["The way to places.", "People are working.", "Stop here."]
+    answer: 0
+    explainCard: signs-guide
+    signQuestion: true
+    source:
+      page: 30
+      quote: "Show the direction and distance to locations."
+  - id: signs-q6
+    ask: "You are the blue car. There is a stop sign. Where do you stop?"
+    scene: stop-intersection
+    step: question-freeze
+    choices: ["In the middle of the crossing.", "Before the white line.", "Past the white line.", "Anywhere you like."]
+    answer: 1
+    explainCard: signs-stop
+    source:
+      page: 29
+      quote: "You must come to a stop before the stop line, if there is one."
