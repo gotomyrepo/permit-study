@@ -50,31 +50,42 @@ const RIGHT_TO: Pose = { x: EDGE, y: WIDEFOUR.center('eb', 'right'), heading: 90
 
 // ---------------------------------------------------------------------------------------------
 // 1. Signal before you turn.
-// "Always signal before you turn." 111–1693 ("signal" 472), "Turn on your turn signal" 2152–3388,
+// "Always signal before you turn." 111–1693, "Turn on your turn signal" 2152–3388 ("Turn on" 2152),
 // "at least 100 feet" 3666–5166, "before the turn." 5166–5944 ("turn." 5583).
-// Blue's left signal is on from "signal", so it is already blinking when blue comes into view (about 3.2 s, the
-// picture is too small to show it sooner at SPEED). Blue is ringed from then through "100 feet", drives on with the
-// signal blinking, and starts its left turn on the word "turn.".
-const SG_ON = 472;
-const SG_HL_ON = 3200;
+// Blue waits fully on screen far down the lane next to the center line (y 280, 70 px from the corner), signal off.
+// Its left signal switches on as "Turn on" is said, while it is still far back. It pulls away (easing up to SPEED)
+// so it is driving toward the corner, ringed, during "at least 100 feet", and starts its left turn on "turn.".
+const SG_START: Pose = { x: NB_LEFT_X, y: 280, heading: 0 };
+const SG_ON = 2152;
+const SG_HL_ON = 3666;
 const SG_HL_OFF = 5166;
 const SG_TURN = 5583; // "turn."
-const SG = upAndTurn(WIDEFOUR.start.nb.left, LEFT_FROM, LEFT_TO, SG_TURN);
-const SG_MS = upTo100(SG.end + 400);
+const SG_DIST = SG_START.y - LEFT_FROM.y;
+/** When blue pulls away: the eased 70 px drive (25 px ramp at half speed on average, then SPEED) ends at SG_TURN. */
+const SG_GO = SG_TURN - Math.round(((2 * 25 + SG_DIST - 25) / SPEED) * 1000);
+const SG_UP = drive(SG_START, SG_DIST, SG_GO, { fromStop: true });
+const SG_END = last(SG_UP).t + turnMs(LEFT_FROM, LEFT_TO);
+const SG_MS = upTo100(SG_END + 400);
 
-/** Blue drives up with its left turn signal on, well before the corner, then turns left. */
+/** Blue, far back from the corner, turns on its left signal, drives up with it blinking, then turns left. */
 export const turnSignal: SceneDef = {
   id: 'turn-signal', width: 300, height: 300,
   ...wideFourWay(),
-  actors: [blueCar(WIDEFOUR.start.nb.left)],
+  actors: [blueCar(SG_START)],
   steps: [
     {
       id: 'teach', duration: SG_MS,
       states: [
         set('blue', 'signal-left', SG_ON), set('blue', 'highlight signal-left', SG_HL_ON),
-        set('blue', 'signal-left', SG_HL_OFF), set('blue', '', SG.end),
+        set('blue', 'signal-left', SG_HL_OFF), set('blue', '', SG_END),
       ],
-      tracks: { blue: [...SG.track, ...driveUntil(LEFT_TO, SG.end, SG_MS)] },
+      tracks: {
+        blue: [
+          kf(SG_START, SG_GO), ...SG_UP,
+          ...turnPath(LEFT_FROM, LEFT_TO, last(SG_UP).t, SG_END),
+          ...driveUntil(LEFT_TO, SG_END, SG_MS),
+        ],
+      },
     },
     {
       // Blue coming up to the corner with its left signal on (no distance is shown).
@@ -166,24 +177,24 @@ export const turnLeft: SceneDef = {
 // "You want to make a U-turn." 111–1194, "Never start it from the right lane." 1652–3138,
 // "Use the lane next to the center line." 3597–5471 ("lane" 3972), "Stay on the left side of that lane." 5944–7499
 // ("left" 6416), "Then make your U-turn." 7972–8972 (the U-turn starts on "Then").
-// Blue comes into view in the glowing lane, keeps to its left side (x 160, 5 px left of the lane center), and makes its U-turn as "Then make your U-turn" is said.
+// Blue comes into view in the glowing lane and drives at the lane center, keeping a clear gap from the double
+// yellow line. For "left side" a narrow strip lights the lane's center-line side. Blue makes its U-turn on "Then".
 const U_RIGHT_ON = 1652;
 const U_RIGHT_OFF = 3138;
 const U_LANE_ON = 3972;
 const U_SIDE_ON = 6416;
 const U_LANE_OFF = 7499;
 const U_TURN = 7972; // "Then"
-const U_X = NB_LEFT_X - 5;
-const U_START: Pose = { ...WIDEFOUR.start.nb.left, x: U_X };
-const U_FROM: Pose = { x: U_X, y: EDGE - 5, heading: 0 };
+const U_START = WIDEFOUR.start.nb.left;
+const U_FROM: Pose = { x: NB_LEFT_X, y: EDGE - 5, heading: 0 };
 /** Into the far southbound lane: the U needs that much room to stay round. */
 const U_TO: Pose = { x: WIDEFOUR.center('sb', 'right'), y: EDGE - 5, heading: 180 };
 const U = upAndTurn(U_START, U_FROM, U_TO, U_TURN, true);
 const U_MS = upTo100(U.end + 500);
 const U_RIGHT = glow('glow-right', 'nb', 'right', 'in', RED_GLOW);
 const U_LANE = glow('glow-lane', 'nb', 'left', 'in');
-/** The left half of the lane next to the center line. */
-const U_SIDE = laneGlow('glow-side', { ...WIDEFOUR.laneRect('nb', 'left', 'in'), w: 16 });
+/** The left side of the lane next to the center line: a narrow strip along the center line. */
+const U_SIDE = laneGlow('glow-side', { ...WIDEFOUR.laneRect('nb', 'left', 'in'), w: 14 }, '#fff176');
 const U_PROPS = [U_RIGHT, U_LANE, U_SIDE];
 
 /** Blue, on the left side of the lane next to the center line with its left signal on, makes a U-turn. */
