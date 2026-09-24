@@ -124,7 +124,8 @@ const round3 = (v: number) => Math.round(v * 1000) / 1000;
 /**
  * Middle pose of a U-turn from `from` to `to` (which must face the opposite way, off to one side): the point where
  * the car faces straight across the road, half-way between the two lanes and half the lanes' spacing ahead of
- * the further-ahead of the two poses, so both halves of the U are round.
+ * the further-ahead of the two poses. Both halves of the U are equally round only when `to` is level with `from`;
+ * if one pose is further back, its half of the U gets a longer, flatter leg to reach the apex.
  */
 export function uTurnApex(from: Pose, to: Pose): Pose {
   const d = dir(from.heading);

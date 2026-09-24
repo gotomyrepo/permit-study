@@ -235,6 +235,8 @@ export type WideLane = 'left' | 'right';
 /** Junction box edges of `wideFourWay()`: both roads run from WIDE_BOX.min to WIDE_BOX.max (120 px wide). */
 const WIDE_BOX = { min: 90, max: 210, mid: 150, size: 120 };
 const WIDE_LANE_W = 30;
+/** Travel heading of each road direction in `wideFourWay()`. */
+const WIDE_HEADING: Record<Dir, number> = { nb: 0, sb: 180, eb: 90, wb: 270 };
 /** Stop lines sit 8 px outside the junction (like `fourWay`'s); stop bars are drawn 2 px inside that. */
 const WIDE_LINE_OUT = 8;
 const WIDE_BAR_OUT = 6;
@@ -247,12 +249,13 @@ function wideCenter(d: Dir, lane: WideLane): number {
   return d === 'nb' || d === 'eb' ? WIDE_BOX.mid + off : WIDE_BOX.mid - off;
 }
 function wideLine(d: Dir): StopLine {
-  const { min, max } = WIDE_BOX;
+  const { min, max, mid } = WIDE_BOX;
+  const heading = WIDE_HEADING[d];
   switch (d) {
-    case 'nb': return { id: `line-${d}`, x: 180, y: max + WIDE_LINE_OUT, heading: 0 };
-    case 'sb': return { id: `line-${d}`, x: 120, y: min - WIDE_LINE_OUT, heading: 180 };
-    case 'eb': return { id: `line-${d}`, x: min - WIDE_LINE_OUT, y: 180, heading: 90 };
-    case 'wb': return { id: `line-${d}`, x: max + WIDE_LINE_OUT, y: 120, heading: 270 };
+    case 'nb': return { id: `line-${d}`, x: mid + WIDE_LANE_W, y: max + WIDE_LINE_OUT, heading };
+    case 'sb': return { id: `line-${d}`, x: mid - WIDE_LANE_W, y: min - WIDE_LINE_OUT, heading };
+    case 'eb': return { id: `line-${d}`, x: min - WIDE_LINE_OUT, y: mid + WIDE_LANE_W, heading };
+    case 'wb': return { id: `line-${d}`, x: max + WIDE_LINE_OUT, y: mid - WIDE_LANE_W, heading };
   }
 }
 /** The stop bar / yield teeth segment across approach `d`'s two lanes (inset by `inset` px at each end). */
@@ -344,7 +347,7 @@ export function wideFourWay(opts: { controls?: Partial<Record<Dir, Control>> } &
   const lanes: Lane[] = [];
   for (const d of DIRS) for (const lane of ['left', 'right'] as WideLane[]) {
     const lo = wideCenter(d, lane) - WIDE_LANE_W / 2;
-    const heading = LINE[d].heading;
+    const heading = WIDE_HEADING[d];
     lanes.push(d === 'nb' || d === 'sb'
       ? { id: WIDEFOUR.laneId(d, lane), x: lo, y: -100, w: WIDE_LANE_W, h: 500, heading }
       : { id: WIDEFOUR.laneId(d, lane), x: -100, y: lo, w: 500, h: WIDE_LANE_W, heading });

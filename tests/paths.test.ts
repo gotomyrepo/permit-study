@@ -106,6 +106,15 @@ describe('uTurnPath', () => {
     // A U-turn to the driver's right faces the other way at the apex.
     expect(uTurnApex({ x: 0, y: 0, heading: 90 }, { x: 0, y: 40, heading: 270 })).toEqual({ x: 20, y: 20, heading: 180 });
   });
+  test('with `to` further ahead or behind, the apex is half the spacing past the further-ahead pose', () => {
+    const o: Pose = { x: 0, y: 0, heading: 0 };
+    expect(uTurnApex(o, { x: -40, y: -20, heading: 180 })).toEqual({ x: -20, y: -40, heading: 270 });
+    expect(uTurnApex(o, { x: -40, y: 20, heading: 180 })).toEqual({ x: -20, y: -20, heading: 270 });
+    const behind = { x: -40, y: 20, heading: 180 };
+    const kfs = uTurnPath(o, behind, 0, 2000);
+    expect(kfs[kfs.length - 1]).toMatchObject({ ...behind, t: 2000 });
+    expect(kfs[7]).toMatchObject({ x: -20, y: -20, heading: 270 });
+  });
   test('rejects poses that do not face opposite ways, or are not off to one side', () => {
     expect(() => uTurnApex(from, { ...to, heading: 270 })).toThrow();
     expect(() => uTurnApex(from, { x: 162, y: 150, heading: 180 })).toThrow();

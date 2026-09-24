@@ -1,7 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
-import { uTurnApex } from '../src/scenes/paths';
-import { laneChange } from '../src/scenes/paths';
+import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
 function centerLines(bg: string, id = 'center-line'): string[] {
