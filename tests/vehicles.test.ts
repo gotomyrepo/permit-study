@@ -19,3 +19,18 @@ describe('turn-signal blinkers', () => {
     expect(css).toMatch(/signal-left"\] \.blinker-left \.halo.*animation: flash/);
   });
 });
+
+describe('ambulance roof lights', () => {
+  const amb = vehicleSvg({ id: 'a', kind: 'ambulance', start: { x: 0, y: 0, heading: 0 } });
+  test('a big red and a big blue lamp, each with a halo', () => {
+    expect(amb.match(/class="siren"/g)).toHaveLength(2);
+    expect(amb.match(/class="siren-halo"/g)).toHaveLength(2);
+    expect(amb).toContain('fill="#f44336"');
+    expect(amb).toContain('fill="#2962ff"');
+  });
+  test('the CSS lights the lamps when flashing; only the halos blink, so a still picture shows them on', () => {
+    const css = readFileSync('src/styles.css', 'utf8');
+    expect(css).toContain('.actor[data-state~="flashing"] .siren { opacity: 1; }');
+    expect(css).toMatch(/flashing"\] \.siren-halo \{ display: inline; animation: flash/);
+  });
+});

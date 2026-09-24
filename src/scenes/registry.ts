@@ -5,9 +5,10 @@ import { lightsScenes } from './defs/lights';
 import { markingsScenes } from './defs/markings';
 import { rightOfWayScenes } from './defs/right-of-way';
 import { turnsScenes } from './defs/turns';
+import { emergencyScenes } from './defs/emergency';
 
 // Each lesson task adds its scene list here.
-const ALL: SceneDef[] = [...yieldScenes, ...signsScenes, ...lightsScenes, ...markingsScenes, ...rightOfWayScenes, ...turnsScenes];
+const ALL: SceneDef[] = [...yieldScenes, ...signsScenes, ...lightsScenes, ...markingsScenes, ...rightOfWayScenes, ...turnsScenes, ...emergencyScenes];
 
 export const SCENES: Record<string, SceneDef> = Object.fromEntries(ALL.map((s) => [s.id, s]));
 export const ALL_SCENES: readonly SceneDef[] = ALL;

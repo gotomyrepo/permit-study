@@ -1,0 +1,101 @@
+id: emergency
+order: 7
+title: Emergency vehicles
+icon: "🚑"
+cards:
+  - id: emergency-pull-over
+    say: "An ambulance is behind you! Pull over to the right edge of the road, and stop."
+    scene: emergency-behind
+    step: teach
+    source:
+      page: 35
+      quote: "You must yield the right-of-way to fire, ambulance, police and other authorized emergency vehicles when they respond to emergencies. They will display lights that are flashing red, red and blue or red and white and/or may sound a siren or air-horn. (Vehicles responding to emergencies for a Police Department, Sheriff Department or the New York State Troopers are not always required to use an audible siren or horn.) When you hear or see an emergency vehicle heading toward your vehicle from any direction, safely pull over immediately to the right edge of the road and stop."
+  - id: emergency-wait
+    say: "Wait until the ambulance goes past you. Then you can drive on."
+    scene: emergency-behind
+    step: wait
+    source:
+      page: 35
+      quote: "Wait until the emergency vehicle passes before you drive on."
+  - id: emergency-oncoming
+    say: "Pull over and stop for an ambulance, even when it comes toward you in the other lane."
+    scene: emergency-oncoming
+    step: teach
+    source:
+      page: 35
+      quote: "You must pull over and stop for an emergency vehicle even if it is headed toward you in the opposite lane of a two-way roadway."
+  - id: emergency-move-over
+    say: "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, you must also slow down."
+    scene: emergency-move-over
+    step: teach
+    source:
+      page: 35
+      quote: "This law requires every driver to exercise care to avoid colliding with an authorized emergency or hazard vehicle that is parked, stopped or standing on the shoulder or any portion of the highway with its emergency lights activated or one or more amber hazard lights activated or combination of one or more amber hazard lights and one or more blue lights activated. Drivers must reduce speed on all roads when encountering such vehicles, but on parkways, interstates and other controlled access roads with multiple lanes, drivers are further required to move from the lane adjacent to the emergency or hazard vehicle unless traffic or other hazards prevent doing so safely."
+  - id: emergency-lights
+    say: "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. You do not have to yield to them. But it is kind to yield, if it is safe."
+    scene: emergency-lights
+    step: teach
+    source:
+      page: 35
+      quote: "Personal vehicles driven by volunteer fire fighters responding to alarms are allowed to display blue lights and those driven by volunteer ambulance or rescue squad members can display green lights. Amber lights on hazard vehicles such as snow plows and tow trucks or the combination of amber lights and rear projected blue lights on hazard vehicles designed for towing or pushing disabled vehicles, warn other drivers of possible dangers. Flashing amber lights are also used on rural mail delivery vehicles and school buses to warn traffic of their presence. The vehicles that display blue, green or amber lights are not authorized emergency vehicles. Their drivers must obey all traffic laws. While you are not required to yield the right-of-way, you should yield as a courtesy if you can safely do so."
+questions:
+  - id: emergency-q1
+    ask: "You are the blue car. An ambulance with flashing lights is behind you. What do you do?"
+    scene: emergency-behind
+    step: question-behind
+    choices: ["Speed up to stay ahead.", "Stop right in your lane.", "Pull over to the right and stop.", "Keep driving the same way."]
+    answer: 2
+    explainCard: emergency-pull-over
+    source:
+      page: 35
+      quote: "They will display lights that are flashing red, red and blue or red and white and/or may sound a siren or air-horn. (Vehicles responding to emergencies for a Police Department, Sheriff Department or the New York State Troopers are not always required to use an audible siren or horn.) When you hear or see an emergency vehicle heading toward your vehicle from any direction, safely pull over immediately to the right edge of the road and stop."
+  - id: emergency-q2
+    ask: "You are the blue car. You pulled over for an ambulance. When can you drive on?"
+    scene: emergency-behind
+    step: question-stopped
+    choices: ["Right away.", "After it passes you.", "When it is right behind you.", "Before it gets close."]
+    answer: 1
+    explainCard: emergency-wait
+    source:
+      page: 35
+      quote: "Wait until the emergency vehicle passes before you drive on."
+  - id: emergency-q3
+    ask: "You are the blue car. An ambulance with flashing lights comes toward you in the other lane. What do you do?"
+    scene: emergency-oncoming
+    step: question-freeze
+    choices: ["Keep going. It is in the other lane.", "Speed up.", "Stop in the middle of the road.", "Pull over to the right and stop."]
+    answer: 3
+    explainCard: emergency-oncoming
+    source:
+      page: 35
+      quote: "You must pull over and stop for an emergency vehicle even if it is headed toward you in the opposite lane of a two-way roadway."
+  - id: emergency-q4
+    ask: "You are the blue car, on a highway. An ambulance is stopped at the side of the road, lights flashing. What do you do?"
+    scene: emergency-move-over
+    step: question-freeze
+    choices: ["Slow down. Move over 1 lane, if safe.", "Speed up to get past it.", "Stop right next to it.", "Keep going at the same speed."]
+    answer: 0
+    explainCard: emergency-move-over
+    source:
+      page: 35
+      quote: "Drivers must reduce speed on all roads when encountering such vehicles, but on parkways, interstates and other controlled access roads with multiple lanes, drivers are further required to move from the lane adjacent to the emergency or hazard vehicle unless traffic or other hazards prevent doing so safely."
+  - id: emergency-q5
+    ask: "A car has a green light on it. Who is driving?"
+    scene: emergency-light-green
+    step: show
+    choices: ["A police officer.", "A volunteer firefighter.", "A volunteer ambulance worker.", "A bus driver."]
+    answer: 2
+    explainCard: emergency-lights
+    source:
+      page: 35
+      quote: "those driven by volunteer ambulance or rescue squad members can display green lights"
+  - id: emergency-q6
+    ask: "A car has a blue light on it. What should you do?"
+    scene: emergency-light-blue
+    step: show
+    choices: ["Yield to be kind, if it is safe.", "Speed up so it cannot pass.", "Stop in the middle of the road."]
+    answer: 0
+    explainCard: emergency-lights
+    source:
+      page: 35
+      quote: "While you are not required to yield the right-of-way, you should yield as a courtesy if you can safely do so."

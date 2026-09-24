@@ -163,3 +163,39 @@ export function uTurnPath(from: Pose, to: Pose, t0: number, t1: number, n = 8): 
   const tm = t0 + ((t1 - t0) * a) / (a + b);
   return [...turnPath(from, apex, t0, tm, n), ...turnPath(apex, to, tm, t1, n)];
 }
+
+/** Time (ms) `changeSpeed` takes to cover `forward` px while its speed goes steadily from `v0` to `v1` (px/s). */
+export function changeSpeedMs(forward: number, v0: number, v1: number): number {
+  return (2 * forward * 1000) / (v0 + v1);
+}
+
+/**
+ * Drive `forward` px ahead from `from` (the previous keyframe, at t0) while the speed changes steadily from `v0` to
+ * `v1` px/s (e.g. `SPEED` to 20 to slow down, or to 0 to come to a stop), arriving after `changeSpeedMs`.
+ * With `side` it is also an S-curve lane change like `laneChange` (positive = to the driver's right), e.g. pulling
+ * over to the edge of the road while stopping. Keyframes are spaced evenly in time, so the speed steps down in
+ * `n` small, even steps (no lurch), and each heading follows the path's real angle. Keyframes are not `turning`:
+ * keep atan(1.5 × |side| / forward) under 20°.
+ */
+export function changeSpeed(
+  from: Pose, forward: number, t0: number, v0: number, v1: number, o: { side?: number; n?: number } = {},
+): Keyframe[] {
+  const side = o.side ?? 0, n = o.n ?? 16;
+  const T = changeSpeedMs(forward, v0, v1) / 1000;
+  const d = dir(from.heading);
+  const r = { x: -d.y, y: d.x };
+  const out: Keyframe[] = [];
+  for (let k = 1; k <= n; k++) {
+    const s = (T * k) / n;
+    const u = k === n ? 1 : (v0 * s + ((v1 - v0) * s * s) / (2 * T)) / forward;
+    const lat = side * u * u * (3 - 2 * u);
+    const slope = (side * 6 * u * (1 - u)) / forward;
+    out.push({
+      t: t0 + s * 1000,
+      x: round3(from.x + d.x * forward * u + r.x * lat),
+      y: round3(from.y + d.y * forward * u + r.y * lat),
+      heading: normHeading(from.heading + (Math.atan(slope) * 180) / Math.PI),
+    });
+  }
+  return out;
+}

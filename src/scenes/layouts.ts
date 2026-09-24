@@ -520,3 +520,57 @@ export function signPair(id: string, left: PairSign, right: PairSign, teachMs: n
     steps: [{ id: 'teach', duration: teachMs }],
   };
 }
+
+/**
+ * A paved shoulder along the bottom (right-hand, for eastbound traffic) edge of `twoLane()` / `sameWay()`:
+ * a lighter grey strip y 190–216 with a solid white edge line where it meets the road. Spread `shoulder()` into
+ * the road's options (it is `LayoutExtras`): it adds the prop `SHOULDER.id` and the zone `SHOULDER.zoneId`, so a
+ * vehicle parked on the shoulder (center y `SHOULDER.y`, any heading) passes the lane check.
+ */
+export const SHOULDER = { id: 'shoulder', zoneId: 'shoulder', top: 190, bottom: 216, y: 203 };
+export function shoulder(): Required<Pick<LayoutExtras, 'props' | 'zones'>> {
+  const { id, zoneId, top, bottom } = SHOULDER;
+  return {
+    props: [{
+      id,
+      svg: `<g data-prop="${id}"><rect x="0" y="${top}" width="300" height="${bottom - top}" fill="#7b7b7b"/>` +
+        line(0, top + 1.5, 300, top + 1.5, { width: 3 }) + `</g>`,
+    }],
+    zones: [{ id: zoneId, x: -100, y: top, w: 500, h: bottom - top }],
+  };
+}
+
+/** Colors of the light a car shows in `lampCarCloseup` (volunteer fire fighters: blue; volunteer ambulance: green). */
+export const LAMP_COLORS = { blue: { lamp: '#1565c0', halo: '#64b5f6' }, green: { lamp: '#2e7d32', halo: '#81c784' } };
+export type LampColor = keyof typeof LAMP_COLORS;
+
+/**
+ * A big light-grey car seen from above (pointing up) with one large colored light on its roof, centered on (cx, cy).
+ * The light stays on; its halo blinks (class `lamp-halo`). The car is the prop `id` (state `highlight` rings it).
+ */
+function lampCar(id: string, cx: number, cy: number, color: LampColor): string {
+  const W = 66, L = 132;
+  const x = cx - W / 2, y = cy - L / 2;
+  const { lamp, halo } = LAMP_COLORS[color];
+  const glass = (gy: number, gh: number) => `<rect x="${x + 9}" y="${gy}" width="${W - 18}" height="${gh}" rx="6" fill="#e3f2fd" stroke="#546e7a" stroke-width="2"/>`;
+  return `<g class="pic" data-prop="${id}">` +
+    `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="16" fill="#cfd8dc" stroke="#37474f" stroke-width="3"/>` +
+    glass(y + 20, 28) + glass(y + L - 34, 18) +
+    `<circle class="lamp-halo" cx="${cx}" cy="${cy + 8}" r="27" fill="${halo}" fill-opacity="0.85"/>` +
+    `<circle cx="${cx}" cy="${cy + 8}" r="16" fill="${lamp}" stroke="#212121" stroke-width="3"/></g>`;
+}
+
+/**
+ * Close-up of one or two big grey cars, each with a colored light on its roof (see `lampCar`), on the plain
+ * close-up background. Props are `lamp-car-<color>`. Steps: `show` (500 ms), plus `teach` when `teachMs` is given.
+ */
+export function lampCarCloseup(id: string, colors: LampColor[], opts: { teachMs?: number } = {}): SceneDef {
+  const xs = colors.length === 1 ? [150] : [80, 220];
+  const props = colors.map((c) => `lamp-car-${c}`);
+  return {
+    id, width: 300, height: 300,
+    background: CLOSEUP_BG + colors.map((c, i) => lampCar(props[i], xs[i], 150, c)).join(''),
+    lanes: [], zones: [], lines: [], props, actors: [],
+    steps: closeupSteps(opts.teachMs),
+  };
+}

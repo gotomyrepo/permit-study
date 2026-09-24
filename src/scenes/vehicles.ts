@@ -21,6 +21,18 @@ function blinkers(W: number, L: number): string {
   return side('left', -W / 2) + side('right', W / 2);
 }
 
+/**
+ * An ambulance's two big roof lights, red on the left and blue on the right, just behind the windshield. They are dim
+ * unless the actor's state includes `flashing` (see styles.css); then the lamps stay fully lit and only their
+ * halos blink, so a still picture always shows the lights on.
+ */
+function emergencyLights(): string {
+  const lights = [{ cx: -5, lamp: '#f44336', halo: '#ff8a80' }, { cx: 5, lamp: '#2962ff', halo: '#82b1ff' }];
+  // Both halos first, so neither lamp is covered by the other's halo.
+  return lights.map((l) => `<circle class="siren-halo" cx="${l.cx}" cy="-3" r="8" fill="${l.halo}" fill-opacity="0.9"/>`).join('') +
+    lights.map((l) => `<circle class="siren" cx="${l.cx}" cy="-3" r="4.5" fill="${l.lamp}" stroke="#212121" stroke-width="1.2"/>`).join('');
+}
+
 /** Drawn pointing up (heading 0), centered on the origin. */
 export function vehicleSvg(a: ActorDef): string {
   const { length: L, width: W } = SIZES[a.kind];
@@ -38,9 +50,10 @@ export function vehicleSvg(a: ActorDef): string {
         [[x + 3, y + 2], [-x - 3, y + 2], [x + 3, -y - 2], [-x - 3, -y - 2]]
           .map(([cx, cy]) => `<circle class="beacon" cx="${cx}" cy="${cy}" r="2.5" fill="#f44336"/>`).join('');
     case 'ambulance':
-      return `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="4" fill="${color}" stroke="#9e9e9e"/>` + glass(y + 4, 7) +
-        `<rect x="-2.5" y="-6" width="5" height="16" fill="#d32f2f"/><rect x="-8" y="-0.5" width="16" height="5" fill="#d32f2f"/>` +
-        `<circle class="beacon" cx="${x + 4}" cy="${y + 14}" r="3" fill="#f44336"/><circle class="beacon" cx="${-x - 4}" cy="${y + 14}" r="3" fill="#2196f3"/>`;
+      // A red and a blue emergency light on the roof, behind the windshield (see `emergencyLights`), and a red cross.
+      return `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="4" fill="${color}" stroke="#616161" stroke-width="1.5"/>` + glass(y + 4, 7) +
+        `<rect x="-2.5" y="4" width="5" height="13" fill="#d32f2f"/><rect x="-6.5" y="8" width="13" height="5" fill="#d32f2f"/>` +
+        emergencyLights();
     case 'truck':
       return `<rect x="${x}" y="${y}" width="${W}" height="14" rx="3" fill="${color}" stroke="#0006"/>` + glass(y + 3, 5) +
         `<rect x="${x}" y="${y + 16}" width="${W}" height="${L - 16}" rx="2" fill="#cfd8dc" stroke="#0006"/>`;

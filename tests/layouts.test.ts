@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { lampCarCloseup, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -231,5 +231,34 @@ describe('planArrow via', () => {
     expect(planArrow('a', from, { x: 100, y: 135, heading: 270 }, '#000').svg.match(/Q/g)).toHaveLength(2);
     const u = planArrow('u', from, to, '#000', uTurnApex(from, to)).svg;
     expect(u).toContain('M165 230 Q165 200 135 200 Q105 200 105 230');
+  });
+});
+
+describe('shoulder', () => {
+  test('a prop and a zone below the road, passed through to twoLane and sameWay', () => {
+    const sh = shoulder();
+    expect(sh.zones).toEqual([{ id: SHOULDER.zoneId, x: -100, y: 190, w: 500, h: 26 }]);
+    expect(SHOULDER.y).toBe(203);
+    expect(sh.props[0].svg).toContain(`data-prop="${SHOULDER.id}"`);
+    for (const L of [twoLane(sh), sameWay(sh)]) {
+      expect(L.props).toContain(SHOULDER.id);
+      expect(L.zones.map((z) => z.id)).toContain(SHOULDER.zoneId);
+      expect(L.lanes.map((l) => l.y + l.h)).toEqual([190, 150]); // lanes are not widened
+    }
+  });
+});
+
+describe('lampCarCloseup', () => {
+  test('one centered car or two side by side, each a prop with its colored roof light', () => {
+    const one = lampCarCloseup('x', ['green']);
+    expect(one.props).toEqual(['lamp-car-green']);
+    expect(one.steps.map((s) => s.id)).toEqual(['show']);
+    expect(one.background).toContain(`fill="${LAMP_COLORS.green.lamp}"`);
+    expect(one.background).toContain('cx="150"');
+    const two = lampCarCloseup('y', ['blue', 'green'], { teachMs: 3000 });
+    expect(two.props).toEqual(['lamp-car-blue', 'lamp-car-green']);
+    expect(two.steps).toEqual([{ id: 'show', duration: 500 }, { id: 'teach', duration: 3000 }]);
+    expect(two.background).toContain(`fill="${LAMP_COLORS.blue.lamp}"`);
+    expect(two.actors).toEqual([]);
   });
 });

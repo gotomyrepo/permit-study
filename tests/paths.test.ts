@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { frameAt } from '../src/scenes/engine';
-import { drive, driveUntil, SPEED, turnMs, turnPath, uTurnApex, uTurnMs, uTurnPath } from '../src/scenes/paths';
+import { changeSpeed, changeSpeedMs, drive, driveUntil, SPEED, turnMs, turnPath, uTurnApex, uTurnMs, uTurnPath } from '../src/scenes/paths';
 import { dir } from '../src/scenes/geometry';
 import type { Keyframe, Pose, SceneDef } from '../src/scenes/types';
 
@@ -141,5 +141,40 @@ describe('uTurnPath', () => {
     let len = 0, prev: Pose = from;
     for (const k of kfs) { len += Math.hypot(k.x - prev.x, k.y - prev.y); prev = k; }
     expect((len / kfs[kfs.length - 1].t) * 1000).toBeCloseTo(SPEED, 0);
+  });
+});
+
+describe('changeSpeed', () => {
+  const EAST: Pose = { x: 50, y: 170, heading: 90 };
+  test('slowing down: covers the distance in 2 x dist / (v0 + v1) and ends at v1', () => {
+    const kfs = changeSpeed(EAST, 40, 1000, SPEED, 20);
+    expect(changeSpeedMs(40, SPEED, 20)).toBeCloseTo(80000 / 65);
+    expect(kfs[kfs.length - 1]).toMatchObject({ x: 90, y: 170, heading: 90 });
+    expect(kfs[kfs.length - 1].t).toBeCloseTo(1000 + 80000 / 65);
+    const scene = sceneWith(EAST, [{ ...EAST, t: 1000 }, ...kfs]);
+    const end = kfs[kfs.length - 1].t;
+    expect(speedAt(scene, 1030)).toBeCloseTo(SPEED, -1);
+    expect(speedAt(scene, end - 30)).toBeCloseTo(20, -1);
+    // The speed only ever goes down, in small steps.
+    let prev = Infinity;
+    for (let t = 1010; t < end - 10; t += 20) {
+      const v = speedAt(scene, t);
+      expect(v).toBeLessThanOrEqual(prev + 0.5);
+      prev = v;
+    }
+  });
+  test('pulling over to a stop: ends side px to the right, heading straight, nearly still', () => {
+    const kfs = changeSpeed(EAST, 50, 0, SPEED, 0, { side: 10 });
+    const end = kfs[kfs.length - 1];
+    expect(end).toMatchObject({ x: 100, y: 180, heading: 90 });
+    expect(end.t).toBeCloseTo(changeSpeedMs(50, SPEED, 0));
+    const scene = sceneWith(EAST, kfs);
+    expect(speedAt(scene, end.t - 10)).toBeLessThan(5);
+    for (let i = 1; i < kfs.length; i++) {
+      const a = kfs[i - 1], b = kfs[i];
+      const along = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+      expect(Math.abs(b.heading - 90)).toBeLessThan(20);
+      expect(Math.abs(along - (b.heading - 90))).toBeLessThan(6); // heading follows the path
+    }
   });
 });

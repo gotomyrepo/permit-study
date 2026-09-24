@@ -1930,5 +1930,193 @@
  {
   "id": "q-turn-q4-answer",
   "text": "The answer is: At least 100 feet before the turn."
+ },
+ {
+  "id": "end-emergency",
+  "text": "Great job! You're done with Emergency vehicles."
+ },
+ {
+  "id": "card-emergency-pull-over",
+  "text": "An ambulance is behind you! Pull over to the right edge of the road, and stop."
+ },
+ {
+  "id": "card-emergency-wait",
+  "text": "Wait until the ambulance goes past you. Then you can drive on."
+ },
+ {
+  "id": "card-emergency-oncoming",
+  "text": "Pull over and stop for an ambulance, even when it comes toward you in the other lane."
+ },
+ {
+  "id": "card-emergency-move-over",
+  "text": "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, you must also slow down."
+ },
+ {
+  "id": "card-emergency-lights",
+  "text": "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. You do not have to yield to them. But it is kind to yield, if it is safe."
+ },
+ {
+  "id": "q-emergency-q1",
+  "text": "You are the blue car. An ambulance with flashing lights is behind you. What do you do?"
+ },
+ {
+  "id": "q-emergency-q1-c0",
+  "text": "Speed up to stay ahead."
+ },
+ {
+  "id": "q-emergency-q1-c1",
+  "text": "Stop right in your lane."
+ },
+ {
+  "id": "q-emergency-q1-c2",
+  "text": "Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q1-c3",
+  "text": "Keep driving the same way."
+ },
+ {
+  "id": "q-emergency-q1-yes",
+  "text": "Yes! Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q1-answer",
+  "text": "The answer is: Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q2",
+  "text": "You are the blue car. You pulled over for an ambulance. When can you drive on?"
+ },
+ {
+  "id": "q-emergency-q2-c0",
+  "text": "Right away."
+ },
+ {
+  "id": "q-emergency-q2-c1",
+  "text": "After it passes you."
+ },
+ {
+  "id": "q-emergency-q2-c2",
+  "text": "When it is right behind you."
+ },
+ {
+  "id": "q-emergency-q2-c3",
+  "text": "Before it gets close."
+ },
+ {
+  "id": "q-emergency-q2-yes",
+  "text": "Yes! After it passes you."
+ },
+ {
+  "id": "q-emergency-q2-answer",
+  "text": "The answer is: After it passes you."
+ },
+ {
+  "id": "q-emergency-q3",
+  "text": "You are the blue car. An ambulance with flashing lights comes toward you in the other lane. What do you do?"
+ },
+ {
+  "id": "q-emergency-q3-c0",
+  "text": "Keep going. It is in the other lane."
+ },
+ {
+  "id": "q-emergency-q3-c1",
+  "text": "Speed up."
+ },
+ {
+  "id": "q-emergency-q3-c2",
+  "text": "Stop in the middle of the road."
+ },
+ {
+  "id": "q-emergency-q3-c3",
+  "text": "Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q3-yes",
+  "text": "Yes! Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q3-answer",
+  "text": "The answer is: Pull over to the right and stop."
+ },
+ {
+  "id": "q-emergency-q4",
+  "text": "You are the blue car, on a highway. An ambulance is stopped at the side of the road, lights flashing. What do you do?"
+ },
+ {
+  "id": "q-emergency-q4-c0",
+  "text": "Slow down. Move over 1 lane, if safe."
+ },
+ {
+  "id": "q-emergency-q4-c1",
+  "text": "Speed up to get past it."
+ },
+ {
+  "id": "q-emergency-q4-c2",
+  "text": "Stop right next to it."
+ },
+ {
+  "id": "q-emergency-q4-c3",
+  "text": "Keep going at the same speed."
+ },
+ {
+  "id": "q-emergency-q4-yes",
+  "text": "Yes! Slow down. Move over 1 lane, if safe."
+ },
+ {
+  "id": "q-emergency-q4-answer",
+  "text": "The answer is: Slow down. Move over 1 lane, if safe."
+ },
+ {
+  "id": "q-emergency-q5",
+  "text": "A car has a green light on it. Who is driving?"
+ },
+ {
+  "id": "q-emergency-q5-c0",
+  "text": "A police officer."
+ },
+ {
+  "id": "q-emergency-q5-c1",
+  "text": "A volunteer firefighter."
+ },
+ {
+  "id": "q-emergency-q5-c2",
+  "text": "A volunteer ambulance worker."
+ },
+ {
+  "id": "q-emergency-q5-c3",
+  "text": "A bus driver."
+ },
+ {
+  "id": "q-emergency-q5-yes",
+  "text": "Yes! A volunteer ambulance worker."
+ },
+ {
+  "id": "q-emergency-q5-answer",
+  "text": "The answer is: A volunteer ambulance worker."
+ },
+ {
+  "id": "q-emergency-q6",
+  "text": "A car has a blue light on it. What should you do?"
+ },
+ {
+  "id": "q-emergency-q6-c0",
+  "text": "Yield to be kind, if it is safe."
+ },
+ {
+  "id": "q-emergency-q6-c1",
+  "text": "Speed up so it cannot pass."
+ },
+ {
+  "id": "q-emergency-q6-c2",
+  "text": "Stop in the middle of the road."
+ },
+ {
+  "id": "q-emergency-q6-yes",
+  "text": "Yes! Yield to be kind, if it is safe."
+ },
+ {
+  "id": "q-emergency-q6-answer",
+  "text": "The answer is: Yield to be kind, if it is safe."
  }
 ]
