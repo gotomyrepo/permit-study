@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { driveway, DRIVEWAY, FOURWAY, fourWay, sameWay, stopPose, twoLane, TWOLANE, walkBand, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { uTurnApex } from '../src/scenes/paths';
 import { laneChange } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -168,5 +169,68 @@ describe('driveway', () => {
   test('DRIVEWAY.stop puts the front 4 px behind the stop line', () => {
     expect(DRIVEWAY.stop()).toEqual({ x: 165, y: 204, heading: 0 });
     expect(DRIVEWAY.stop('bus').y).toBe(182 + 32 + 4);
+  });
+});
+
+describe('wideFourWay', () => {
+  test('two 30 px lanes each way, left lanes next to the center line', () => {
+    const lanes = Object.fromEntries(wideFourWay().lanes.map((l) => [l.id, l]));
+    expect(lanes['nb-left']).toEqual({ id: 'nb-left', x: 150, y: -100, w: 30, h: 500, heading: 0 });
+    expect(lanes['nb-right']).toEqual({ id: 'nb-right', x: 180, y: -100, w: 30, h: 500, heading: 0 });
+    expect(lanes['sb-left']).toEqual({ id: 'sb-left', x: 120, y: -100, w: 30, h: 500, heading: 180 });
+    expect(lanes['sb-right']).toEqual({ id: 'sb-right', x: 90, y: -100, w: 30, h: 500, heading: 180 });
+    expect(lanes['eb-left']).toEqual({ id: 'eb-left', x: -100, y: 150, w: 500, h: 30, heading: 90 });
+    expect(lanes['eb-right']).toEqual({ id: 'eb-right', x: -100, y: 180, w: 500, h: 30, heading: 90 });
+    expect(lanes['wb-left']).toEqual({ id: 'wb-left', x: -100, y: 120, w: 500, h: 30, heading: 270 });
+    expect(lanes['wb-right']).toEqual({ id: 'wb-right', x: -100, y: 90, w: 500, h: 30, heading: 270 });
+  });
+  test('roads 90–210, junction zone, double yellow center and broken white lane lines', () => {
+    const L = wideFourWay();
+    expect(L.background).toContain('<rect x="0" y="90" width="300" height="120"');
+    expect(L.background).toContain('<rect x="90" y="0" width="120" height="300"');
+    expect(L.zones).toEqual([{ id: 'junction', x: 90, y: 90, w: 120, h: 120 }]);
+    expect(L.background).toContain('x1="147.8" y1="0" x2="147.8" y2="90" stroke="#ffd600"');
+    expect(L.background).toContain('x1="120" y1="0" x2="120" y2="90" stroke="#ffffff" stroke-width="2.5" stroke-dasharray');
+  });
+  test('start, exit and stop poses sit on lane centers; every approach has a stop line', () => {
+    expect(WIDEFOUR.start.nb.right).toEqual({ x: 195, y: 340, heading: 0 });
+    expect(WIDEFOUR.start.sb.left).toEqual({ x: 135, y: -40, heading: 180 });
+    expect(WIDEFOUR.exit.eb.right).toEqual({ x: 340, y: 195, heading: 90 });
+    expect(WIDEFOUR.exit.wb.left).toEqual({ x: -40, y: 135, heading: 270 });
+    expect(wideFourWay().lines.map((l) => l.id)).toEqual(['line-nb', 'line-sb', 'line-eb', 'line-wb']);
+    // Car front (18 px ahead of center) 4 px behind the line at y 218.
+    expect(wideStopPose('nb', 'left')).toEqual({ x: 165, y: 240, heading: 0 });
+    expect(wideStopPose('wb', 'right')).toEqual({ x: 240, y: 105, heading: 270 });
+    expect(wideStopPose('sb', 'right')).toEqual({ x: 105, y: 60, heading: 180 });
+  });
+  test('controls add a bar across both lanes plus the sign or light prop', () => {
+    const L = wideFourWay({ controls: { nb: 'stop', eb: 'light' } });
+    expect(L.props).toEqual([WIDEFOUR.signId('nb'), WIDEFOUR.lightId('eb')]);
+    expect(L.background).toContain('<line x1="150" y1="216" x2="210" y2="216"');
+    expect(L.background).toContain('<line x1="84" y1="150" x2="84" y2="210"');
+    expect(wideFourWay().props).toEqual([]);
+  });
+  test('laneRect covers the lane before (in) or after (out) the junction', () => {
+    expect(WIDEFOUR.laneRect('nb', 'right', 'in')).toEqual({ x: 180, y: 210, w: 30, h: 90 });
+    expect(WIDEFOUR.laneRect('nb', 'left', 'out')).toEqual({ x: 150, y: 0, w: 30, h: 90 });
+    expect(WIDEFOUR.laneRect('eb', 'right', 'out')).toEqual({ x: 210, y: 180, w: 90, h: 30 });
+    expect(WIDEFOUR.laneRect('wb', 'left', 'out')).toEqual({ x: 0, y: 120, w: 90, h: 30 });
+  });
+  test('laneGlow is a prop with the given id and color', () => {
+    const g = laneGlow('g', { x: 0, y: 0, w: 30, h: 90 }, '#e53935');
+    expect(g.id).toBe('g');
+    expect(g.svg).toContain('data-prop="g"');
+    expect(g.svg).toContain('fill="#e53935"');
+    expect(withExtras(wideFourWay(), { props: [g] }).props).toEqual(['g']);
+  });
+});
+
+describe('planArrow via', () => {
+  test('without via the path is one curve; with via it bends through the via pose', () => {
+    const from = { x: 165, y: 230, heading: 0 }, to = { x: 105, y: 230, heading: 180 };
+    // Two <path>s (edge + color), one curve each.
+    expect(planArrow('a', from, { x: 100, y: 135, heading: 270 }, '#000').svg.match(/Q/g)).toHaveLength(2);
+    const u = planArrow('u', from, to, '#000', uTurnApex(from, to)).svg;
+    expect(u).toContain('M165 230 Q165 200 135 200 Q105 200 105 230');
   });
 });

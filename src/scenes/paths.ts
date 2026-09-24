@@ -117,3 +117,48 @@ export function driveUntil(from: Pose, t0: number, t1: number, o: { fromStop?: b
   out[out.length - 1].t = t1; // absorb rounding so the last keyframe lands exactly on t1
   return out;
 }
+
+/** Rounds away floating-point dust (e.g. sin(180°) ≈ 1e-16), so poses print cleanly. */
+const round3 = (v: number) => Math.round(v * 1000) / 1000;
+
+/**
+ * Middle pose of a U-turn from `from` to `to` (which must face the opposite way, off to one side): the point where
+ * the car faces straight across the road, half-way between the two lanes and half the lanes' spacing ahead of
+ * the further-ahead of the two poses, so both halves of the U are round.
+ */
+export function uTurnApex(from: Pose, to: Pose): Pose {
+  const d = dir(from.heading);
+  const r = { x: -d.y, y: d.x };
+  const rx = to.x - from.x, ry = to.y - from.y;
+  const side = rx * r.x + ry * r.y;
+  const ahead = rx * d.x + ry * d.y;
+  const back = Math.abs(normHeading(to.heading - from.heading) - 180);
+  if (back > 1 || Math.abs(side) < 1) throw new Error('uTurnApex: `to` must face the opposite way of `from`, off to one side');
+  const along = Math.max(0, ahead) + Math.abs(side) / 2;
+  return {
+    x: round3(from.x + d.x * along + (r.x * side) / 2),
+    y: round3(from.y + d.y * along + (r.y * side) / 2),
+    heading: normHeading(from.heading + (side < 0 ? -90 : 90)),
+  };
+}
+
+/**
+ * Time (ms) a `uTurnPath` from `from` to `to` should take for an average `speed` (default `SPEED`):
+ * the sum of `turnMs` for its two halves.
+ */
+export function uTurnMs(from: Pose, to: Pose, speed = SPEED): number {
+  const apex = uTurnApex(from, to);
+  return turnMs(from, apex, speed) + turnMs(apex, to, speed);
+}
+
+/**
+ * Smooth U-turn from `from` (the previous keyframe, at t0) to `to` (facing the opposite way), arriving at t1:
+ * two chained `turnPath` 90° turns through `uTurnApex`, with the time split so the speed stays about the same.
+ * Every keyframe is `turning` and its heading follows the path. Use `uTurnMs` for t1 − t0.
+ */
+export function uTurnPath(from: Pose, to: Pose, t0: number, t1: number, n = 8): Keyframe[] {
+  const apex = uTurnApex(from, to);
+  const a = turnMs(from, apex), b = turnMs(apex, to);
+  const tm = t0 + ((t1 - t0) * a) / (a + b);
+  return [...turnPath(from, apex, t0, tm, n), ...turnPath(apex, to, tm, t1, n)];
+}

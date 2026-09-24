@@ -68,12 +68,18 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .actor .beacon { opacity: 0.25; }
 .actor[data-state~="flashing"] .beacon { opacity: 1; animation: flash 0.5s steps(2) infinite; }
 .actor[data-state~="hidden"] { display: none; }
+/* Turn signals (cars only): hidden unless the state says which side. The amber lamps stay on; only the halo blinks. */
+.actor .blinker { display: none; }
+.actor[data-state~="signal-left"] .blinker-left, .actor[data-state~="signal-right"] .blinker-right { display: inline; }
+.actor[data-state~="signal-left"] .blinker-left .halo, .actor[data-state~="signal-right"] .blinker-right .halo { animation: flash 0.8s steps(2) infinite; }
 @keyframes flash { 50% { opacity: 0.15; } }
 @media (prefers-reduced-motion: reduce) {
   /* Same selectors as the flashing rules so specificity ties and this later rule wins; fill/opacity from those rules keep them solid on. */
   .light[data-state~="flash-red"] .lamp.red,
   .light[data-state~="flash-yellow"] .lamp.yellow,
   .actor[data-state~="flashing"] .beacon,
+  .actor[data-state~="signal-left"] .blinker-left .halo,
+  .actor[data-state~="signal-right"] .blinker-right .halo,
   .sign[data-state~="highlight"],
   .actor[data-state~="highlight"],
   .marking[data-state~="highlight"] { animation: none; }

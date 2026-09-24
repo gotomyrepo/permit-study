@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { frameAt } from '../src/scenes/engine';
-import { drive, driveUntil, SPEED, turnMs, turnPath } from '../src/scenes/paths';
+import { drive, driveUntil, SPEED, turnMs, turnPath, uTurnApex, uTurnMs, uTurnPath } from '../src/scenes/paths';
+import { dir } from '../src/scenes/geometry';
 import type { Keyframe, Pose, SceneDef } from '../src/scenes/types';
 
 /** One car following `track` in a single step, so speeds can be measured with the real engine. */
@@ -91,6 +92,43 @@ describe('turnMs', () => {
     const from: Pose = { x: 165, y: 190, heading: 0 };
     const to: Pose = { x: 110, y: 135, heading: 270 };
     const kfs = turnPath(from, to, 0, turnMs(from, to), 64);
+    let len = 0, prev: Pose = from;
+    for (const k of kfs) { len += Math.hypot(k.x - prev.x, k.y - prev.y); prev = k; }
+    expect((len / kfs[kfs.length - 1].t) * 1000).toBeCloseTo(SPEED, 0);
+  });
+});
+
+describe('uTurnPath', () => {
+  const from: Pose = { x: 162, y: 205, heading: 0 };
+  const to: Pose = { x: 105, y: 205, heading: 180 };
+  test('apex faces across the road, half-way between the lanes and half their spacing ahead', () => {
+    expect(uTurnApex(from, to)).toEqual({ x: 133.5, y: 176.5, heading: 270 });
+    // A U-turn to the driver's right faces the other way at the apex.
+    expect(uTurnApex({ x: 0, y: 0, heading: 90 }, { x: 0, y: 40, heading: 270 })).toEqual({ x: 20, y: 20, heading: 180 });
+  });
+  test('rejects poses that do not face opposite ways, or are not off to one side', () => {
+    expect(() => uTurnApex(from, { ...to, heading: 270 })).toThrow();
+    expect(() => uTurnApex(from, { x: 162, y: 150, heading: 180 })).toThrow();
+  });
+  test('ends exactly at `to` at t1, every keyframe turning, times increasing', () => {
+    const kfs = uTurnPath(from, to, 1000, 3000);
+    expect(kfs[kfs.length - 1]).toMatchObject({ x: to.x, y: to.y, heading: to.heading, t: 3000, turning: true });
+    expect(kfs.every((k) => k.turning)).toBe(true);
+    for (let i = 1; i < kfs.length; i++) expect(kfs[i].t).toBeGreaterThan(kfs[i - 1].t);
+  });
+  test('headings follow the path: each short move goes the way the car faces (within 12°)', () => {
+    const kfs = uTurnPath(from, to, 0, 2000, 32);
+    let prev: Pose = from;
+    for (const k of kfs) {
+      const a = dir(prev.heading), b = dir(k.heading);
+      const mx = k.x - prev.x, my = k.y - prev.y, len = Math.hypot(mx, my);
+      const cos = (v: { x: number; y: number }) => (mx * v.x + my * v.y) / len;
+      expect(Math.min(cos(a), cos(b))).toBeGreaterThan(Math.cos((12 * Math.PI) / 180));
+      prev = k;
+    }
+  });
+  test('over uTurnMs the average speed is SPEED', () => {
+    const kfs = uTurnPath(from, to, 0, uTurnMs(from, to), 64);
     let len = 0, prev: Pose = from;
     for (const k of kfs) { len += Math.hypot(k.x - prev.x, k.y - prev.y); prev = k; }
     expect((len / kfs[kfs.length - 1].t) * 1000).toBeCloseTo(SPEED, 0);

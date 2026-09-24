@@ -1798,5 +1798,137 @@
  {
   "id": "q-row-q6-answer",
   "text": "The answer is: The person walking."
+ },
+ {
+  "id": "end-turns",
+  "text": "Great job! You're done with Turns."
+ },
+ {
+  "id": "card-turn-signal",
+  "text": "Always signal before you turn. Turn on your turn signal at least 100 feet before the turn."
+ },
+ {
+  "id": "card-turn-right",
+  "text": "To turn right, get as far right as you can. Then turn into the right lane of the new road."
+ },
+ {
+  "id": "card-turn-left",
+  "text": "To turn left, use the lane next to the center line. Turn into the lane next to the center line. Stay on the right side of that line."
+ },
+ {
+  "id": "card-turn-u",
+  "text": "You want to make a U-turn. Never start it from the right lane. Use the lane next to the center line. Stay on the left side of that lane. Then make your U-turn."
+ },
+ {
+  "id": "q-turn-q1",
+  "text": "You want to turn right. Which arrow shows the correct way?"
+ },
+ {
+  "id": "q-turn-q1-c0",
+  "text": "The orange arrow."
+ },
+ {
+  "id": "q-turn-q1-c1",
+  "text": "The purple arrow."
+ },
+ {
+  "id": "q-turn-q1-c2",
+  "text": "Both arrows."
+ },
+ {
+  "id": "q-turn-q1-c3",
+  "text": "Neither arrow."
+ },
+ {
+  "id": "q-turn-q1-yes",
+  "text": "Yes! The orange arrow."
+ },
+ {
+  "id": "q-turn-q1-answer",
+  "text": "The answer is: The orange arrow."
+ },
+ {
+  "id": "q-turn-q2",
+  "text": "You want to turn left. Which arrow shows the correct way?"
+ },
+ {
+  "id": "q-turn-q2-c0",
+  "text": "Both arrows."
+ },
+ {
+  "id": "q-turn-q2-c1",
+  "text": "The orange arrow."
+ },
+ {
+  "id": "q-turn-q2-c2",
+  "text": "Neither arrow."
+ },
+ {
+  "id": "q-turn-q2-c3",
+  "text": "The purple arrow."
+ },
+ {
+  "id": "q-turn-q2-yes",
+  "text": "Yes! The purple arrow."
+ },
+ {
+  "id": "q-turn-q2-answer",
+  "text": "The answer is: The purple arrow."
+ },
+ {
+  "id": "q-turn-q3",
+  "text": "Which lane can you make a U-turn from?"
+ },
+ {
+  "id": "q-turn-q3-c0",
+  "text": "The right lane."
+ },
+ {
+  "id": "q-turn-q3-c1",
+  "text": "The lane next to the center line."
+ },
+ {
+  "id": "q-turn-q3-c2",
+  "text": "Any lane you like."
+ },
+ {
+  "id": "q-turn-q3-c3",
+  "text": "The shoulder of the road."
+ },
+ {
+  "id": "q-turn-q3-yes",
+  "text": "Yes! The lane next to the center line."
+ },
+ {
+  "id": "q-turn-q3-answer",
+  "text": "The answer is: The lane next to the center line."
+ },
+ {
+  "id": "q-turn-q4",
+  "text": "You want to turn. When must you turn on your turn signal?"
+ },
+ {
+  "id": "q-turn-q4-c0",
+  "text": "At least 10 feet before the turn."
+ },
+ {
+  "id": "q-turn-q4-c1",
+  "text": "Only as you start to turn."
+ },
+ {
+  "id": "q-turn-q4-c2",
+  "text": "At least 100 feet before the turn."
+ },
+ {
+  "id": "q-turn-q4-c3",
+  "text": "After you finish the turn."
+ },
+ {
+  "id": "q-turn-q4-yes",
+  "text": "Yes! At least 100 feet before the turn."
+ },
+ {
+  "id": "q-turn-q4-answer",
+  "text": "The answer is: At least 100 feet before the turn."
  }
 ]

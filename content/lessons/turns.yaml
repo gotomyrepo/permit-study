@@ -1,0 +1,74 @@
+id: turns
+order: 6
+title: Turns
+icon: "↪️"
+cards:
+  - id: turn-signal
+    say: "Always signal before you turn. Turn on your turn signal at least 100 feet before the turn."
+    scene: turn-signal
+    step: teach
+    source:
+      page: 36
+      quote: "Always signal before you turn or change lanes. It is important that other highway users know your intentions. The law requires you to signal a turn or lane change with your turn lights or hand signals at least 100 feet (30 m) ahead."
+  - id: turn-right
+    say: "To turn right, get as far right as you can. Then turn into the right lane of the new road."
+    scene: turn-right
+    step: teach
+    source:
+      page: 36
+      quote: "As you prepare to turn, get as far to the right as possible. Do not make wide, sweeping turns. Unless signs direct you to do otherwise, turn into the right lane of the road you enter."
+  - id: turn-left
+    say: "To turn left, use the lane next to the center line. Turn into the lane next to the center line. Stay on the right side of that line."
+    scene: turn-left
+    step: teach
+    source:
+      page: 37
+      quote: "Approach the turn from the right half of the roadway closest to the center. Enter the left lane, to the right of the center line."
+  - id: turn-u
+    say: "You want to make a U-turn. Never start it from the right lane. Use the lane next to the center line. Stay on the left side of that lane. Then make your U-turn."
+    scene: turn-u
+    step: teach
+    source:
+      page: 37
+      quote: "You can make a U-turn only from the left portion of the lane nearest to the centerline of the roadway, never from the right lane."
+questions:
+  - id: turn-q1
+    ask: "You want to turn right. Which arrow shows the correct way?"
+    scene: turn-right
+    step: question-arrows
+    choices: ["The orange arrow.", "The purple arrow.", "Both arrows.", "Neither arrow."]
+    answer: 0
+    explainCard: turn-right
+    source:
+      page: 36
+      quote: "As you prepare to turn, get as far to the right as possible. Do not make wide, sweeping turns. Unless signs direct you to do otherwise, turn into the right lane of the road you enter."
+  - id: turn-q2
+    ask: "You want to turn left. Which arrow shows the correct way?"
+    scene: turn-left
+    step: question-arrows
+    choices: ["Both arrows.", "The orange arrow.", "Neither arrow.", "The purple arrow."]
+    answer: 3
+    explainCard: turn-left
+    source:
+      page: 37
+      quote: "Approach the turn from the right half of the roadway closest to the center. Enter the left lane, to the right of the center line."
+  - id: turn-q3
+    ask: "Which lane can you make a U-turn from?"
+    scene: turn-u
+    step: question-road
+    choices: ["The right lane.", "The lane next to the center line.", "Any lane you like.", "The shoulder of the road."]
+    answer: 1
+    explainCard: turn-u
+    source:
+      page: 37
+      quote: "You can make a U-turn only from the left portion of the lane nearest to the centerline of the roadway, never from the right lane."
+  - id: turn-q4
+    ask: "You want to turn. When must you turn on your turn signal?"
+    scene: turn-signal
+    step: question-freeze
+    choices: ["At least 10 feet before the turn.", "Only as you start to turn.", "At least 100 feet before the turn.", "After you finish the turn."]
+    answer: 2
+    explainCard: turn-signal
+    source:
+      page: 36
+      quote: "The law requires you to signal a turn or lane change with your turn lights or hand signals at least 100 feet (30 m) ahead."

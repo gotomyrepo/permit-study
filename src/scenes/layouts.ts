@@ -2,18 +2,18 @@ import type { ActorKind, Lane, Pose, SceneDef, StopLine, Zone } from './types';
 import { SIZES } from './engine';
 import { dir } from './geometry';
 import { turnControl } from './paths';
-import { grass, line, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
+import { doubleYellow, grass, line, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
 
 export type Dir = 'nb' | 'sb' | 'eb' | 'wb';
 export type Control = 'stop' | 'yield' | 'light';
 
+/** Junction box edges: both roads run from BOX.min to BOX.max (60 px wide), centered on BOX.mid. */
+const BOX = { min: 120, max: 180, mid: 150, size: 60 };
 /**
  * Standard 300×300 four-way intersection.
  * Horizontal road y 120–180, vertical road x 120–180, junction box 120–180 both ways.
  * Lane centers: nb x=165, sb x=135, eb y=165, wb y=135 (US right-hand traffic).
  */
-/** Junction box edges: both roads run from BOX.min to BOX.max (60 px wide), centered on BOX.mid. */
-const BOX = { min: 120, max: 180, mid: 150, size: 60 };
 const LINE: Record<Dir, StopLine> = {
   nb: { id: 'line-nb', x: 165, y: 188, heading: 0 },
   sb: { id: 'line-sb', x: 135, y: 112, heading: 180 },
@@ -210,14 +210,15 @@ export function withExtras(base: Layout, o: LayoutExtras): Layout {
  * "Where this car will go" arrow: a thick line in the car's `color` with a dark edge and an arrowhead,
  * from `from` to `to`. If the headings differ it follows the same curve as `turnPath(from, to)`.
  * It is a prop: give it state `hidden` to hide it (e.g. set `hidden` in `initialStates` and '' in a question step).
+ * Pass `via` to bend it through a middle pose (two `turnPath`-style curves), e.g. `uTurnApex(from, to)` for a U-turn.
  */
-export function planArrow(id: string, from: Pose, to: Pose, color: string): ExtraProp {
-  const c = turnControl(from, to);
+export function planArrow(id: string, from: Pose, to: Pose, color: string, via?: Pose): ExtraProp {
   const d = dir(to.heading);
   const r = { x: -d.y, y: d.x };
   const tip = { x: to.x + d.x * 10, y: to.y + d.y * 10 };
   const f = (v: number) => +v.toFixed(2);
-  const path = `M${f(from.x)} ${f(from.y)} Q${f(c.x)} ${f(c.y)} ${f(to.x)} ${f(to.y)}`;
+  const q = (a: Pose, b: Pose) => { const c = turnControl(a, b); return ` Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}`; };
+  const path = `M${f(from.x)} ${f(from.y)}` + (via ? q(from, via) + q(via, to) : q(from, to));
   const head = `${f(tip.x)},${f(tip.y)} ${f(to.x + r.x * 8)},${f(to.y + r.y * 8)} ${f(to.x - r.x * 8)},${f(to.y - r.y * 8)}`;
   return {
     id,
@@ -228,12 +229,147 @@ export function planArrow(id: string, from: Pose, to: Pose, color: string): Extr
   };
 }
 
+/** Which of an approach's two lanes in `wideFourWay()`: `left` is next to the center line, `right` is next to the curb. */
+export type WideLane = 'left' | 'right';
+
+/** Junction box edges of `wideFourWay()`: both roads run from WIDE_BOX.min to WIDE_BOX.max (120 px wide). */
+const WIDE_BOX = { min: 90, max: 210, mid: 150, size: 120 };
+const WIDE_LANE_W = 30;
+/** Stop lines sit 8 px outside the junction (like `fourWay`'s); stop bars are drawn 2 px inside that. */
+const WIDE_LINE_OUT = 8;
+const WIDE_BAR_OUT = 6;
+/** On the grass, to the right of each approach, just before the junction. */
+const WIDE_SIGN_POS: Record<Dir, [number, number]> = { nb: [228, 238], sb: [72, 62], eb: [62, 228], wb: [238, 72] };
+
+/** Lane center across the road: `left` lanes are 15 px from the center line, `right` lanes 45 px (US right-hand traffic). */
+function wideCenter(d: Dir, lane: WideLane): number {
+  const off = lane === 'left' ? WIDE_LANE_W / 2 : WIDE_LANE_W * 1.5;
+  return d === 'nb' || d === 'eb' ? WIDE_BOX.mid + off : WIDE_BOX.mid - off;
+}
+function wideLine(d: Dir): StopLine {
+  const { min, max } = WIDE_BOX;
+  switch (d) {
+    case 'nb': return { id: `line-${d}`, x: 180, y: max + WIDE_LINE_OUT, heading: 0 };
+    case 'sb': return { id: `line-${d}`, x: 120, y: min - WIDE_LINE_OUT, heading: 180 };
+    case 'eb': return { id: `line-${d}`, x: min - WIDE_LINE_OUT, y: 180, heading: 90 };
+    case 'wb': return { id: `line-${d}`, x: max + WIDE_LINE_OUT, y: 120, heading: 270 };
+  }
+}
+/** The stop bar / yield teeth segment across approach `d`'s two lanes (inset by `inset` px at each end). */
+function wideBar(d: Dir, inset = 0): [number, number, number, number] {
+  const { min, max, mid } = WIDE_BOX;
+  switch (d) {
+    case 'nb': return [mid + inset, max + WIDE_BAR_OUT, max - inset, max + WIDE_BAR_OUT];
+    case 'sb': return [min + inset, min - WIDE_BAR_OUT, mid - inset, min - WIDE_BAR_OUT];
+    case 'eb': return [min - WIDE_BAR_OUT, mid + inset, min - WIDE_BAR_OUT, max - inset];
+    case 'wb': return [max + WIDE_BAR_OUT, min + inset, max + WIDE_BAR_OUT, mid - inset];
+  }
+}
+const WIDE_TEETH_POINT: Record<Dir, 'up' | 'down' | 'left' | 'right'> = { nb: 'down', sb: 'up', eb: 'left', wb: 'right' };
+const perLane = <T>(f: (d: Dir, lane: WideLane) => T) =>
+  Object.fromEntries(DIRS.map((d) => [d, { left: f(d, 'left'), right: f(d, 'right') }])) as Record<Dir, Record<WideLane, T>>;
+
 /**
- * 300×300 street with a parking lot below it. The street is the same as `fourWay()`'s horizontal road
- * (y 120–180, lanes `eb` center y 165 and `wb` center y 135, so `FOURWAY.start/exit.eb/wb` work).
- * The driveway (x 140–190) runs from the lot (y 228–300) up to the street; its lane `drive` (center x 165) heads north.
- * `DRIVEWAY.lineId` is an unpainted stop line at the street's edge; `DRIVEWAY.zoneId` is the near street lane in front of the driveway.
+ * Bigger 300×300 four-way intersection with two lanes each way, for "which lane do you turn from?" pictures.
+ * Both roads run from 90 to 210 (junction box 90–210); a double yellow center line at 150 splits the directions,
+ * and a broken white line splits each direction's two 30 px lanes. Lane ids are `<dir>-left` (next to the center
+ * line) and `<dir>-right` (next to the curb). Lane centers: nb x 165 / 195, sb x 135 / 105, eb y 165 / 195, wb y 135 / 105.
  */
+export const WIDEFOUR = {
+  start: perLane((d, lane): Pose => {
+    const c = wideCenter(d, lane);
+    return d === 'nb' ? { x: c, y: 340, heading: 0 } : d === 'sb' ? { x: c, y: -40, heading: 180 } :
+      d === 'eb' ? { x: -40, y: c, heading: 90 } : { x: 340, y: c, heading: 270 };
+  }),
+  exit: perLane((d, lane): Pose => {
+    const c = wideCenter(d, lane);
+    return d === 'nb' ? { x: c, y: -40, heading: 0 } : d === 'sb' ? { x: c, y: 340, heading: 180 } :
+      d === 'eb' ? { x: 340, y: c, heading: 90 } : { x: -40, y: c, heading: 270 };
+  }),
+  /** Lane center across the road (x for nb/sb, y for eb/wb). */
+  center: wideCenter,
+  laneId: (d: Dir, lane: WideLane) => `${d}-${lane}`,
+  lineId: (d: Dir) => `line-${d}`,
+  signId: (d: Dir) => `sign-${d}`,
+  lightId: (d: Dir) => `light-${d}`,
+  /**
+   * Rectangle over lane `lane` of road direction `d`, on the grass-to-junction stretch where that traffic arrives
+   * (`part: 'in'`, before the junction) or leaves (`'out'`, after it). For `laneGlow`.
+   */
+  laneRect(d: Dir, lane: WideLane, part: 'in' | 'out'): { x: number; y: number; w: number; h: number } {
+    const c = wideCenter(d, lane) - WIDE_LANE_W / 2;
+    const { min, max } = WIDE_BOX;
+    // nb and wb traffic arrive from the high-coordinate side (bottom / right); sb and eb leave toward it.
+    const high = (d === 'nb' || d === 'wb') === (part === 'in');
+    const [a, len] = high ? [max, 300 - max] : [0, min];
+    return d === 'nb' || d === 'sb' ? { x: c, y: a, w: WIDE_LANE_W, h: len } : { x: a, y: c, w: len, h: WIDE_LANE_W };
+  },
+  box: WIDE_BOX,
+};
+
+/** Pose with the vehicle's front 4 px behind the stop line of approach `d`, in lane `lane` of `wideFourWay()`. */
+export function wideStopPose(d: Dir, lane: WideLane, kind: ActorKind = 'car'): Pose {
+  const half = SIZES[kind].length / 2 + 4;
+  const l = wideLine(d), c = wideCenter(d, lane);
+  switch (d) {
+    case 'nb': return { x: c, y: l.y + half, heading: 0 };
+    case 'sb': return { x: c, y: l.y - half, heading: 180 };
+    case 'eb': return { x: l.x - half, y: c, heading: 90 };
+    case 'wb': return { x: l.x + half, y: c, heading: 270 };
+  }
+}
+
+/**
+ * Two lanes each way (see `WIDEFOUR`). `controls` work as in `fourWay`: a stop bar (or yield teeth) across both lanes
+ * of that approach, with its sign or light (`WIDEFOUR.signId/lightId`) on the grass to the right. Every approach has a
+ * stop line `WIDEFOUR.lineId(d)` for `stopsBehind`; use `wideStopPose` to stop behind it. Takes `LayoutExtras` too.
+ */
+export function wideFourWay(opts: { controls?: Partial<Record<Dir, Control>> } & LayoutExtras = {}): Layout {
+  const { controls = {}, ...extras } = opts;
+  const { min, max, mid, size } = WIDE_BOX;
+  let bg = grass(300, 300) + road(0, min, 300, size) + road(min, 0, size, 300);
+  bg += doubleYellow(mid, 0, mid, min) + doubleYellow(mid, max, mid, 300) + doubleYellow(0, mid, min, mid) + doubleYellow(max, mid, 300, mid);
+  for (const at of [mid - WIDE_LANE_W, mid + WIDE_LANE_W]) {
+    bg += line(at, 0, at, min, { dash: true }) + line(at, max, at, 300, { dash: true }) +
+      line(0, at, min, at, { dash: true }) + line(max, at, 300, at, { dash: true });
+  }
+  const props: string[] = [];
+  for (const [d, c] of Object.entries(controls) as [Dir, Control][]) {
+    const [sx, sy] = WIDE_SIGN_POS[d];
+    if (c === 'yield') bg += yieldTeeth(...wideBar(d, 1), WIDE_TEETH_POINT[d]);
+    else bg += stopBar(...wideBar(d));
+    if (c === 'light') { bg += trafficLight(WIDEFOUR.lightId(d), sx, sy); props.push(WIDEFOUR.lightId(d)); }
+    else { bg += sign(c, sx, sy, { id: WIDEFOUR.signId(d) }); props.push(WIDEFOUR.signId(d)); }
+  }
+  const lanes: Lane[] = [];
+  for (const d of DIRS) for (const lane of ['left', 'right'] as WideLane[]) {
+    const lo = wideCenter(d, lane) - WIDE_LANE_W / 2;
+    const heading = LINE[d].heading;
+    lanes.push(d === 'nb' || d === 'sb'
+      ? { id: WIDEFOUR.laneId(d, lane), x: lo, y: -100, w: WIDE_LANE_W, h: 500, heading }
+      : { id: WIDEFOUR.laneId(d, lane), x: -100, y: lo, w: 500, h: WIDE_LANE_W, heading });
+  }
+  return withExtras({
+    background: bg, lanes,
+    zones: [{ id: 'junction', x: min, y: min, w: size, h: size }],
+    lines: DIRS.map(wideLine),
+    props,
+  }, extras);
+}
+
+/**
+ * A see-through glow over a lane (e.g. `WIDEFOUR.laneRect(...)`), with a thick edge in `color` (default bright yellow),
+ * to point at "this lane" while it is named. It is a prop drawn under the cars: hide it with `hidden` until needed.
+ */
+export function laneGlow(id: string, r: { x: number; y: number; w: number; h: number }, color = '#ffeb3b'): ExtraProp {
+  const i = 2;
+  return {
+    id,
+    svg: `<g class="lane-glow" data-prop="${id}"><rect x="${r.x + i}" y="${r.y + i}" width="${r.w - 2 * i}" height="${r.h - 2 * i}" ` +
+      `fill="${color}" fill-opacity="0.35" stroke="${color}" stroke-width="3.5" rx="3"/></g>`,
+  };
+}
+
 /** Driveway lane center (the same x as the `nb` lane) and its stop line, 2 px below the street's edge. */
 const DRIVE_X = LINE.nb.x;
 const DRIVE_LINE_Y = BOX.max + 2;
@@ -244,6 +380,12 @@ export const DRIVEWAY = {
   stop: (kind: ActorKind = 'car'): Pose => ({ x: DRIVE_X, y: DRIVE_LINE_Y + SIZES[kind].length / 2 + 4, heading: 0 }),
 };
 
+/**
+ * 300×300 street with a parking lot below it. The street is the same as `fourWay()`'s horizontal road
+ * (y 120–180, lanes `eb` center y 165 and `wb` center y 135, so `FOURWAY.start/exit.eb/wb` work).
+ * The driveway (x 140–190) runs from the lot (y 228–300) up to the street; its lane `drive` (center x 165) heads north.
+ * `DRIVEWAY.lineId` is an unpainted stop line at the street's edge; `DRIVEWAY.zoneId` is the near street lane in front of the driveway.
+ */
 export function driveway(): Layout {
   const lot = '#8d8d8d';
   let bg = grass(300, 300) + road(0, BOX.min, 300, BOX.size) + line(0, BOX.mid, 300, BOX.mid, { color: COLORS.yellow, dash: true });
