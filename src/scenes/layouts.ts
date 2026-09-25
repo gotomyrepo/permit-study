@@ -522,6 +522,18 @@ export function signPair(id: string, left: PairSign, right: PairSign, teachMs: n
 }
 
 /**
+ * An unpainted stop line just in front of a vehicle of `kind` standing at pose `p`: `gap` px (default 2) ahead of its
+ * front, facing its heading. Add it to a layout with `lines` and use it in a `stopsBehind` expect to prove the vehicle
+ * stays stopped there (e.g. pulled over at the edge of the road, or waiting behind a stopped school bus).
+ */
+export function stopLineAhead(id: string, p: Pose, kind: ActorKind = 'car', gap = 2): StopLine {
+  const d = dir(p.heading);
+  const ahead = SIZES[kind].length / 2 + gap;
+  const r = (v: number) => Math.round(v * 1000) / 1000;
+  return { id, x: r(p.x + d.x * ahead), y: r(p.y + d.y * ahead), heading: p.heading };
+}
+
+/**
  * A paved shoulder along the bottom (right-hand, for eastbound traffic) edge of `twoLane()` / `sameWay()`:
  * a lighter grey strip y 190–216 with a solid white edge line where it meets the road. Spread `shoulder()` into
  * the road's options (it is `LayoutExtras`): it adds the prop `SHOULDER.id` and the zone `SHOULDER.zoneId`, so a

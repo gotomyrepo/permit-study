@@ -150,7 +150,7 @@ describe('changeSpeed', () => {
     const kfs = changeSpeed(EAST, 40, 1000, SPEED, 20);
     expect(changeSpeedMs(40, SPEED, 20)).toBeCloseTo(80000 / 65);
     expect(kfs[kfs.length - 1]).toMatchObject({ x: 90, y: 170, heading: 90 });
-    expect(kfs[kfs.length - 1].t).toBeCloseTo(1000 + 80000 / 65);
+    expect(kfs[kfs.length - 1].t).toBe(Math.round(1000 + 80000 / 65));
     const scene = sceneWith(EAST, [{ ...EAST, t: 1000 }, ...kfs]);
     const end = kfs[kfs.length - 1].t;
     expect(speedAt(scene, 1030)).toBeCloseTo(SPEED, -1);
@@ -167,7 +167,7 @@ describe('changeSpeed', () => {
     const kfs = changeSpeed(EAST, 50, 0, SPEED, 0, { side: 10 });
     const end = kfs[kfs.length - 1];
     expect(end).toMatchObject({ x: 100, y: 180, heading: 90 });
-    expect(end.t).toBeCloseTo(changeSpeedMs(50, SPEED, 0));
+    expect(end.t).toBe(Math.round(changeSpeedMs(50, SPEED, 0)));
     const scene = sceneWith(EAST, kfs);
     expect(speedAt(scene, end.t - 10)).toBeLessThan(5);
     for (let i = 1; i < kfs.length; i++) {
@@ -176,5 +176,16 @@ describe('changeSpeed', () => {
       expect(Math.abs(b.heading - 90)).toBeLessThan(20);
       expect(Math.abs(along - (b.heading - 90))).toBeLessThan(6); // heading follows the path
     }
+  });
+  test('times are whole ms, like drive', () => {
+    for (const k of changeSpeed(EAST, 50, 1000, SPEED, 0, { side: 10 })) expect(Number.isInteger(k.t)).toBe(true);
+  });
+  test('clear errors for no distance, no speed at all, or a negative speed; a target speed of 0 still works', () => {
+    expect(() => changeSpeed(EAST, 0, 0, SPEED, 0)).toThrow(/forward must be more than 0/);
+    expect(() => changeSpeed(EAST, 30, 0, 0, 0)).toThrow(/both 0/);
+    expect(() => changeSpeed(EAST, 30, 0, -5, 20)).toThrow(/can't be negative/);
+    expect(() => changeSpeed(EAST, 30, 0, SPEED, -1)).toThrow(/can't be negative/);
+    expect(() => changeSpeed(EAST, 30, 0, SPEED, 0)).not.toThrow();
+    expect(() => changeSpeed(EAST, 30, 0, 0, SPEED)).not.toThrow();
   });
 });

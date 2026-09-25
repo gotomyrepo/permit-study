@@ -180,6 +180,9 @@ export function changeSpeedMs(forward: number, v0: number, v1: number): number {
 export function changeSpeed(
   from: Pose, forward: number, t0: number, v0: number, v1: number, o: { side?: number; n?: number } = {},
 ): Keyframe[] {
+  if (!(forward > 0)) throw new Error(`changeSpeed: forward must be more than 0 px (got ${forward})`);
+  if (v0 < 0 || v1 < 0) throw new Error(`changeSpeed: speeds can't be negative (got ${v0} → ${v1} px/s)`);
+  if (v0 + v1 === 0) throw new Error('changeSpeed: v0 and v1 are both 0, so the car never moves');
   const side = o.side ?? 0, n = o.n ?? 16;
   const T = changeSpeedMs(forward, v0, v1) / 1000;
   const d = dir(from.heading);
@@ -191,7 +194,7 @@ export function changeSpeed(
     const lat = side * u * u * (3 - 2 * u);
     const slope = (side * 6 * u * (1 - u)) / forward;
     out.push({
-      t: t0 + s * 1000,
+      t: Math.round(t0 + s * 1000), // whole ms, like `drive`
       x: round3(from.x + d.x * forward * u + r.x * lat),
       y: round3(from.y + d.y * forward * u + r.y * lat),
       heading: normHeading(from.heading + (Math.atan(slope) * 180) / Math.PI),

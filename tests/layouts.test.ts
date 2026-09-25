@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -268,5 +268,13 @@ describe('lampCarCloseup', () => {
     expect(three.props).toEqual(['lamp-car-blue', 'lamp-car-green', 'lamp-truck-amber']);
     expect(three.background).toContain(`fill="${LAMP_COLORS.amber.lamp}"`);
     for (const x of [55, 150, 245]) expect(three.background).toContain(`cx="${x}"`);
+  });
+});
+
+describe('stopLineAhead', () => {
+  test('sits gap px in front of the vehicle, facing its heading', () => {
+    expect(stopLineAhead('a', { x: 100, y: 180, heading: 90 })).toEqual({ id: 'a', x: 120, y: 180, heading: 90 });
+    expect(stopLineAhead('b', { x: 165, y: 250, heading: 0 }, 'bus', 5)).toEqual({ id: 'b', x: 165, y: 213, heading: 0 });
+    expect(stopLineAhead('c', { x: 200, y: 130, heading: 270 }, 'ambulance')).toEqual({ id: 'c', x: 178, y: 130, heading: 270 });
   });
 });
