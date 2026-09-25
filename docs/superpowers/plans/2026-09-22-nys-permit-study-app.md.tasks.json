@@ -192,11 +192,20 @@
   {
    "id": 20,
    "subject": "Task 20: Lesson: Parking",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 20 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
     9
+   ]
+  },
+  {
+   "id": 23,
+   "subject": "Task 20b: Lesson: Parking signs",
+   "status": "pending",
+   "description": "Added 2026-09-25 by user decision: separate short lesson for NO PARKING / NO STANDING / NO STOPPING signs (p.43) and disability parking, since Parking hit the 5-card limit. Follows Tasks 12-21 common rules.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
+   "blockedBy": [
+    20
    ]
   },
   {
@@ -229,5 +238,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-25T04:26:30.039Z"
+ "lastUpdated": "2026-09-25T12:19:21.319Z"
 }
