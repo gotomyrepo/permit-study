@@ -2,7 +2,7 @@ import type { ActorKind, Lane, Pose, SceneDef, StopLine, Zone } from './types';
 import { SIZES } from './engine';
 import { dir } from './geometry';
 import { turnControl } from './paths';
-import { doubleYellow, grass, line, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
+import { doubleYellow, grass, line, measure, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
 
 export type Dir = 'nb' | 'sb' | 'eb' | 'wb';
 export type Control = 'stop' | 'yield' | 'light';
@@ -535,9 +535,11 @@ export function stopLineAhead(id: string, p: Pose, kind: ActorKind = 'car', gap 
 
 /**
  * A paved shoulder along the bottom (right-hand, for eastbound traffic) edge of `twoLane()` / `sameWay()`:
- * a lighter grey strip y 190–216 with a solid white edge line where it meets the road. Spread `shoulder()` into
- * the road's options (it is `LayoutExtras`): it adds the prop `SHOULDER.id` and the zone `SHOULDER.zoneId`, so a
- * vehicle parked on the shoulder (center y `SHOULDER.y`, any heading) passes the lane check.
+ * a lighter grey strip y 190–216 with a solid white edge line where it meets the road. It is `LayoutExtras`: it adds
+ * the prop `SHOULDER.id` and the zone `SHOULDER.zoneId`, so a vehicle parked on the shoulder (center y `SHOULDER.y`,
+ * any heading) passes the lane check. Spreading it into the road's options (`twoLane({ ...shoulder() })`) only works
+ * when you pass no other `props` or `zones`, since a later `props:` key replaces the shoulder's. To add your own too,
+ * merge them: `const sh = shoulder(); sameWay({ props: [...sh.props, myGlow], zones: sh.zones })`.
  */
 export const SHOULDER = { id: 'shoulder', zoneId: 'shoulder', top: 190, bottom: 216, y: 203 };
 export function shoulder(): Required<Pick<LayoutExtras, 'props' | 'zones'>> {
@@ -619,4 +621,38 @@ export function lampCarCloseup(id: string, vehicles: LampVehicle[], opts: { teac
     lanes: [], zones: [], lines: [], props, actors: [],
     steps: closeupSteps(opts.teachMs),
   };
+}
+
+/**
+ * A grass median down the middle of `twoLane()`, so it reads as a divided highway: a green strip y 143–157 (over the
+ * center line) with a solid yellow edge line on each side (y 142 and 158). It stays clear of both lanes' cars
+ * (bodies y 121–139 and 161–179). It is `LayoutExtras` with one prop, `MEDIAN.id`; merge it with other props as for
+ * `shoulder()`.
+ */
+export const MEDIAN = { id: 'median', top: 142, bottom: 158 };
+export function median(): Required<Pick<LayoutExtras, 'props'>> {
+  const { id, top, bottom } = MEDIAN;
+  return {
+    props: [{
+      id,
+      svg: `<g data-prop="${id}"><rect x="0" y="${top + 1}" width="300" height="${bottom - top - 2}" fill="${COLORS.grass}"/>` +
+        line(0, top, 300, top, { color: COLORS.yellow, width: 3 }) + line(0, bottom, 300, bottom, { color: COLORS.yellow, width: 3 }) + `</g>`,
+    }],
+  };
+}
+
+/**
+ * A "this far" measuring arrow as a prop: a double-headed dark arrow from (x1, y) to (x2, y) with a white label
+ * above it (e.g. "20 feet"), and a short tick at each end. Use it to show a distance while the narration says it;
+ * hide it with `hidden` until then. `reach: [ya, yb]` adds a dashed dark guide line up (or down) from each end to
+ * that y, to tie the arrow to the two things it measures between (e.g. a car's front and a bus's back in the lane
+ * above). Throws if the two ends are less than 20 px apart (too short to read) or the text is empty.
+ */
+export function measureProp(id: string, x1: number, x2: number, y: number, text: string, o: { reach?: [number, number] } = {}): ExtraProp {
+  if (!(Math.abs(x2 - x1) >= 20)) throw new Error(`measureProp: the ends must be at least 20 px apart (got ${x1} to ${x2})`);
+  if (!text.trim()) throw new Error('measureProp: text must not be empty');
+  const tick = (x: number) => line(x, y - 7, x, y + 7, { color: '#212121', width: 2 });
+  const guide = (x: number, to: number) => line(x, y, x, to, { color: '#212121', width: 1.5, dash: '4 3' });
+  const guides = o.reach ? guide(x1, o.reach[0]) + guide(x2, o.reach[1]) : '';
+  return { id, svg: `<g class="measure" data-prop="${id}">${guides}${tick(x1)}${tick(x2)}${measure(x1, y, x2, y, text)}</g>` };
 }

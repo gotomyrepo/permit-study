@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -276,5 +276,42 @@ describe('stopLineAhead', () => {
     expect(stopLineAhead('a', { x: 100, y: 180, heading: 90 })).toEqual({ id: 'a', x: 120, y: 180, heading: 90 });
     expect(stopLineAhead('b', { x: 165, y: 250, heading: 0 }, 'bus', 5)).toEqual({ id: 'b', x: 165, y: 213, heading: 0 });
     expect(stopLineAhead('c', { x: 200, y: 130, heading: 270 }, 'ambulance')).toEqual({ id: 'c', x: 178, y: 130, heading: 270 });
+  });
+});
+
+describe('median', () => {
+  test('a grass strip with a yellow edge line on each side, clear of both lanes of twoLane', () => {
+    const m = median();
+    expect(m.props.map((p) => p.id)).toEqual([MEDIAN.id]);
+    expect(m.props[0].svg).toContain(`data-prop="${MEDIAN.id}"`);
+    const road = twoLane(m);
+    expect(road.props).toContain(MEDIAN.id);
+    expect(road.lanes.map((l) => l.id)).toEqual(['eb', 'wb']);
+    // Car bodies: westbound y 121–139, eastbound 161–179; the median's lines (3 px wide) stay between them.
+    expect(MEDIAN.top - 1.5).toBeGreaterThan(139);
+    expect(MEDIAN.bottom + 1.5).toBeLessThan(161);
+  });
+});
+
+describe('measureProp', () => {
+  test('a labeled arrow prop with ticks at both ends', () => {
+    const m = measureProp('gap', 150, 198, 214, '20 feet');
+    expect(m.id).toBe('gap');
+    expect(m.svg).toContain('data-prop="gap"');
+    expect(m.svg).toContain('20 feet');
+    expect(m.svg).toContain('x1="150"');
+    expect(m.svg).toContain('x1="198"');
+  });
+  test('reach adds a dashed guide from each end to the given y', () => {
+    const m = measureProp('gap', 120, 168, 200, '20 feet', { reach: [170, 130] });
+    expect(m.svg).toContain('x1="120" y1="200" x2="120" y2="170"');
+    expect(m.svg).toContain('x1="168" y1="200" x2="168" y2="130"');
+    expect(m.svg.match(/stroke-dasharray="4 3"/g)).toHaveLength(2);
+    expect(measureProp('gap', 120, 168, 200, '20 feet').svg).not.toContain('stroke-dasharray');
+  });
+  test('rejects ends that are too close and empty text', () => {
+    expect(() => measureProp('g', 100, 110, 50, '5 feet')).toThrow(/at least 20 px apart/);
+    expect(() => measureProp('g', 100, NaN, 50, '5 feet')).toThrow(/at least 20 px apart/);
+    expect(() => measureProp('g', 100, 160, 50, ' ')).toThrow(/text must not be empty/);
   });
 });

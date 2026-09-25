@@ -2122,5 +2122,189 @@
  {
   "id": "q-emergency-q6-answer",
   "text": "The answer is: Warns you of possible danger."
+ },
+ {
+  "id": "end-school-bus",
+  "text": "Great job! You're done with School buses."
+ },
+ {
+  "id": "card-school-bus-yellow",
+  "text": "The school bus ahead is flashing yellow lights. It is getting ready to stop. Slow down, and get ready to stop too."
+ },
+ {
+  "id": "card-school-bus-stop",
+  "text": "The school bus has stopped. Its red lights are flashing. You must stop before you reach the bus. Stop at least 20 feet away."
+ },
+ {
+  "id": "card-school-bus-wait",
+  "text": "Stay stopped until the bus starts moving again. Then look for children by the side of the road. Drive slowly until you pass them."
+ },
+ {
+  "id": "card-school-bus-oncoming",
+  "text": "A school bus has stopped in the other lane. Its red lights are flashing. You must stop for it too, at least 20 feet away."
+ },
+ {
+  "id": "card-school-bus-divided",
+  "text": "This school bus is on the other side of a divided highway. Its red lights are flashing. You must still stop for it."
+ },
+ {
+  "id": "q-school-bus-q1",
+  "text": "You are the blue car. The school bus ahead has stopped. Its red lights are flashing. What do you do?"
+ },
+ {
+  "id": "q-school-bus-q1-c0",
+  "text": "Pass it slowly on the left."
+ },
+ {
+  "id": "q-school-bus-q1-c1",
+  "text": "Honk, then drive around it."
+ },
+ {
+  "id": "q-school-bus-q1-c2",
+  "text": "Stop at least 20 feet away."
+ },
+ {
+  "id": "q-school-bus-q1-c3",
+  "text": "Stop right at its back bumper."
+ },
+ {
+  "id": "q-school-bus-q1-yes",
+  "text": "Yes! Stop at least 20 feet away."
+ },
+ {
+  "id": "q-school-bus-q1-answer",
+  "text": "The answer is: Stop at least 20 feet away."
+ },
+ {
+  "id": "q-school-bus-q2",
+  "text": "You are the blue car. The school bus ahead is flashing yellow lights. What do you do?"
+ },
+ {
+  "id": "q-school-bus-q2-c0",
+  "text": "Speed up and pass it."
+ },
+ {
+  "id": "q-school-bus-q2-c1",
+  "text": "Slow down. Get ready to stop."
+ },
+ {
+  "id": "q-school-bus-q2-c2",
+  "text": "Keep the same speed."
+ },
+ {
+  "id": "q-school-bus-q2-c3",
+  "text": "Honk so it lets you pass."
+ },
+ {
+  "id": "q-school-bus-q2-yes",
+  "text": "Yes! Slow down. Get ready to stop."
+ },
+ {
+  "id": "q-school-bus-q2-answer",
+  "text": "The answer is: Slow down. Get ready to stop."
+ },
+ {
+  "id": "q-school-bus-q3",
+  "text": "You are the blue car. A school bus has stopped in the other lane. Its red lights are flashing. What do you do?"
+ },
+ {
+  "id": "q-school-bus-q3-c0",
+  "text": "Keep going. It is in the other lane."
+ },
+ {
+  "id": "q-school-bus-q3-c1",
+  "text": "Stop before you reach the bus."
+ },
+ {
+  "id": "q-school-bus-q3-c2",
+  "text": "Speed up to get past it."
+ },
+ {
+  "id": "q-school-bus-q3-c3",
+  "text": "Honk and keep going."
+ },
+ {
+  "id": "q-school-bus-q3-yes",
+  "text": "Yes! Stop before you reach the bus."
+ },
+ {
+  "id": "q-school-bus-q3-answer",
+  "text": "The answer is: Stop before you reach the bus."
+ },
+ {
+  "id": "q-school-bus-q4",
+  "text": "You are the blue car, on a divided highway. A school bus has stopped on the other side. Its red lights are flashing. What do you do?"
+ },
+ {
+  "id": "q-school-bus-q4-c0",
+  "text": "Keep going. It is on the other side."
+ },
+ {
+  "id": "q-school-bus-q4-c1",
+  "text": "Stop for the bus."
+ },
+ {
+  "id": "q-school-bus-q4-c2",
+  "text": "Speed up to get past it."
+ },
+ {
+  "id": "q-school-bus-q4-yes",
+  "text": "Yes! Stop for the bus."
+ },
+ {
+  "id": "q-school-bus-q4-answer",
+  "text": "The answer is: Stop for the bus."
+ },
+ {
+  "id": "q-school-bus-q5",
+  "text": "You are the blue car. You stopped for a school bus. Its red lights are still flashing. When can you drive again?"
+ },
+ {
+  "id": "q-school-bus-q5-c0",
+  "text": "Right away, if you see no children."
+ },
+ {
+  "id": "q-school-bus-q5-c1",
+  "text": "When the bus starts moving again."
+ },
+ {
+  "id": "q-school-bus-q5-c2",
+  "text": "When a car behind you honks."
+ },
+ {
+  "id": "q-school-bus-q5-yes",
+  "text": "Yes! When the bus starts moving again."
+ },
+ {
+  "id": "q-school-bus-q5-answer",
+  "text": "The answer is: When the bus starts moving again."
+ },
+ {
+  "id": "q-school-bus-q6",
+  "text": "You are the blue car. The school bus has driven away. What do you do now?"
+ },
+ {
+  "id": "q-school-bus-q6-c0",
+  "text": "Speed up to make up time."
+ },
+ {
+  "id": "q-school-bus-q6-c1",
+  "text": "Look for children. Drive slowly past them."
+ },
+ {
+  "id": "q-school-bus-q6-c2",
+  "text": "Honk so the children stay back."
+ },
+ {
+  "id": "q-school-bus-q6-c3",
+  "text": "Drive fast past the bus stop."
+ },
+ {
+  "id": "q-school-bus-q6-yes",
+  "text": "Yes! Look for children. Drive slowly past them."
+ },
+ {
+  "id": "q-school-bus-q6-answer",
+  "text": "The answer is: Look for children. Drive slowly past them."
  }
 ]

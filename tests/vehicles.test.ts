@@ -34,3 +34,23 @@ describe('ambulance roof lights', () => {
     expect(css).toMatch(/flashing"\] \.siren-halo \{ display: inline; animation: flash/);
   });
 });
+
+describe('school bus', () => {
+  const bus = vehicleSvg({ id: 'b', kind: 'bus', start: { x: 0, y: 0, heading: 0 } });
+  test('yellow-orange, with 4 red and 4 yellow roof lamps (each with a halo) and a stop arm', () => {
+    expect(bus).toContain('fill="#f9a825"');
+    expect(bus.match(/class="beacon"/g)).toHaveLength(4);
+    expect(bus.match(/class="beacon-halo"/g)).toHaveLength(4);
+    expect(bus.match(/class="beacon-amber"/g)).toHaveLength(4);
+    expect(bus.match(/class="beacon-amber-halo"/g)).toHaveLength(4);
+    expect(bus).toMatch(/<g class="stop-arm">.*fill="#d32f2f"/);
+  });
+  test('the CSS lights red for flashing and yellow for warning; only the halos blink; the arm shows for stop-arm', () => {
+    const css = readFileSync('src/styles.css', 'utf8');
+    expect(css).toContain('.actor[data-state~="flashing"] .beacon { opacity: 1; }');
+    expect(css).toMatch(/flashing"\] \.beacon-halo \{ display: inline; animation: flash/);
+    expect(css).toContain('.actor[data-state~="warning"] .beacon-amber { display: inline; }');
+    expect(css).toMatch(/warning"\] \.beacon-amber-halo \{ display: inline; animation: flash/);
+    expect(css).toContain('.actor[data-state~="stop-arm"] .stop-arm { display: inline; }');
+  });
+});

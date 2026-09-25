@@ -65,8 +65,13 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .light[data-state~="flash-yellow"] .lamp.yellow { fill: #ffc107; animation: flash 1s steps(2) infinite; }
 .actor .stop-arm { display: none; }
 .actor[data-state~="stop-arm"] .stop-arm { display: inline; }
-.actor .beacon { opacity: 0.25; }
-.actor[data-state~="flashing"] .beacon { opacity: 1; animation: flash 0.5s steps(2) infinite; }
+/* School bus roof lights: dim red unless flashing (red) or warning (yellow); the lit lamps stay on and only the halos blink. */
+.actor .beacon { opacity: 0.35; }
+.actor .beacon-halo, .actor .beacon-amber, .actor .beacon-amber-halo { display: none; }
+.actor[data-state~="flashing"] .beacon { opacity: 1; }
+.actor[data-state~="flashing"] .beacon-halo { display: inline; animation: flash 0.5s steps(2) infinite; }
+.actor[data-state~="warning"] .beacon-amber { display: inline; }
+.actor[data-state~="warning"] .beacon-amber-halo { display: inline; animation: flash 0.5s steps(2) infinite; }
 /* Ambulance roof lights: dim unless flashing; when flashing the lamps stay lit and only the halos blink. */
 .actor .siren { opacity: 0.35; }
 .actor .siren-halo { display: none; }
@@ -84,7 +89,8 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
   /* Same selectors as the flashing rules so specificity ties and this later rule wins; fill/opacity from those rules keep them solid on. */
   .light[data-state~="flash-red"] .lamp.red,
   .light[data-state~="flash-yellow"] .lamp.yellow,
-  .actor[data-state~="flashing"] .beacon,
+  .actor[data-state~="flashing"] .beacon-halo,
+  .actor[data-state~="warning"] .beacon-amber-halo,
   .actor[data-state~="flashing"] .siren-halo,
   .pic .lamp-halo,
   .pic[data-state~="highlight"],

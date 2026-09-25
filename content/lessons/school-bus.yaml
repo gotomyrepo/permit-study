@@ -1,0 +1,101 @@
+id: school-bus
+order: 8
+title: School buses
+icon: "🚌"
+cards:
+  - id: school-bus-yellow
+    say: "The school bus ahead is flashing yellow lights. It is getting ready to stop. Slow down, and get ready to stop too."
+    scene: school-bus-yellow
+    step: teach
+    source:
+      page: 40
+      quote: "Before a school bus stops to load or discharge passengers, the driver will usually yellow flash warning lights, which are located on the front and back of the bus near the roof. When you see them, decrease speed and be prepared to stop."
+  - id: school-bus-stop
+    say: "The school bus has stopped. Its red lights are flashing. You must stop before you reach the bus. Stop at least 20 feet away."
+    scene: school-bus-stop
+    step: teach
+    source:
+      page: 40
+      quote: "When a stopped school bus flashes its red light(s), traffic that approaches from either direction, even in front of the school and in school parking lots, must stop before it reaches the bus. You should stop at least 20 feet (6 m) away from the bus."
+  - id: school-bus-wait
+    say: "Stay stopped until the bus starts moving again. Then look for children by the side of the road. Drive slowly until you pass them."
+    scene: school-bus-stop
+    step: wait
+    source:
+      page: 40
+      quote: "When you stop for a school bus, you cannot drive again until the bus starts moving again or when the bus driver or a traffic officer signals that you can proceed. This law applies on all roadways in New York State. You must stop for a school bus even if it is on the opposite side of a divided highway. After you stop for a school bus, look for children along the side of the road. Drive slowly until you have passed them."
+  - id: school-bus-oncoming
+    say: "A school bus has stopped in the other lane. Its red lights are flashing. You must stop for it too, at least 20 feet away."
+    scene: school-bus-oncoming
+    step: teach
+    source:
+      page: 40
+      quote: "When a stopped school bus flashes its red light(s), traffic that approaches from either direction, even in front of the school and in school parking lots, must stop before it reaches the bus. You should stop at least 20 feet (6 m) away from the bus."
+  - id: school-bus-divided
+    say: "This school bus is on the other side of a divided highway. Its red lights are flashing. You must still stop for it."
+    scene: school-bus-divided
+    step: teach
+    source:
+      page: 40
+      quote: "You must stop for a school bus even if it is on the opposite side of a divided highway."
+questions:
+  - id: school-bus-q1
+    ask: "You are the blue car. The school bus ahead has stopped. Its red lights are flashing. What do you do?"
+    scene: school-bus-stop
+    step: question-stop
+    choices: ["Pass it slowly on the left.", "Honk, then drive around it.", "Stop at least 20 feet away.", "Stop right at its back bumper."]
+    answer: 2
+    explainCard: school-bus-stop
+    source:
+      page: 40
+      quote: "must stop before it reaches the bus. You should stop at least 20 feet (6 m) away from the bus."
+  - id: school-bus-q2
+    ask: "You are the blue car. The school bus ahead is flashing yellow lights. What do you do?"
+    scene: school-bus-yellow
+    step: question-yellow
+    choices: ["Speed up and pass it.", "Slow down. Get ready to stop.", "Keep the same speed.", "Honk so it lets you pass."]
+    answer: 1
+    explainCard: school-bus-yellow
+    source:
+      page: 40
+      quote: "Before a school bus stops to load or discharge passengers, the driver will usually yellow flash warning lights, which are located on the front and back of the bus near the roof. When you see them, decrease speed and be prepared to stop."
+  - id: school-bus-q3
+    ask: "You are the blue car. A school bus has stopped in the other lane. Its red lights are flashing. What do you do?"
+    scene: school-bus-oncoming
+    step: question-oncoming
+    choices: ["Keep going. It is in the other lane.", "Stop before you reach the bus.", "Speed up to get past it.", "Honk and keep going."]
+    answer: 1
+    explainCard: school-bus-oncoming
+    source:
+      page: 40
+      quote: "When a stopped school bus flashes its red light(s), traffic that approaches from either direction, even in front of the school and in school parking lots, must stop before it reaches the bus."
+  - id: school-bus-q4
+    ask: "You are the blue car, on a divided highway. A school bus has stopped on the other side. Its red lights are flashing. What do you do?"
+    scene: school-bus-divided
+    step: question-divided
+    choices: ["Keep going. It is on the other side.", "Stop for the bus.", "Speed up to get past it."]
+    answer: 1
+    explainCard: school-bus-divided
+    source:
+      page: 40
+      quote: "You must stop for a school bus even if it is on the opposite side of a divided highway."
+  - id: school-bus-q5
+    ask: "You are the blue car. You stopped for a school bus. Its red lights are still flashing. When can you drive again?"
+    scene: school-bus-stop
+    step: question-wait
+    choices: ["Right away, if you see no children.", "When the bus starts moving again.", "When a car behind you honks."]
+    answer: 1
+    explainCard: school-bus-wait
+    source:
+      page: 40
+      quote: "When you stop for a school bus, you cannot drive again until the bus starts moving again"
+  - id: school-bus-q6
+    ask: "You are the blue car. The school bus has driven away. What do you do now?"
+    scene: school-bus-stop
+    step: question-after
+    choices: ["Speed up to make up time.", "Look for children. Drive slowly past them.", "Honk so the children stay back.", "Drive fast past the bus stop."]
+    answer: 1
+    explainCard: school-bus-wait
+    source:
+      page: 40
+      quote: "After you stop for a school bus, look for children along the side of the road. Drive slowly until you have passed them."
