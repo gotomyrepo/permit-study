@@ -155,11 +155,25 @@ export function label(x: number, y: number, text: string, size = 12): string {
     `<text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-weight="700" font-size="${size}" fill="#212121">${esc(text)}</text></g>`;
 }
 
-/** Double-headed measuring arrow with a label, e.g. "15 feet". */
-export function measure(x1: number, y1: number, x2: number, y2: number, text: string): string {
+/**
+ * Double-headed measuring arrow with a label, e.g. "15 feet". The label sits 12 px above the middle unless `labelAt`
+ * gives its center. With `inward`, the heads sit just outside the two ends and point in at them, on short lead
+ * lines, for a distance too short to fit two heads between its ends.
+ */
+export function measure(
+  x1: number, y1: number, x2: number, y2: number, text: string,
+  o: { labelAt?: { x: number; y: number }; inward?: boolean } = {},
+): string {
   const ang = Math.atan2(y2 - y1, x2 - x1);
   const head = (x: number, y: number, a: number) =>
     `<polygon points="${n(x)},${n(y)} ${n(x - 7 * Math.cos(a - 0.4))},${n(y - 7 * Math.sin(a - 0.4))} ${n(x - 7 * Math.cos(a + 0.4))},${n(y - 7 * Math.sin(a + 0.4))}" fill="#212121"/>`;
+  const at = o.labelAt ?? { x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 12 };
+  if (o.inward) {
+    const lead = 14, cx = Math.cos(ang), sy = Math.sin(ang);
+    const dark = { color: '#212121', width: 2 };
+    return line(x1 - cx * lead, y1 - sy * lead, x2 + cx * lead, y2 + sy * lead, dark) +
+      head(x1, y1, ang) + head(x2, y2, ang + Math.PI) + label(at.x, at.y, text);
+  }
   return line(x1, y1, x2, y2, { color: '#212121', width: 2 }) + head(x2, y2, ang) + head(x1, y1, ang + Math.PI) +
-    label((x1 + x2) / 2, (y1 + y2) / 2 - 12, text);
+    label(at.x, at.y, text);
 }

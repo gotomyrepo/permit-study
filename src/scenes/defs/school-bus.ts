@@ -1,6 +1,6 @@
 import type { ActorDef, Pose, SceneDef, StateSet, Zone } from '../types';
 import { SIZES } from '../engine';
-import { laneGlow, measureProp, median, stopLineAhead, twoLane } from '../layouts';
+import { feetPx, laneGlow, measureProp, median, stopLineAhead, twoLane } from '../layouts';
 import { changeSpeed, drive, driveUntil, kf, SPEED } from '../paths';
 
 // School buses, manual page 40. Times are in ms and follow the word timings in
@@ -20,8 +20,8 @@ const RED_ON = 'stop-arm flashing highlight';
 const YELLOW = 'warning';
 const YELLOW_ON = 'warning highlight';
 
-/** 20 feet in scene px: a 36 px car stands for a 15-foot car, so 1 foot is 2.4 px. */
-export const FEET_20 = 48;
+/** 20 feet in scene px (`feetPx`: a 36 px car stands for a 15-foot car, so 1 foot is 2.4 px). */
+export const FEET_20 = feetPx(20);
 const LANE_Y = 170;
 const WB_Y = 130;
 const CAR_HALF = SIZES.car.length / 2;
@@ -185,8 +185,8 @@ export const schoolBusStop: SceneDef = {
 
 // ---------------------------------------------------------------------------------------------
 // 3. A bus stopped in the other lane: stop for it too, at least 20 feet away.
-// Clip: "school bus has stopped" 180–1400, "in the other lane." 1402–2200, "red lights are flashing." 2777–3900,
-// "You must stop" 4416–5000 ("stop" 4736), "for it too," 5041–5708, "at least" 6000–6416, "20 feet" 6416–6958, "away." 6958–7319.
+// Clip: "school bus has stopped" 180–1388, "in the other lane." 1402–2152, "red lights are flashing." 2777–3958,
+// "You must stop" 4416–5027 ("stop" 4736), "for it too," 5041–5708, "at least" 6000–6416, "20 feet" 6416–6958, "away." 6958–7319.
 // The bus stands still in the westbound lane (stop arm out toward blue's lane, red lights on), ringed while it and
 // its lights are named; the other lane glows on "other lane". Blue drives in at SPEED and, on "stop", slows to a
 // stop with its front 50 px short of the bus's front (the stop line is 48 px, 20 feet, short of it); the "20 feet" arrow shows on "20".
@@ -201,6 +201,12 @@ const O_DOWN = slowToStop(O_BLUE_STOP, O_SLOW_FWD, O_SLOW);
 const O_IN = driveInTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - O_SLOW_FWD }, O_SLOW);
 const O_STOP_T = last(O_DOWN).t;
 const O_MS = 7700;
+const O_BUS_ON = 180; // "school"
+const O_BUS_OFF = 2200; // just after "lane." (ends 2152)
+const O_LANE_ON = 1402; // "in (the other lane)"
+const O_LIGHTS_ON = 2777; // "red": the lane glow goes off and the bus is ringed again
+const O_LIGHTS_OFF = 3900; // near the end of "flashing." (3375–3958)
+const O_GAP_ON = 6416; // "20" (just after "least")
 const O_GLOW = laneGlow('glow-other', { x: 0, y: 110, w: 300, h: 40 });
 const O_GAP = measureProp('gap-20', frontX(O_BLUE_STOP, CAR_HALF), O_BUS_FRONT, 96, '20 feet', { reach: [LANE_Y, WB_Y] });
 
@@ -213,8 +219,9 @@ export const schoolBusOncoming: SceneDef = {
     {
       id: 'teach', duration: O_MS,
       states: [
-        set('bus', RED_ON, 180), set('bus', RED, 2200), set(O_GLOW.id, '', 1402), set(O_GLOW.id, 'hidden', 2777),
-        set('bus', RED_ON, 2777), set('bus', RED, 3900), set(O_GAP.id, '', 6416),
+        set('bus', RED_ON, O_BUS_ON), set('bus', RED, O_BUS_OFF), set(O_GLOW.id, '', O_LANE_ON),
+        set(O_GLOW.id, 'hidden', O_LIGHTS_ON), set('bus', RED_ON, O_LIGHTS_ON), set('bus', RED, O_LIGHTS_OFF),
+        set(O_GAP.id, '', O_GAP_ON),
       ],
       tracks: { blue: [...O_IN.track, ...O_DOWN, kf(O_BLUE_STOP, O_MS)] },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: O_LINE.id, from: O_STOP_T, to: O_MS }],
@@ -230,10 +237,10 @@ export const schoolBusOncoming: SceneDef = {
 
 // ---------------------------------------------------------------------------------------------
 // 4. A divided highway (a grass median down the middle): the bus is on the other side, and blue still stops.
-// Clip: "school bus" 291–1000, "is on the other side of a divided highway." 1069–3300 ("other" 1430),
-// "red lights are flashing." 3861–5300, "You must still stop" 5500–6300 ("stop" 6000), "for it." 6319–6693.
+// Clip: "school bus" 291–958, "is on the other side of a divided highway." 1069–3235 ("other" 1430),
+// "Its red lights are flashing." 3694–5041 ("red" 3861), "You must still stop" 5500–6305 ("stop" 6000), "for it." 6319–6693.
 // The bus stands still on the far side of the median, ringed while it and its lights are named; the far side glows
-// from "other" to the end of "highway". Blue drives in at SPEED and, on "stop", slows to a stop 50 px short of the
+// from "other" until "Its". Blue drives in at SPEED and, on "stop", slows to a stop 50 px short of the
 // bus's front.
 const D_SLOW = 6000; // "stop"
 const D_SLOW_FWD = 30;
@@ -241,6 +248,12 @@ const D_DOWN = slowToStop(O_BLUE_STOP, D_SLOW_FWD, D_SLOW);
 const D_IN = driveInTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - D_SLOW_FWD }, D_SLOW);
 const D_STOP_T = last(D_DOWN).t;
 const D_MS = 7800;
+const D_BUS_ON = 291; // "school"
+const D_BUS_OFF = 1069; // "is"
+const D_SIDE_ON = 1430; // "other"
+const D_SIDE_OFF = 3694; // "Its"
+const D_LIGHTS_ON = 3861; // "red"
+const D_LIGHTS_OFF = 5300; // after "flashing." (ends 5041), before "You" (5500)
 const D_MED = median();
 const D_GLOW = laneGlow('glow-other', { x: 0, y: 110, w: 300, h: 31 });
 
@@ -253,8 +266,8 @@ export const schoolBusDivided: SceneDef = {
     {
       id: 'teach', duration: D_MS,
       states: [
-        set('bus', RED_ON, 291), set('bus', RED, 1069), set(D_GLOW.id, '', 1430), set(D_GLOW.id, 'hidden', 3694),
-        set('bus', RED_ON, 3861), set('bus', RED, 5300),
+        set('bus', RED_ON, D_BUS_ON), set('bus', RED, D_BUS_OFF), set(D_GLOW.id, '', D_SIDE_ON),
+        set(D_GLOW.id, 'hidden', D_SIDE_OFF), set('bus', RED_ON, D_LIGHTS_ON), set('bus', RED, D_LIGHTS_OFF),
       ],
       tracks: { blue: [...D_IN.track, ...D_DOWN, kf(O_BLUE_STOP, D_MS)] },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: O_LINE.id, from: D_STOP_T, to: D_MS }],

@@ -30,10 +30,22 @@ describe('school bus lesson', () => {
       expect(p.bus.x + BUS).toBeLessThanOrEqual(300);
     }
   });
-  test('blue waits until the bus has started moving before it drives on', () => {
-    const w = schoolBusStop.steps[1];
-    const busGo = w.tracks!.bus[0];
-    const blueHold = w.tracks!.blue[0];
-    expect(busGo.t).toBeLessThan(blueHold.t);
+  test('blue stays still until the bus is moving, and the bus is still moving when blue starts', () => {
+    const wi = schoolBusStop.steps.findIndex((s) => s.id === 'wait');
+    const ms = schoolBusStop.steps[wi].duration;
+    const at = (t: number) => frameAt(schoolBusStop, wi, t).poses;
+    const start = at(0);
+    let busMovedAt = -1, blueMovedAt = -1;
+    for (let t = 0; t <= ms; t += 25) {
+      const p = at(t);
+      if (busMovedAt < 0 && Math.abs(p.bus.x - start.bus.x) > 0.5) busMovedAt = t;
+      if (blueMovedAt < 0 && Math.abs(p.blue.x - start.blue.x) > 0.5) blueMovedAt = t;
+    }
+    expect(busMovedAt).toBeGreaterThan(0);
+    expect(blueMovedAt).toBeGreaterThan(busMovedAt);
+    // Blue is still at its stop the whole time before the bus moves.
+    for (let t = 0; t < busMovedAt; t += 25) expect(at(t).blue.x).toBeCloseTo(start.blue.x, 3);
+    // When blue starts, the bus has already pulled well away from its stopping place.
+    expect(at(blueMovedAt).bus.x - start.bus.x).toBeGreaterThan(SIZES.bus.length / 2);
   });
 });

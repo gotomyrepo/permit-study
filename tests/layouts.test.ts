@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -309,9 +309,47 @@ describe('measureProp', () => {
     expect(m.svg.match(/stroke-dasharray="4 3"/g)).toHaveLength(2);
     expect(measureProp('gap', 120, 168, 200, '20 feet').svg).not.toContain('stroke-dasharray');
   });
-  test('rejects ends that are too close and empty text', () => {
-    expect(() => measureProp('g', 100, 110, 50, '5 feet')).toThrow(/at least 20 px apart/);
-    expect(() => measureProp('g', 100, NaN, 50, '5 feet')).toThrow(/at least 20 px apart/);
+  test('vertical arrows, label sides and guides that run sideways', () => {
+    const v = measureProp('curb', 170, 190, 250, '12 inches', { vertical: true, reach: [230, 230] });
+    expect(v.svg).toContain('x1="243" y1="170" x2="257" y2="170"'); // tick across the top end
+    expect(v.svg).toContain('x1="250" y1="190" x2="230" y2="190"'); // dashed guide to x 230
+    expect(v.svg).toContain('translate(296.4 180)'); // label to the right, clear of the arrow
+    const left = measureProp('curb', 170, 190, 250, '12 inches', { vertical: true, label: 'left' });
+    expect(left.svg).toContain('translate(203.6 180)');
+    const below = measureProp('gap', 100, 160, 50, '5 feet', { label: 'below' });
+    expect(below.svg).toContain('translate(130 62)');
+  });
+  test('short distances get inward heads outside the ends instead of throwing', () => {
+    const s = measureProp('curb', 180, 186, 250, '1 foot', { vertical: true });
+    expect(s.svg).toContain('x1="250" y1="166" x2="250" y2="200"'); // lead line past both ends
+    expect(s.svg.match(/<polygon/g)).toHaveLength(2);
+    expect(s.svg).toContain('translate(285.6 183)');
+  });
+  test('the default horizontal arrow is unchanged', () => {
+    expect(measureProp('gap', 150, 198, 96, '20 feet').svg).toBe(
+      measureProp('gap', 150, 198, 96, '20 feet', { label: 'above' }).svg);
+  });
+  test('rejects zero length, bad numbers, empty text and a label on the wrong side', () => {
+    expect(() => measureProp('g', 100, 100, 50, '5 feet')).toThrow(/must be different numbers/);
+    expect(() => measureProp('g', 100, NaN, 50, '5 feet')).toThrow(/must be different numbers/);
+    expect(() => measureProp('g', 100, 160, NaN, '5 feet')).toThrow(/must be different numbers/);
     expect(() => measureProp('g', 100, 160, 50, ' ')).toThrow(/text must not be empty/);
+    expect(() => measureProp('g', 100, 160, 50, '5 feet', { label: 'left' })).toThrow(/horizontal arrow's label goes above or below/);
+    expect(() => measureProp('g', 100, 160, 50, '5 feet', { vertical: true, label: 'above' })).toThrow(/vertical arrow's label goes left or right/);
+  });
+});
+
+describe('distance scale', () => {
+  test('1 foot is 2.4 px (a 36 px car is 15 feet); inches are a twelfth of that', () => {
+    expect(FOOT_PX).toBe(2.4);
+    expect(feetPx(15)).toBe(36);
+    expect(feetPx(20)).toBe(48);
+    expect(feetPx(0)).toBe(0);
+    expect(inchesPx(12)).toBe(2.4);
+    expect(inchesPx(6)).toBe(1.2);
+  });
+  test('rejects negative or non-number distances', () => {
+    expect(() => feetPx(-1)).toThrow(/feetPx: the distance must be a number 0 or more/);
+    expect(() => inchesPx(NaN)).toThrow(/inchesPx: the distance must be a number 0 or more/);
   });
 });

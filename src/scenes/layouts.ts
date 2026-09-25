@@ -642,17 +642,65 @@ export function median(): Required<Pick<LayoutExtras, 'props'>> {
 }
 
 /**
- * A "this far" measuring arrow as a prop: a double-headed dark arrow from (x1, y) to (x2, y) with a white label
- * above it (e.g. "20 feet"), and a short tick at each end. Use it to show a distance while the narration says it;
- * hide it with `hidden` until then. `reach: [ya, yb]` adds a dashed dark guide line up (or down) from each end to
- * that y, to tie the arrow to the two things it measures between (e.g. a car's front and a bus's back in the lane
- * above). Throws if the two ends are less than 20 px apart (too short to read) or the text is empty.
+ * The distance scale for road scenes: a 36 px car stands for a 15-foot car, so 1 foot is 2.4 px. Use `feetPx` and
+ * `inchesPx` for any distance the manual quotes (e.g. `feetPx(20)` is 48 px, `inchesPx(12)` is 2.4 px).
  */
-export function measureProp(id: string, x1: number, x2: number, y: number, text: string, o: { reach?: [number, number] } = {}): ExtraProp {
-  if (!(Math.abs(x2 - x1) >= 20)) throw new Error(`measureProp: the ends must be at least 20 px apart (got ${x1} to ${x2})`);
+export const FOOT_PX = 2.4;
+const scaled = (what: string, v: number, px: number) => {
+  if (!Number.isFinite(v) || v < 0) throw new Error(`${what}: the distance must be a number 0 or more (got ${v})`);
+  return Math.round(v * px * 1000) / 1000;
+};
+export const feetPx = (ft: number) => scaled('feetPx', ft, FOOT_PX);
+export const inchesPx = (inches: number) => scaled('inchesPx', inches, FOOT_PX / 12);
+
+export type MeasureLabel = 'above' | 'below' | 'left' | 'right';
+/** Ends closer than this get inward-pointing heads outside the ends (two heads don't fit between them). */
+const MEASURE_SHORT = 20;
+/**
+ * A "this far" measuring arrow as a prop: a double-headed dark arrow with a white label (e.g. "20 feet") and a short
+ * tick across each end. Use it to show a distance while the narration says it; hide it with `hidden` until then.
+ * - Horizontal (default): from (a, at) to (b, at). `label` is `'above'` (default) or `'below'`.
+ * - `vertical: true`: from (at, a) to (at, b), e.g. a car's side to the curb. `label` is `'right'` (default) or `'left'`.
+ * - `reach: [ra, rb]` adds a dashed dark guide from each end to that y (horizontal) or x (vertical), to tie the arrow
+ *   to the two things it measures between (e.g. a car's front and a bus's back in the lane below).
+ * - Ends closer than 20 px (a short quoted distance such as inches to the curb) get their heads just outside the
+ *   ends, pointing in; the label stays beside the arrow, clear of it.
+ * Throws if the ends are the same (or not numbers), the text is empty, or `label` doesn't suit the direction.
+ */
+export function measureProp(
+  id: string, a: number, b: number, at: number, text: string,
+  o: { vertical?: boolean; label?: MeasureLabel; reach?: [number, number] } = {},
+): ExtraProp {
+  const len = Math.abs(b - a);
+  if (!Number.isFinite(len) || !Number.isFinite(at) || len === 0) {
+    throw new Error(`measureProp: the two ends must be different numbers (got ${a} and ${b}, at ${at})`);
+  }
   if (!text.trim()) throw new Error('measureProp: text must not be empty');
-  const tick = (x: number) => line(x, y - 7, x, y + 7, { color: '#212121', width: 2 });
-  const guide = (x: number, to: number) => line(x, y, x, to, { color: '#212121', width: 1.5, dash: '4 3' });
-  const guides = o.reach ? guide(x1, o.reach[0]) + guide(x2, o.reach[1]) : '';
-  return { id, svg: `<g class="measure" data-prop="${id}">${guides}${tick(x1)}${tick(x2)}${measure(x1, y, x2, y, text)}</g>` };
+  const vertical = !!o.vertical;
+  const side = o.label ?? (vertical ? 'right' : 'above');
+  const ok: MeasureLabel[] = vertical ? ['left', 'right'] : ['above', 'below'];
+  if (!ok.includes(side)) {
+    throw new Error(`measureProp: a ${vertical ? 'vertical' : 'horizontal'} arrow's label goes ${ok.join(' or ')} (got '${side}')`);
+  }
+  const dark = '#212121';
+  const pt = (v: number) => (vertical ? { x: at, y: v } : { x: v, y: at });
+  const p1 = pt(a), p2 = pt(b);
+  const tick = (p: { x: number; y: number }) =>
+    vertical ? line(p.x - 7, p.y, p.x + 7, p.y, { color: dark, width: 2 }) : line(p.x, p.y - 7, p.x, p.y + 7, { color: dark, width: 2 });
+  const guide = (p: { x: number; y: number }, to: number) =>
+    vertical ? line(p.x, p.y, to, p.y, { color: dark, width: 1.5, dash: '4 3' }) : line(p.x, p.y, p.x, to, { color: dark, width: 1.5, dash: '4 3' });
+  const guides = o.reach ? guide(p1, o.reach[0]) + guide(p2, o.reach[1]) : '';
+  const inward = len < MEASURE_SHORT;
+  const mid = (a + b) / 2;
+  // Label width as `label()` draws it (12 px text), so a side label clears the arrow and its ticks.
+  const halfW = (text.length * 12 * 0.6 + 10) / 2;
+  const labelAt =
+    side === 'above' ? undefined :
+    side === 'below' ? { x: mid, y: at + 12 } :
+    side === 'left' ? { x: at - 9 - halfW, y: mid } : { x: at + 9 + halfW, y: mid };
+  const opts = { ...(labelAt ? { labelAt } : {}), ...(inward ? { inward } : {}) };
+  return {
+    id,
+    svg: `<g class="measure" data-prop="${id}">${guides}${tick(p1)}${tick(p2)}${measure(p1.x, p1.y, p2.x, p2.y, text, opts)}</g>`,
+  };
 }
