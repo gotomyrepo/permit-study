@@ -540,36 +540,70 @@ export function shoulder(): Required<Pick<LayoutExtras, 'props' | 'zones'>> {
   };
 }
 
-/** Colors of the light a car shows in `lampCarCloseup` (volunteer fire fighters: blue; volunteer ambulance: green). */
-export const LAMP_COLORS = { blue: { lamp: '#1565c0', halo: '#64b5f6' }, green: { lamp: '#2e7d32', halo: '#81c784' } };
-export type LampColor = keyof typeof LAMP_COLORS;
-
 /**
- * A big light-grey car seen from above (pointing up) with one large colored light on its roof, centered on (cx, cy).
- * The light stays on; its halo blinks (class `lamp-halo`). The car is the prop `id` (state `highlight` rings it).
+ * Colors of the roof light in `lampCarCloseup`: volunteer fire fighters' cars show blue, volunteer ambulance
+ * members' cars green, and hazard vehicles such as tow trucks amber (manual page 35).
  */
+export const LAMP_COLORS = {
+  blue: { lamp: '#1565c0', halo: '#64b5f6' },
+  green: { lamp: '#2e7d32', halo: '#81c784' },
+  amber: { lamp: '#ff8f00', halo: '#ffd54f' },
+};
+export type LampColor = keyof typeof LAMP_COLORS;
+/** A close-up vehicle: a car or a tow truck, with a roof light of the given color. A bare color means a car. */
+export type LampVehicle = LampColor | { lamp: LampColor; kind: 'car' | 'tow-truck' };
+const lampKind = (v: LampVehicle) => (typeof v === 'string' ? 'car' : v.kind);
+const lampColor = (v: LampVehicle) => (typeof v === 'string' ? v : v.lamp);
+/** Prop id of a close-up vehicle: `lamp-car-<color>` or `lamp-truck-<color>`. */
+export const lampPropId = (v: LampVehicle) => `lamp-${lampKind(v) === 'car' ? 'car' : 'truck'}-${lampColor(v)}`;
+
+const LAMP_W = 66, LAMP_L = 132;
+/** The roof light: a big lamp that stays lit, with a halo that blinks (class `lamp-halo`). */
+const roofLamp = (cx: number, cy: number, color: LampColor) =>
+  `<circle class="lamp-halo" cx="${cx}" cy="${cy}" r="27" fill="${LAMP_COLORS[color].halo}" fill-opacity="0.85"/>` +
+  `<circle cx="${cx}" cy="${cy}" r="16" fill="${LAMP_COLORS[color].lamp}" stroke="#212121" stroke-width="3"/>`;
+
+/** A big light-grey car seen from above (pointing up), centered on (cx, cy), with a roof light. */
 function lampCar(id: string, cx: number, cy: number, color: LampColor): string {
-  const W = 66, L = 132;
+  const W = LAMP_W, L = LAMP_L;
   const x = cx - W / 2, y = cy - L / 2;
-  const { lamp, halo } = LAMP_COLORS[color];
   const glass = (gy: number, gh: number) => `<rect x="${x + 9}" y="${gy}" width="${W - 18}" height="${gh}" rx="6" fill="#e3f2fd" stroke="#546e7a" stroke-width="2"/>`;
   return `<g class="pic" data-prop="${id}">` +
     `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="16" fill="#cfd8dc" stroke="#37474f" stroke-width="3"/>` +
-    glass(y + 20, 28) + glass(y + L - 34, 18) +
-    `<circle class="lamp-halo" cx="${cx}" cy="${cy + 8}" r="27" fill="${halo}" fill-opacity="0.85"/>` +
-    `<circle cx="${cx}" cy="${cy + 8}" r="16" fill="${lamp}" stroke="#212121" stroke-width="3"/></g>`;
+    glass(y + 20, 28) + glass(y + L - 34, 18) + roofLamp(cx, cy + 8, color) + `</g>`;
 }
 
 /**
- * Close-up of one or two big grey cars, each with a colored light on its roof (see `lampCar`), on the plain
- * close-up background. Props are `lamp-car-<color>`. Steps: `show` (500 ms), plus `teach` when `teachMs` is given.
+ * A big tow truck seen from above (pointing up), centered on (cx, cy): a grey cab with a windshield and a roof light,
+ * a flat bed behind it, and a dark tow arm with a hook sticking out the back.
  */
-export function lampCarCloseup(id: string, colors: LampColor[], opts: { teachMs?: number } = {}): SceneDef {
-  const xs = colors.length === 1 ? [150] : [80, 220];
-  const props = colors.map((c) => `lamp-car-${c}`);
+function lampTowTruck(id: string, cx: number, cy: number, color: LampColor): string {
+  const W = LAMP_W, L = LAMP_L;
+  const x = cx - W / 2, y = cy - L / 2;
+  const cab = 52;
+  return `<g class="pic" data-prop="${id}">` +
+    `<rect x="${cx - 5}" y="${y + L - 8}" width="10" height="22" fill="#37474f"/>` +
+    `<path d="M${cx - 9} ${y + L + 12} a9 9 0 0 0 18 0" fill="none" stroke="#37474f" stroke-width="5"/>` +
+    `<rect x="${x + 3}" y="${y + cab + 4}" width="${W - 6}" height="${L - cab - 4}" rx="4" fill="#90a4ae" stroke="#37474f" stroke-width="3"/>` +
+    `<rect x="${cx - 4}" y="${y + cab + 10}" width="8" height="${L - cab - 12}" fill="#37474f"/>` +
+    `<rect x="${x}" y="${y}" width="${W}" height="${cab}" rx="12" fill="#cfd8dc" stroke="#37474f" stroke-width="3"/>` +
+    `<rect x="${x + 9}" y="${y + 8}" width="${W - 18}" height="14" rx="5" fill="#e3f2fd" stroke="#546e7a" stroke-width="2"/>` +
+    roofLamp(cx, y + 36, color) + `</g>`;
+}
+
+/**
+ * Close-up of one to three big vehicles (grey cars, or a tow truck), each with a colored roof light, on the plain
+ * close-up background. Props are `lampPropId(v)` (`highlight` rings one). Steps: `show` (500 ms), plus `teach`
+ * when `teachMs` is given.
+ */
+export function lampCarCloseup(id: string, vehicles: LampVehicle[], opts: { teachMs?: number } = {}): SceneDef {
+  const xs = vehicles.length === 1 ? [150] : vehicles.length === 2 ? [80, 220] : [55, 150, 245];
+  const props = vehicles.map(lampPropId);
+  const draw = (v: LampVehicle, i: number) =>
+    (lampKind(v) === 'car' ? lampCar : lampTowTruck)(props[i], xs[i], lampKind(v) === 'car' ? 150 : 140, lampColor(v));
   return {
     id, width: 300, height: 300,
-    background: CLOSEUP_BG + colors.map((c, i) => lampCar(props[i], xs[i], 150, c)).join(''),
+    background: CLOSEUP_BG + vehicles.map(draw).join(''),
     lanes: [], zones: [], lines: [], props, actors: [],
     steps: closeupSteps(opts.teachMs),
   };

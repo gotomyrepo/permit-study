@@ -25,14 +25,14 @@ cards:
       page: 35
       quote: "You must pull over and stop for an emergency vehicle even if it is headed toward you in the opposite lane of a two-way roadway."
   - id: emergency-move-over
-    say: "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, you must also slow down."
+    say: "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, slow down."
     scene: emergency-move-over
     step: teach
     source:
       page: 35
       quote: "This law requires every driver to exercise care to avoid colliding with an authorized emergency or hazard vehicle that is parked, stopped or standing on the shoulder or any portion of the highway with its emergency lights activated or one or more amber hazard lights activated or combination of one or more amber hazard lights and one or more blue lights activated. Drivers must reduce speed on all roads when encountering such vehicles, but on parkways, interstates and other controlled access roads with multiple lanes, drivers are further required to move from the lane adjacent to the emergency or hazard vehicle unless traffic or other hazards prevent doing so safely."
   - id: emergency-lights
-    say: "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. You do not have to yield to them. But it is kind to yield, if it is safe."
+    say: "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. Amber lights on snow plows and tow trucks warn you of possible danger. You do not have to yield to them. But it is kind to yield, if it is safe."
     scene: emergency-lights
     step: teach
     source:
@@ -90,12 +90,12 @@ questions:
       page: 35
       quote: "those driven by volunteer ambulance or rescue squad members can display green lights"
   - id: emergency-q6
-    ask: "A car has a blue light on it. What should you do?"
-    scene: emergency-light-blue
+    ask: "A tow truck has an amber light on it. What does the amber light do?"
+    scene: emergency-light-amber
     step: show
-    choices: ["Yield to be kind, if it is safe.", "Speed up so it cannot pass.", "Stop in the middle of the road."]
-    answer: 0
+    choices: ["Shows it is an ambulance.", "Warns you of possible danger.", "Tells you to speed up.", "Shows a volunteer firefighter."]
+    answer: 1
     explainCard: emergency-lights
     source:
       page: 35
-      quote: "While you are not required to yield the right-of-way, you should yield as a courtesy if you can safely do so."
+      quote: "Amber lights on hazard vehicles such as snow plows and tow trucks or the combination of amber lights and rear projected blue lights on hazard vehicles designed for towing or pushing disabled vehicles, warn other drivers of possible dangers."

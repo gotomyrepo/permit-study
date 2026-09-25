@@ -1949,11 +1949,11 @@
  },
  {
   "id": "card-emergency-move-over",
-  "text": "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, you must also slow down."
+  "text": "An ambulance is stopped at the side of the road, lights flashing. On a highway with 2 or more lanes your way, move over 1 lane, if it is safe. On every road, slow down."
  },
  {
   "id": "card-emergency-lights",
-  "text": "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. You do not have to yield to them. But it is kind to yield, if it is safe."
+  "text": "A blue light on a car means a volunteer firefighter is driving. A green light means a volunteer ambulance worker is driving. Amber lights on snow plows and tow trucks warn you of possible danger. You do not have to yield to them. But it is kind to yield, if it is safe."
  },
  {
   "id": "q-emergency-q1",
@@ -2097,26 +2097,30 @@
  },
  {
   "id": "q-emergency-q6",
-  "text": "A car has a blue light on it. What should you do?"
+  "text": "A tow truck has an amber light on it. What does the amber light do?"
  },
  {
   "id": "q-emergency-q6-c0",
-  "text": "Yield to be kind, if it is safe."
+  "text": "Shows it is an ambulance."
  },
  {
   "id": "q-emergency-q6-c1",
-  "text": "Speed up so it cannot pass."
+  "text": "Warns you of possible danger."
  },
  {
   "id": "q-emergency-q6-c2",
-  "text": "Stop in the middle of the road."
+  "text": "Tells you to speed up."
+ },
+ {
+  "id": "q-emergency-q6-c3",
+  "text": "Shows a volunteer firefighter."
  },
  {
   "id": "q-emergency-q6-yes",
-  "text": "Yes! Yield to be kind, if it is safe."
+  "text": "Yes! Warns you of possible danger."
  },
  {
   "id": "q-emergency-q6-answer",
-  "text": "The answer is: Yield to be kind, if it is safe."
+  "text": "The answer is: Warns you of possible danger."
  }
 ]

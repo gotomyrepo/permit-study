@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { lampCarCloseup, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -260,5 +260,13 @@ describe('lampCarCloseup', () => {
     expect(two.steps).toEqual([{ id: 'show', duration: 500 }, { id: 'teach', duration: 3000 }]);
     expect(two.background).toContain(`fill="${LAMP_COLORS.blue.lamp}"`);
     expect(two.actors).toEqual([]);
+  });
+  test('a tow truck with an amber light, in a row of three', () => {
+    const truck = { lamp: 'amber', kind: 'tow-truck' } as const;
+    expect(lampPropId(truck)).toBe('lamp-truck-amber');
+    const three = lampCarCloseup('z', ['blue', 'green', truck]);
+    expect(three.props).toEqual(['lamp-car-blue', 'lamp-car-green', 'lamp-truck-amber']);
+    expect(three.background).toContain(`fill="${LAMP_COLORS.amber.lamp}"`);
+    for (const x of [55, 150, 245]) expect(three.background).toContain(`cx="${x}"`);
   });
 });
