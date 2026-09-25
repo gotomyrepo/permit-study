@@ -202,7 +202,7 @@
   {
    "id": 23,
    "subject": "Task 20b: Lesson: Parking signs",
-   "status": "pending",
+   "status": "completed",
    "description": "Added 2026-09-25 by user decision: separate short lesson for NO PARKING / NO STANDING / NO STOPPING signs (p.43) and disability parking, since Parking hit the 5-card limit. Follows Tasks 12-21 common rules.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     20
@@ -238,5 +238,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-25T12:19:21.319Z"
+ "lastUpdated": "2026-09-25T12:41:16.058Z"
 }
