@@ -114,18 +114,16 @@ function stopScene(o: {
 
 // Clip: "This sign says" 111–1138, "NO PARKING." 1291–1999, "You may stop" 2458–3041 ("stop" 2736),
 // "for a short time," 3055–4040, "to load or unload" 4430–5888, "things" 5902, "or people." 6277–6832 ("people" 6388).
-export const psNoParking = stopScene({
-  id: 'parking-signs-no-parking', kind: 'no-parking',
-  t: { signOn: 1291, signOff: 1999, stop: 2736, things: 5902, people: 6388, ms: 7300 },
-});
+/** The NO PARKING clip's times (exported for tests). */
+export const NO_PARKING_T = { signOn: 1291, signOff: 1999, stop: 2736, things: 5902, people: 6388, ms: 7300 };
+export const psNoParking = stopScene({ id: 'parking-signs-no-parking', kind: 'no-parking', t: NO_PARKING_T });
 
 // Clip: "This sign says" 125–1055, "NO STANDING." 1180–2041, "You may stop" 2513–3041 ("stop" 2750),
 // "for a short time," 3055–3999, "only to pick up or drop off" 4500–6069, "people." 6083–6471,
 // "You must stay in the car." 6930–8082 ("stay" 7263).
-export const psNoStanding = stopScene({
-  id: 'parking-signs-no-standing', kind: 'no-standing',
-  t: { signOn: 1180, signOff: 2041, stop: 2750, people: 6083, stay: 7263, ms: 8500 },
-});
+/** The NO STANDING clip's times (exported for tests). */
+export const NO_STANDING_T = { signOn: 1180, signOff: 2041, stop: 2750, people: 6083, stay: 7263, ms: 8500 };
+export const psNoStanding = stopScene({ id: 'parking-signs-no-standing', kind: 'no-standing', t: NO_STANDING_T });
 
 // ---------------------------------------------------------------------------------------------
 // 3. NO STOPPING (card parking-signs-no-stopping). Blue drives past the sign without stopping, slowly enough to stay
@@ -137,7 +135,8 @@ export const psNoStanding = stopScene({
 // ("obey" 3736), "a traffic sign," 4222–5235 ("traffic" 4291), "a traffic light," 5694–6555 ("traffic" 5736),
 // "or an officer." 7027–7777 ("an" 7111), "Or to avoid a crash" 8236–9486, "with another car." 9500–10401
 // ("another" 9680).
-const ST = {
+/** The NO STOPPING clip's times (exported for tests). */
+export const ST = {
   signOn: 1152, signOff: 1943, panelOn: 3736, stopOn: 4291, stopOff: 5235, lightOn: 5736, lightOff: 6555,
   officerOn: 7111, officerOff: 7777, redGo: 7500, redOn: 9680, ms: 10900,
 };
@@ -227,25 +226,28 @@ export const psNoStopping: SceneDef = {
 //   "and for cars with special equipment." 6944–8846. The reserved space glows on "Next to it"; the striped space
 //   glows from "space" to the end.
 // - question: blue driving along the lane in front of the spaces; nothing glows.
-const LOT = {
+/** The parking lot's geometry (exported for tests). */
+export const LOT = {
   top: 20, rowTop: 128, curbY: 184, sidewalkY: 188, spaceW: 32, firstX: 22, spaces: 8,
   laneId: 'lot', rowId: 'spaces',
 };
 const spaceX = (i: number) => LOT.firstX + i * LOT.spaceW;
 const RESERVED_I = 3, STRIPES_I = 4;
-const RES_X = spaceX(RESERVED_I), STR_X = spaceX(STRIPES_I);
+/** The left edges of the reserved and striped spaces. */
+export const RES_X = spaceX(RESERVED_I), STR_X = spaceX(STRIPES_I);
 /** A parked car's center: nose toward the sidewalk, 3 px short of the curb. */
 const parkedIn = (i: number): Pose => ({ x: spaceX(i) + LOT.spaceW / 2, y: LOT.curbY - 3 - CAR_HALF, heading: 180 });
 const RT = { resOn: 291, resSignOn: 1013, resSignOff: 1624, resMs: 9400, nextOn: 111, nextOff: 860, stripesOn: 875, stripesMs: 9300 };
 
-function stripes(x: number, y: number, w: number, h: number): string {
-  const clip = 'lot-stripes-clip';
+/** Diagonal white stripes filling a space; `clip` is the (document-unique) id of the clipPath that trims them. */
+function stripes(clip: string, x: number, y: number, w: number, h: number): string {
   let s = `<clipPath id="${clip}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath><g clip-path="url(#${clip})">`;
   for (let d = -h; d < w + h; d += 10) s += line(x + d, y + h, x + d + h, y, { width: 3.5 });
   return s + `</g><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#fff" stroke-width="2.5"/>`;
 }
 
-function lotLayout(extra: ExtraProp[]) {
+/** The lot for scene `sceneId` (which makes its clipPath id unique). */
+function lotLayout(sceneId: string, extra: ExtraProp[]) {
   const h = LOT.curbY - LOT.rowTop;
   const spaceLines = Array.from({ length: LOT.spaces + 1 }, (_, i) => line(spaceX(i), LOT.rowTop, spaceX(i), LOT.curbY, { width: 2.5 })).join('');
   const sign = signProp('sign-reserved', 'reserved-parking', RES_X + LOT.spaceW / 2, 244, { size: 106, post: false });
@@ -256,7 +258,7 @@ function lotLayout(extra: ExtraProp[]) {
       background: grass(300, 300) + road(0, LOT.top, 300, LOT.curbY - LOT.top) +
         `<rect x="0" y="${LOT.curbY}" width="300" height="${LOT.sidewalkY - LOT.curbY}" fill="#9e9e9e"/>` +
         `<rect x="0" y="${LOT.sidewalkY}" width="300" height="${300 - LOT.sidewalkY}" fill="#d7d7d7"/>` +
-        spaceLines + stripes(STR_X, LOT.rowTop, LOT.spaceW, h) + props.map((p) => p.svg).join(''),
+        spaceLines + stripes(`${sceneId}-stripes-clip`, STR_X, LOT.rowTop, LOT.spaceW, h) + props.map((p) => p.svg).join(''),
       lanes: [
         { id: LOT.laneId, x: -100, y: LOT.top, w: 500, h: LOT.rowTop - LOT.top, heading: 'any' as const },
         { id: LOT.rowId, x: 0, y: LOT.rowTop, w: 300, h, heading: 'any' as const },
@@ -268,14 +270,15 @@ function lotLayout(extra: ExtraProp[]) {
 
 const GLOW_RES = laneGlow('glow-reserved', { x: RES_X, y: LOT.rowTop, w: LOT.spaceW, h: LOT.curbY - LOT.rowTop });
 const GLOW_STR = laneGlow('glow-stripes', { x: STR_X, y: LOT.rowTop, w: LOT.spaceW, h: LOT.curbY - LOT.rowTop });
-const LOT_L = lotLayout([GLOW_RES, GLOW_STR]);
+const LOT_ID = 'parking-signs-lot';
+const LOT_L = lotLayout(LOT_ID, [GLOW_RES, GLOW_STR]);
 const L_BLUE = parkedIn(1);
 const L_RED = parkedIn(5);
 const L_GREY = parkedIn(7);
 const L_STOP = stopLineAhead('stop-park', L_BLUE);
 
 export const psLot: SceneDef = {
-  id: 'parking-signs-lot', width: 300, height: 300,
+  id: LOT_ID, width: 300, height: 300,
   ...LOT_L.layout, lines: [L_STOP],
   initialStates: { [GLOW_RES.id]: 'hidden', [GLOW_STR.id]: 'hidden' },
   actors: [

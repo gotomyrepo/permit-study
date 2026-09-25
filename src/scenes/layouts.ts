@@ -178,7 +178,6 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
   };
 }
 
-/** A prop to draw on top of a layout: `svg` should carry `data-prop="<id>"` so steps can set its state. */
 /**
  * A prop to add with `LayoutExtras`. `parts` names pieces inside it that are props of their own (their svg carries
  * their own `data-prop`), each with the state it starts in, e.g. a `trafficLightProp`'s lamps. `withExtras` lists
