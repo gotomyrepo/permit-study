@@ -1,4 +1,4 @@
-import type { ActorDef, Pose, SceneDef, StateSet } from '../types';
+import type { Pose, SceneDef, StateSet } from '../types';
 import { SIZES } from '../engine';
 import {
   CURB, curbStreet, laneGlow, partStates, signCloseup, signProp, stopLineAhead, trafficLightProp, type ExtraProp,
@@ -26,16 +26,40 @@ const still = (id: string, at: Record<string, Pose>, states: StateSet[]) => ({ i
 /** Where the sign stands: its board is 88 px wide and fills the grass from the sidewalk down, ahead of where blue stops. */
 const SIGN = { x: 222, y: 268, size: 88 };
 const signOf = (kind: SignKind) => signProp(`sign-${kind}`, kind, SIGN.x, SIGN.y, { size: SIGN.size, post: false });
-/** The sidewalk, as a lane a person can stand in (center y 226.5). */
-const SIDEWALK = { id: 'sidewalk', x: -100, y: CURB.curbY, w: 500, h: CURB.sidewalkBottom - CURB.curbY, heading: 'any' as const };
-const WALK_Y = (CURB.curbBottom + CURB.sidewalkBottom) / 2;
+/** The top of the sidewalk: the box and the person stand from here down, spilling onto the grass. */
+const WALK_TOP = CURB.curbBottom;
+/** How big the box is (px square). */
+export const BOX_PX = 28;
 
-/** A cardboard box on the sidewalk (something unloaded), 18 px square. */
-function boxProp(id: string, x: number, y: number): ExtraProp {
+/** A cardboard box (something unloaded), `BOX_PX` square, its top edge at `top`. */
+function boxProp(id: string, x: number, top: number): ExtraProp {
+  const h = BOX_PX / 2;
   return {
     id,
-    svg: `<g class="pic" data-prop="${id}"><rect x="${x - 9}" y="${y - 9}" width="18" height="18" rx="1.5" fill="#a1662f" stroke="#3e2723" stroke-width="1.5"/>` +
-      line(x - 9, y, x + 9, y, { color: '#e0c08a', width: 3.5 }) + `</g>`,
+    svg: `<g class="pic" data-prop="${id}"><rect x="${x - h}" y="${top}" width="${BOX_PX}" height="${BOX_PX}" rx="2" fill="#a1662f" stroke="#3e2723" stroke-width="2"/>` +
+      line(x - h, top + h, x + h, top + h, { color: '#e0c08a', width: 5 }) + `</g>`,
+  };
+}
+
+/** How wide the person is (px): about 1.6 times a `pedestrian` seen from above. */
+export const FRIEND_W = 24;
+/**
+ * A person standing, seen from the front (`FRIEND_W` wide, about 40 px tall, head at the top), in an orange shirt
+ * like a `pedestrian`; `highlight` rings them. `top` is the top of the head.
+ */
+function friendProp(id: string, x: number, top: number): ExtraProp {
+  const dark = '#212121', shirt = '#ff7043', pants = '#37474f', skin = '#f1c27d';
+  const g = (v: string) => `<g transform="translate(${x} ${top})">${v}</g>`;
+  return {
+    id,
+    svg: `<g class="pic" data-prop="${id}">` + g(
+      `<rect x="-7" y="25" width="6" height="15" rx="2" fill="${pants}" stroke="${dark}" stroke-width="1.2"/>` +
+      `<rect x="1" y="25" width="6" height="15" rx="2" fill="${pants}" stroke="${dark}" stroke-width="1.2"/>` +
+      `<path d="M-9 14 L-12 27 M9 14 L12 27" stroke="${shirt}" stroke-width="5" stroke-linecap="round"/>` +
+      `<rect x="-9" y="11" width="18" height="17" rx="4" fill="${shirt}" stroke="${dark}" stroke-width="1.5"/>` +
+      `<circle cx="0" cy="5.5" r="5.5" fill="${skin}" stroke="${dark}" stroke-width="1.2"/>` +
+      `<path d="M-5.5 4 Q0 -3 5.5 4" fill="#3e2723" stroke="${dark}" stroke-width="1"/>`,
+    ) + `</g>`,
   };
 }
 
@@ -48,27 +72,27 @@ function boxProp(id: string, x: number, y: number): ExtraProp {
 const STOP_X = 120;
 const SLOW_FWD = 40;
 const STOP_POSE = east(STOP_X, CURB.parkY);
-/** The box and the person stand side by side on the sidewalk, beside blue's right side. */
-export const BOX_X = STOP_X - 22, FRIEND_X = STOP_X + 6;
+/** The box and the person stand on the sidewalk beside blue, far enough apart that their rings don't touch. */
+export const BOX_X = STOP_X - 40, FRIEND_X = STOP_X + 10;
 
 function stopScene(o: {
   id: string; kind: SignKind;
   t: { signOn: number; signOff: number; stop: number; things?: number; people: number; stay?: number; ms: number };
 }): SceneDef {
   const sign = signOf(o.kind);
-  const box = boxProp('box', BOX_X, WALK_Y);
-  const props = o.t.things === undefined ? [sign] : [sign, box];
+  const box = boxProp('box', BOX_X, WALK_TOP);
+  const friend = friendProp('friend', FRIEND_X, WALK_TOP);
+  const props = o.t.things === undefined ? [sign, friend] : [sign, box, friend];
   const inTo = driveInTo(east(-30, CURB.parkY), east(STOP_X - SLOW_FWD, CURB.parkY), o.t.stop);
   const down = changeSpeed(last(inTo.track), SLOW_FWD, o.t.stop, SPEED, 0);
   const stopT = last(down).t;
   if (stopT > (o.t.things ?? o.t.people)) throw new Error(`${o.id}: blue must stop before anything is unloaded`);
   const stop = stopLineAhead('stop-curb', STOP_POSE);
-  const friend: ActorDef = { id: 'friend', kind: 'pedestrian', start: { x: FRIEND_X, y: WALK_Y, heading: 180 } };
   return {
     id: o.id, width: 300, height: 300,
-    ...curbStreet({ hydrant: false, corner: 'none', props, lanes: [SIDEWALK], lines: [stop] }),
+    ...curbStreet({ hydrant: false, corner: 'none', props, lines: [stop] }),
     initialStates: { friend: 'hidden', ...(o.t.things === undefined ? {} : { [box.id]: 'hidden' }) },
-    actors: [{ id: 'blue', kind: 'car', you: true, start: inTo.start }, friend],
+    actors: [{ id: 'blue', kind: 'car', you: true, start: inTo.start }],
     steps: [
       {
         id: 'teach', duration: o.t.ms,

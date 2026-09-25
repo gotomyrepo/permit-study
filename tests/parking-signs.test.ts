@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { BOX_X, FRIEND_X, psLot, psNoParking, psNoStanding, psNoStopping } from '../src/scenes/defs/parking-signs';
+import { BOX_PX, BOX_X, FRIEND_W, FRIEND_X, psLot, psNoParking, psNoStanding, psNoStopping } from '../src/scenes/defs/parking-signs';
 import { frameAt, SIZES } from '../src/scenes/engine';
 import { CURB } from '../src/scenes/layouts';
 import type { SceneDef } from '../src/scenes/types';
@@ -16,8 +16,8 @@ describe('parking signs lesson pictures', () => {
       expect(b.y).toBe(CURB.parkY);
       expect(stateAt(s, 'friend', shown - 1)).toContain('hidden');
     }
-    // The 18 px box and the 24 px wide person don't touch.
-    expect(FRIEND_X - SIZES.pedestrian.width / 2 - (BOX_X + 9)).toBeGreaterThan(0);
+    // The box and the person are well apart, so their rings (about 4 px each) don't touch.
+    expect(FRIEND_X - FRIEND_W / 2 - (BOX_X + BOX_PX / 2)).toBeGreaterThan(10);
     expect(psNoStanding.background).not.toContain('data-prop="box"');
   });
   test('NO STOPPING: blue never stops and stays on screen for the whole clip', () => {

@@ -76,13 +76,13 @@ questions:
     ask: "What does this sign mean?"
     scene: parking-signs-reserved-sign
     step: show
-    choices: ["A gas station is near.", "Anyone may park here.", "No parking at any time.", "This space is reserved for people with disabilities."]
+    choices: ["A gas station is near.", "Anyone may park here.", "Only trucks may park here.", "This space is reserved for people with disabilities."]
     answer: 3
     explainCard: parking-signs-reserved
     signQuestion: true
     source:
       page: 44
-      figure: "Reserved parking sign picture, in the section RESERVED PARKING FOR PEOPLE WITH DISABILITIES (the text says reserved spaces 'must be marked with signs like the one shown above'): a white sign with RESERVED PARKING in black, a white wheelchair symbol on a black square, and a black bar at the bottom"
+      quote: "Reserved spaces must be marked with signs like the one shown above"
   - id: parking-signs-q5
     ask: "Your friend has a permit for persons with disabilities. You drive her car. When may you park in a reserved space?"
     scene: parking-signs-lot
