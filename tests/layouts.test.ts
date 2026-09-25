@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { fogBank, signPair, signProp, speedGauge, feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { CURB, curbStreet, WHEEL_OUT, wheelsProp, fogBank, signPair, signProp, speedGauge, feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -412,5 +412,52 @@ describe('speed helpers', () => {
     expect(() => speedGauge('g', 0, 0, 10, { max: 0 })).toThrow(/max/);
     expect(() => speedGauge('g', 0, 0, 10, { r: 10 })).toThrow(/r must/);
     expect(() => speedGauge('', 0, 0, 10)).toThrow(/id/);
+  });
+});
+
+describe('curbStreet', () => {
+  test('twoLane road plus a parking lane (any heading) along the curb; a car at CURB.parkY has its wheels 1 foot from the curb', () => {
+    const L = curbStreet();
+    expect(L.lanes).toEqual([...twoLane().lanes, { id: CURB.laneId, x: -100, y: 190, w: 500, h: 24, heading: 'any' }]);
+    expect(CURB.parkY).toBeCloseTo(CURB.curbY - feetPx(1) - WHEEL_OUT - 9, 6);
+    // The parked car's body (plus its tires) stays inside the parking lane.
+    expect(CURB.parkY - 9).toBeGreaterThanOrEqual(CURB.parkTop);
+    expect(L.props).toEqual([TWOLANE.centerId, CURB.curbId, CURB.crosswalkId, CURB.signId, CURB.hydrantId]);
+    for (const id of L.props) expect(L.background).toContain(`data-prop="${id}"`);
+  });
+  test('corner and hydrant options', () => {
+    expect(curbStreet({ corner: 'crosswalk' }).props).toEqual([TWOLANE.centerId, CURB.curbId, CURB.crosswalkId, CURB.hydrantId]);
+    const plain = curbStreet({ corner: 'none', hydrant: false });
+    expect(plain.props).toEqual([TWOLANE.centerId, CURB.curbId]);
+    expect(plain.background).not.toContain('STOP');
+    expect(curbStreet({ hydrant: 170, corner: 'none' }).background).toContain('cx="170" cy="226"');
+  });
+  test('takes LayoutExtras', () => {
+    const L = curbStreet({ props: [laneGlow('g', { x: 0, y: 190, w: 50, h: 24 })], lines: [{ id: 'l', x: 1, y: 2, heading: 90 }] });
+    expect(L.props).toContain('g');
+    expect(L.lines.map((l) => l.id)).toEqual(['l']);
+  });
+  test('throws when the hydrant is off the sidewalk or on the corner', () => {
+    expect(() => curbStreet({ hydrant: 5 })).toThrow(/hydrant must be on the sidewalk, from x 10 to 222/);
+    expect(() => curbStreet({ hydrant: 230 })).toThrow(/hydrant must be on the sidewalk/);
+    expect(() => curbStreet({ hydrant: NaN })).toThrow(/hydrant must be on the sidewalk/);
+    expect(() => curbStreet({ hydrant: 280, corner: 'none' })).not.toThrow();
+  });
+});
+
+describe('wheelsProp', () => {
+  test('four tires that stick out WHEEL_OUT px past each side of the car, turned to its heading', () => {
+    const w = wheelsProp('w', { x: 150, y: 200, heading: 90 });
+    expect(w.svg).toContain('data-prop="w"');
+    expect(w.svg).toContain('translate(150 200) rotate(90)');
+    expect(w.svg.match(/<rect /g)).toHaveLength(4);
+    // Car frame (pointing up): a car is 18 px wide, so the tires' outer edges are at x ±(9 + WHEEL_OUT).
+    const xs = [...w.svg.matchAll(/<rect x="([-\d.]+)"[^>]*width="(\d+)"/g)].map((m) => [Number(m[1]), Number(m[1]) + Number(m[2])]);
+    expect(Math.min(...xs.map((x) => x[0]))).toBe(-9 - WHEEL_OUT);
+    expect(Math.max(...xs.map((x) => x[1]))).toBe(9 + WHEEL_OUT);
+  });
+  test('throws clear errors', () => {
+    expect(() => wheelsProp('', { x: 1, y: 1, heading: 0 })).toThrow(/id must not be empty/);
+    expect(() => wheelsProp('w', { x: NaN, y: 1, heading: 0 })).toThrow(/pose must be numbers/);
   });
 });

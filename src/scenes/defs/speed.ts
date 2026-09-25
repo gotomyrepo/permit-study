@@ -2,7 +2,7 @@ import type { ActorDef, Pose, SceneDef, StateSet } from '../types';
 import { SIZES } from '../engine';
 import { label } from '../parts';
 import { FOG_EDGE_PX, fogBank, signCloseup, signPair, signProp, speedGauge, twoLane, type ExtraProp } from '../layouts';
-import { changeSpeed, changeSpeedMs, drive, driveUntil, kf, SPEED } from '../paths';
+import { changeSpeed, changeSpeedMs, driveInTo, driveUntil, SPEED } from '../paths';
 
 // Speed, manual pages 47 (Speed) and 62 (Expressway Driving: 55 and 65 mph). Times are in ms and follow the word
 // timings in public/audio/card-speed-*.json (the word each time is tied to is named next to it). Digits get no word
@@ -18,15 +18,8 @@ const CAR_HALF = SIZES.car.length / 2;
 const blueCar = (start: Pose): ActorDef => ({ id: 'blue', kind: 'car', you: true, start });
 const east = (x: number): Pose => ({ x, y: LANE_Y, heading: 90 });
 
-/** A car waits off screen at x -60 (in blue's lane), then drives at `speed` so it reaches `to` at `t1`. */
-function driveInTo(to: Pose, t1: number, speed = SPEED) {
-  const start = east(-60);
-  const go = t1 - Math.round(((to.x - start.x) / speed) * 1000);
-  if (go <= 0) throw new Error(`driveInTo: the car would have to start before t=0 (t=${go})`);
-  const track = drive(start, to.x - start.x, go, { speed });
-  track[track.length - 1].t = t1; // absorb rounding so what follows can start exactly at t1
-  return { start, track: [kf(start, go), ...track] };
-}
+/** A car waits off screen at x -60 (in blue's lane), then drives at SPEED so it reaches `to` at `t1`. */
+const driveEastTo = (to: Pose, t1: number) => driveInTo(east(-60), to, t1);
 
 // ---------------------------------------------------------------------------------------------
 // 1. No speed limit sign: drive no more than 55 mph (card speed-no-sign).
@@ -86,7 +79,7 @@ const F_FOG = fogBank('fog', FOG_X, 300, { label: 'FOG', opacity: 0.92 });
 const F_SIGN = signProp('sign-55', 'speed', 96, 232, { text: '55', size: 60 });
 /** Where blue starts slowing: so that it has slowed with its front 4 px short of the fog's soft edge. */
 export const F_SLOW_AT: Pose = east(FOG_X - FOG_EDGE_PX - 4 - F_SLOW_FWD - CAR_HALF);
-const F_IN = driveInTo(F_SLOW_AT, F.slow);
+const F_IN = driveEastTo(F_SLOW_AT, F.slow);
 const F_DOWN = changeSpeed(F_SLOW_AT, F_SLOW_FWD, F.slow, SPEED, F_CRAWL);
 const F_TRACK = [...F_IN.track, ...F_DOWN, ...driveUntil(last(F_DOWN), last(F_DOWN).t, F.ms, { speed: F_CRAWL })];
 /** When blue starts and ends slowing (for tests). */
@@ -128,7 +121,7 @@ const tBlueX = (t: number) => T_BLUE_START.x + (T_CRAWL * t) / 1000;
 /** Red starts slowing on "way" from here, so that when it has slowed to T_CRAWL it is T_GAP px behind blue. */
 const T_RED_SLOWED_T = T.redSlow + Math.round(changeSpeedMs(T_RED_SLOW_FWD, SPEED, T_CRAWL));
 const T_RED_SLOW_AT = east(tBlueX(T_RED_SLOWED_T) - 2 * CAR_HALF - T_GAP - T_RED_SLOW_FWD);
-const T_RED_IN = driveInTo(T_RED_SLOW_AT, T.redSlow);
+const T_RED_IN = driveEastTo(T_RED_SLOW_AT, T.redSlow);
 const T_RED_DOWN = changeSpeed(T_RED_SLOW_AT, T_RED_SLOW_FWD, T.redSlow, SPEED, T_CRAWL);
 const T_RED_TRACK = [...T_RED_IN.track, ...T_RED_DOWN, ...driveUntil(last(T_RED_DOWN), last(T_RED_DOWN).t, T.ms, { speed: T_CRAWL })];
 const T_RED_START = T_RED_IN.start;

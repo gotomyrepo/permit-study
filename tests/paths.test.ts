@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { frameAt } from '../src/scenes/engine';
-import { changeSpeed, changeSpeedMs, drive, driveUntil, SPEED, turnMs, turnPath, uTurnApex, uTurnMs, uTurnPath } from '../src/scenes/paths';
+import { changeSpeed, changeSpeedMs, drive, driveInTo, driveUntil, SPEED, turnMs, turnPath, uTurnApex, uTurnMs, uTurnPath } from '../src/scenes/paths';
 import { dir } from '../src/scenes/geometry';
 import type { Keyframe, Pose, SceneDef } from '../src/scenes/types';
 
@@ -69,6 +69,32 @@ describe('driveUntil', () => {
   test('throws a clear error when the time is too short', () => {
     expect(() => driveUntil(FROM, 0, 0)).toThrow(/too short/);
     expect(() => driveUntil(FROM, 0, 1000, { fromStop: true })).toThrow(/too short/);
+  });
+});
+
+describe('driveInTo', () => {
+  const START: Pose = { x: -60, y: 170, heading: 90 };
+  test('waits at the start, then drives at SPEED and arrives exactly at t1', () => {
+    const { start, track } = driveInTo(START, { x: 120, y: 170, heading: 90 }, 5000);
+    expect(start).toEqual(START);
+    expect(track[0]).toMatchObject({ ...START, t: 1000 }); // 180 px at 45 px/s takes 4000 ms
+    expect(track[track.length - 1]).toMatchObject({ x: 120, y: 170, t: 5000 });
+    expect(speedAt(sceneWith(START, track), 3000)).toBeCloseTo(SPEED, 0);
+    expect(speedAt(sceneWith(START, track), 500)).toBe(0);
+  });
+  test('takes a custom speed, and works for any heading', () => {
+    const slow = driveInTo(START, { x: 30, y: 170, heading: 90 }, 5000, 30);
+    expect(slow.track[0].t).toBe(2000);
+    const north = driveInTo({ x: 165, y: 340, heading: 0 }, { x: 165, y: 250, heading: 0 }, 3000);
+    expect(north.track[0].t).toBe(1000);
+    expect(north.track[north.track.length - 1]).toMatchObject({ x: 165, y: 250, t: 3000 });
+  });
+  test('throws clear errors', () => {
+    expect(() => driveInTo(START, { x: 120, y: 170, heading: 90 }, 3000)).toThrow(/set off before t=0/);
+    expect(() => driveInTo(START, { x: -80, y: 170, heading: 90 }, 3000)).toThrow(/straight ahead/);
+    expect(() => driveInTo(START, { x: 120, y: 180, heading: 90 }, 9000)).toThrow(/straight ahead/);
+    expect(() => driveInTo(START, { x: 120, y: 170, heading: 270 }, 9000)).toThrow(/straight ahead/);
+    expect(() => driveInTo(START, { x: 120, y: 170, heading: 90 }, 9000, 0)).toThrow(/speed must be more than 0/);
   });
 });
 

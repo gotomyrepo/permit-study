@@ -1,5 +1,5 @@
 import type { Ease, Keyframe, Pose } from './types';
-import { dir, normHeading } from './geometry';
+import { angleDiff, dir, normHeading } from './geometry';
 
 export function kf(p: Pose, t: number, ease?: Ease): Keyframe {
   return ease ? { x: p.x, y: p.y, heading: p.heading, t, ease } : { x: p.x, y: p.y, heading: p.heading, t };
@@ -83,6 +83,29 @@ export function drive(from: Pose, dist: number, t0: number, o: { fromStop?: bool
   if (dist - a - b > 0) { t += (dist - a - b) / v; out.push({ ...at(dist - b), t: Math.round(t) }); }
   if (b > 0) { t += (2 * b) / v; out.push({ ...at(dist), t: Math.round(t), ease: 'out' }); }
   return out;
+}
+
+/**
+ * A car waits at `start` (e.g. off screen), then drives straight ahead at a steady `speed` (default `SPEED`) so it
+ * arrives at `to` exactly at t1, e.g. so a slow-down or a stop can start on a spoken word. `to` must be straight
+ * ahead of `start`, facing the same way. Returns the start pose (for the actor's `start`) and the track: a keyframe
+ * holding `start` until the car sets off, then the drive. Throws if `to` isn't straight ahead, or if the car would
+ * have to set off before t=0.
+ */
+export function driveInTo(start: Pose, to: Pose, t1: number, speed = SPEED): { start: Pose; track: Keyframe[] } {
+  if (!(speed > 0)) throw new Error(`driveInTo: speed must be more than 0 px/s (got ${speed})`);
+  const d = dir(start.heading);
+  const rx = to.x - start.x, ry = to.y - start.y;
+  const ahead = rx * d.x + ry * d.y;
+  const side = Math.abs(rx * -d.y + ry * d.x);
+  if (angleDiff(to.heading, start.heading) > 1e-6 || side > 0.5 || !(ahead > 0)) {
+    throw new Error('driveInTo: `to` must be straight ahead of `start`, facing the same way');
+  }
+  const go = t1 - Math.round((ahead / speed) * 1000);
+  if (go <= 0) throw new Error(`driveInTo: the car would have to set off before t=0 (t=${go})`);
+  const track = drive(start, ahead, go, { speed });
+  track[track.length - 1].t = t1; // absorb rounding so what follows can start exactly at t1
+  return { start, track: [kf(start, go), ...track] };
 }
 
 /**

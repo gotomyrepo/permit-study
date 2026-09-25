@@ -1,0 +1,101 @@
+id: parking
+order: 10
+title: Parking
+icon: "🅿️"
+cards:
+  - id: parking-start
+    say: "Find a space big enough for your car. Check your mirrors and signal. Stop next to the car in front of the space. Leave about 2 feet between the cars."
+    scene: parking-start
+    step: teach
+    source:
+      page: 42
+      quote: "Select a space that is large enough for your vehicle on your side of the road. Check your mirrors before you stop and signal to warn other drivers. Stop next to the vehicle in front of the space and leave about two feet between the other vehicle and your vehicle."
+  - id: parking-curb
+    say: "You are parked next to the curb. Your wheels must be no more than 1 foot from the curb."
+    scene: parking-curb
+    step: teach
+    source:
+      page: 42
+      quote: "In your final parking position, your wheels must be no more than one foot (30 cm) from the curb."
+  - id: parking-hydrant
+    say: "This is a fire hydrant. Park at least 15 feet away from it."
+    scene: parking-hydrant
+    step: teach
+    source:
+      page: 43
+      quote: "You cannot park, stop or stand: Within 15 feet (5 m) of a fire hydrant, unless a licensed driver remains in the vehicle to move it in an emergency."
+  - id: parking-crosswalk
+    say: "This crosswalk is at an intersection. Park at least 20 feet away from it."
+    scene: parking-crosswalk
+    step: teach
+    source:
+      page: 43
+      quote: "Parking or standing is not allowed: In front of a driveway. Within 20 feet (6 m) of a crosswalk at an intersection."
+  - id: parking-stop-sign
+    say: "This is a STOP sign. Park at least 30 feet away from it."
+    scene: parking-stop-sign
+    step: teach
+    source:
+      page: 43
+      quote: "Within 30 feet (10 m) of a traffic light, STOP sign or YIELD sign."
+questions:
+  - id: parking-q1
+    ask: "You are the blue car. You want to park in the empty space. Where do you stop first?"
+    scene: parking-start
+    step: question-where
+    choices: ["In the middle of the space.", "Next to the car in front of the space.", "Next to the car behind the space."]
+    answer: 1
+    explainCard: parking-start
+    source:
+      page: 42
+      quote: "Stop next to the vehicle in front of the space and leave about two feet between the other vehicle and your vehicle."
+  - id: parking-q2
+    ask: "You are the blue car. You stopped next to the car in front of the space. How far from it should you be?"
+    scene: parking-start
+    step: question-gap
+    choices: ["Touching it.", "About 10 feet.", "About 20 feet.", "About 2 feet."]
+    answer: 3
+    explainCard: parking-start
+    source:
+      page: 42
+      quote: "Stop next to the vehicle in front of the space and leave about two feet between the other vehicle and your vehicle."
+  - id: parking-q3
+    ask: "You are the blue car. You parked next to the curb. How close to the curb must your wheels be?"
+    scene: parking-curb
+    step: question
+    choices: ["No more than 5 feet.", "No more than 1 foot.", "No more than 3 feet.", "Any distance is fine."]
+    answer: 1
+    explainCard: parking-curb
+    source:
+      page: 42
+      quote: "In your final parking position, your wheels must be no more than one foot (30 cm) from the curb."
+  - id: parking-q4
+    ask: "You are the blue car. You want to park near this fire hydrant. How far away must you park?"
+    scene: parking-hydrant
+    step: question
+    choices: ["At least 5 feet.", "At least 10 feet.", "At least 15 feet.", "Right next to it is fine."]
+    answer: 2
+    explainCard: parking-hydrant
+    source:
+      page: 43
+      quote: "Within 15 feet (5 m) of a fire hydrant, unless a licensed driver remains in the vehicle to move it in an emergency."
+  - id: parking-q5
+    ask: "You are the blue car. You want to park near this crosswalk at an intersection. How far away must you park?"
+    scene: parking-crosswalk
+    step: question
+    choices: ["At least 20 feet.", "At least 5 feet.", "At least 10 feet.", "Right up to the crosswalk."]
+    answer: 0
+    explainCard: parking-crosswalk
+    source:
+      page: 43
+      quote: "Within 20 feet (6 m) of a crosswalk at an intersection."
+  - id: parking-q6
+    ask: "You are the blue car. You want to park near this STOP sign. How far away must you park?"
+    scene: parking-stop-sign
+    step: question
+    choices: ["At least 10 feet.", "Right next to it.", "At least 30 feet.", "At least 5 feet."]
+    answer: 2
+    explainCard: parking-stop-sign
+    source:
+      page: 43
+      quote: "Within 30 feet (10 m) of a traffic light, STOP sign or YIELD sign."

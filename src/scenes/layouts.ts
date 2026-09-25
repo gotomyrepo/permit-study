@@ -790,3 +790,100 @@ export function measureProp(
     svg: `<g class="measure" data-prop="${id}">${guides}${tick(p1)}${tick(p2)}${measure(p1.x, p1.y, p2.x, p2.y, text, opts)}</g>`,
   };
 }
+
+/**
+ * `curbStreet()` geometry. The street is `twoLane()`'s road (y 110–190, lanes `eb` center 170 and `wb` center 130)
+ * with a parking lane below it (y 190–214, no line between them), then the curb (y 214–217) and a sidewalk
+ * (y 217–236). `parkY` is where a parked car's center goes: its wheels (`wheelsProp`) 1 foot from the curb.
+ * With a corner, a cross street runs down the right side (x `crossX`–300) and a crosswalk (two white lines, x
+ * `crosswalkX[0]`–`crosswalkX[1]`) crosses the street and the parking lane just before it; `'stop'` adds a STOP sign
+ * on the sidewalk corner for eastbound traffic, at (`signX`, `signY`).
+ */
+/** How far `wheelsProp`'s tires stick out past each side of the car (px). */
+export const WHEEL_OUT = 2;
+const CURB_Y = 214;
+export const CURB = {
+  laneId: 'parking',
+  parkTop: 190, curbY: CURB_Y, curbBottom: 217, sidewalkBottom: 236,
+  hydrantId: 'hydrant', hydrantX: 100, hydrantY: 226,
+  curbId: 'curb',
+  crosswalkId: 'crosswalk', crosswalkX: [232, 248] as [number, number],
+  crossX: 254,
+  signId: 'sign-stop', signX: 222, signY: 242, signSize: 38,
+  parkY: Math.round((CURB_Y - feetPx(1) - WHEEL_OUT - SIZES.car.width / 2) * 1000) / 1000,
+};
+/** What stands at the right end of `curbStreet()`: nothing, a crosswalk at an intersection, or that plus a STOP sign. */
+export type CurbCorner = 'none' | 'crosswalk' | 'stop';
+
+/**
+ * A 300×300 street with a parking lane along the curb (see `CURB`). The parking lane is the lane `CURB.laneId`
+ * (`heading: 'any'`), so a car parked there with an `at` pose (center y `CURB.parkY`) passes the lane check.
+ * - `hydrant`: x of a fire hydrant on the sidewalk (prop `CURB.hydrantId`, `highlight` rings it), or `false` for none.
+ *   Default `CURB.hydrantX`.
+ * - `corner` (default `'stop'`): `'crosswalk'` adds the cross street and the crosswalk (prop `CURB.crosswalkId`, a
+ *   `marking`: `highlight` gives it a white glow); `'stop'` adds the STOP sign too (prop `CURB.signId`); `'none'` has neither.
+ * The curb is the prop `CURB.curbId` (`highlight` rings it). The other options are `LayoutExtras`, added with `withExtras`.
+ * Throws if the hydrant is off the sidewalk or on the corner.
+ */
+export function curbStreet(opts: { hydrant?: number | false; corner?: CurbCorner } & LayoutExtras = {}): Layout {
+  const { hydrant = CURB.hydrantX, corner = 'stop', ...extras } = opts;
+  const C = CURB;
+  const end = corner === 'none' ? 300 : C.crosswalkX[0];
+  if (hydrant !== false && (!Number.isFinite(hydrant) || hydrant < 10 || hydrant > end - 10)) {
+    throw new Error(`curbStreet: the hydrant must be on the sidewalk, from x 10 to ${end - 10} (got ${hydrant})`);
+  }
+  const base = twoLane();
+  // The parking lane starts 1 px up, under the road's edge, so no seam shows between them.
+  let bg = `<rect x="0" y="${C.parkTop - 1}" width="300" height="${C.curbY - C.parkTop + 1}" fill="${COLORS.road}"/>` +
+    `<rect x="0" y="${C.curbBottom}" width="300" height="${C.sidewalkBottom - C.curbBottom}" fill="#d7d7d7"/>` +
+    `<g class="pic" data-prop="${C.curbId}"><rect x="0" y="${C.curbY}" width="300" height="${C.curbBottom - C.curbY}" fill="#9e9e9e"/></g>`;
+  const props: string[] = [C.curbId];
+  if (corner !== 'none') {
+    bg += road(C.crossX, 0, 300 - C.crossX, 300) +
+      line((C.crossX + 300) / 2, 0, (C.crossX + 300) / 2, 104, { color: COLORS.yellow, width: MARK_W, dash: MARK_DASH }) +
+      line((C.crossX + 300) / 2, 242, (C.crossX + 300) / 2, 300, { color: COLORS.yellow, width: MARK_W, dash: MARK_DASH });
+    // The street's center line stops at the crosswalk.
+    bg += `<rect x="${C.crosswalkX[0] - 3}" y="144" width="${C.crossX - C.crosswalkX[0] + 5}" height="12" fill="${COLORS.road}"/>`;
+    const walk = C.crosswalkX.map((x) => line(x, 110, x, C.curbY, { width: 4 })).join('');
+    bg += `<g class="marking" data-prop="${C.crosswalkId}">${walk}</g>`;
+    props.push(C.crosswalkId);
+    if (corner === 'stop') {
+      bg += sign('stop', C.signX, C.signY, { id: C.signId, size: C.signSize });
+      props.push(C.signId);
+    }
+  }
+  if (hydrant !== false) {
+    const hx = hydrant, hy = C.hydrantY;
+    bg += `<g class="pic" data-prop="${C.hydrantId}">` +
+      `<rect x="${hx - 13}" y="${hy - 3.5}" width="26" height="7" rx="2" fill="#b71c1c" stroke="#4a0000" stroke-width="1.5"/>` +
+      `<circle cx="${hx}" cy="${hy}" r="9" fill="#e53935" stroke="#4a0000" stroke-width="2"/>` +
+      `<circle cx="${hx}" cy="${hy}" r="3.5" fill="#ffcdd2"/></g>`;
+    props.push(C.hydrantId);
+  }
+  return withExtras({
+    background: base.background + bg,
+    lanes: [...base.lanes, { id: C.laneId, x: -100, y: C.parkTop, w: 500, h: C.curbY - C.parkTop, heading: 'any' }],
+    zones: base.zones, lines: base.lines, props: [...base.props, ...props],
+  }, extras);
+}
+
+/**
+ * The four tires of a car of `kind` standing at pose `p`, as a prop drawn just under it: dark tires that stick out
+ * `WHEEL_OUT` px past each side at the front and back axles, so a picture about "your wheels" shows them. `highlight`
+ * rings them. Only for a car that stays at `p` (e.g. parked with an `at` pose).
+ */
+export function wheelsProp(id: string, p: Pose, kind: ActorKind = 'car'): ExtraProp {
+  if (!id) throw new Error('wheelsProp: id must not be empty');
+  if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(p.heading)) {
+    throw new Error(`wheelsProp: the pose must be numbers (got ${JSON.stringify(p)})`);
+  }
+  const { length: L, width: W } = SIZES[kind];
+  const tw = 4, tl = Math.round(L * 0.22), axle = L / 2 - tl;
+  const tire = (sx: number, sy: number) =>
+    `<rect x="${sx > 0 ? W / 2 + WHEEL_OUT - tw : -W / 2 - WHEEL_OUT}" y="${sy * axle - tl / 2}" width="${tw}" height="${tl}" rx="1.5" fill="#212121"/>`;
+  return {
+    id,
+    svg: `<g class="pic" data-prop="${id}"><g transform="translate(${p.x} ${p.y}) rotate(${p.heading})">` +
+      tire(-1, -1) + tire(1, -1) + tire(-1, 1) + tire(1, 1) + `</g></g>`,
+  };
+}

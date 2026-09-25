@@ -2466,5 +2466,193 @@
  {
   "id": "q-speed-q5-answer",
   "text": "The answer is: The speed limit is 65 miles per hour."
+ },
+ {
+  "id": "end-parking",
+  "text": "Great job! You're done with Parking."
+ },
+ {
+  "id": "card-parking-start",
+  "text": "Find a space big enough for your car. Check your mirrors and signal. Stop next to the car in front of the space. Leave about 2 feet between the cars."
+ },
+ {
+  "id": "card-parking-curb",
+  "text": "You are parked next to the curb. Your wheels must be no more than 1 foot from the curb."
+ },
+ {
+  "id": "card-parking-hydrant",
+  "text": "This is a fire hydrant. Park at least 15 feet away from it."
+ },
+ {
+  "id": "card-parking-crosswalk",
+  "text": "This crosswalk is at an intersection. Park at least 20 feet away from it."
+ },
+ {
+  "id": "card-parking-stop-sign",
+  "text": "This is a STOP sign. Park at least 30 feet away from it."
+ },
+ {
+  "id": "q-parking-q1",
+  "text": "You are the blue car. You want to park in the empty space. Where do you stop first?"
+ },
+ {
+  "id": "q-parking-q1-c0",
+  "text": "In the middle of the space."
+ },
+ {
+  "id": "q-parking-q1-c1",
+  "text": "Next to the car in front of the space."
+ },
+ {
+  "id": "q-parking-q1-c2",
+  "text": "Next to the car behind the space."
+ },
+ {
+  "id": "q-parking-q1-yes",
+  "text": "Yes! Next to the car in front of the space."
+ },
+ {
+  "id": "q-parking-q1-answer",
+  "text": "The answer is: Next to the car in front of the space."
+ },
+ {
+  "id": "q-parking-q2",
+  "text": "You are the blue car. You stopped next to the car in front of the space. How far from it should you be?"
+ },
+ {
+  "id": "q-parking-q2-c0",
+  "text": "Touching it."
+ },
+ {
+  "id": "q-parking-q2-c1",
+  "text": "About 10 feet."
+ },
+ {
+  "id": "q-parking-q2-c2",
+  "text": "About 20 feet."
+ },
+ {
+  "id": "q-parking-q2-c3",
+  "text": "About 2 feet."
+ },
+ {
+  "id": "q-parking-q2-yes",
+  "text": "Yes! About 2 feet."
+ },
+ {
+  "id": "q-parking-q2-answer",
+  "text": "The answer is: About 2 feet."
+ },
+ {
+  "id": "q-parking-q3",
+  "text": "You are the blue car. You parked next to the curb. How close to the curb must your wheels be?"
+ },
+ {
+  "id": "q-parking-q3-c0",
+  "text": "No more than 5 feet."
+ },
+ {
+  "id": "q-parking-q3-c1",
+  "text": "No more than 1 foot."
+ },
+ {
+  "id": "q-parking-q3-c2",
+  "text": "No more than 3 feet."
+ },
+ {
+  "id": "q-parking-q3-c3",
+  "text": "Any distance is fine."
+ },
+ {
+  "id": "q-parking-q3-yes",
+  "text": "Yes! No more than 1 foot."
+ },
+ {
+  "id": "q-parking-q3-answer",
+  "text": "The answer is: No more than 1 foot."
+ },
+ {
+  "id": "q-parking-q4",
+  "text": "You are the blue car. You want to park near this fire hydrant. How far away must you park?"
+ },
+ {
+  "id": "q-parking-q4-c0",
+  "text": "At least 5 feet."
+ },
+ {
+  "id": "q-parking-q4-c1",
+  "text": "At least 10 feet."
+ },
+ {
+  "id": "q-parking-q4-c2",
+  "text": "At least 15 feet."
+ },
+ {
+  "id": "q-parking-q4-c3",
+  "text": "Right next to it is fine."
+ },
+ {
+  "id": "q-parking-q4-yes",
+  "text": "Yes! At least 15 feet."
+ },
+ {
+  "id": "q-parking-q4-answer",
+  "text": "The answer is: At least 15 feet."
+ },
+ {
+  "id": "q-parking-q5",
+  "text": "You are the blue car. You want to park near this crosswalk at an intersection. How far away must you park?"
+ },
+ {
+  "id": "q-parking-q5-c0",
+  "text": "At least 20 feet."
+ },
+ {
+  "id": "q-parking-q5-c1",
+  "text": "At least 5 feet."
+ },
+ {
+  "id": "q-parking-q5-c2",
+  "text": "At least 10 feet."
+ },
+ {
+  "id": "q-parking-q5-c3",
+  "text": "Right up to the crosswalk."
+ },
+ {
+  "id": "q-parking-q5-yes",
+  "text": "Yes! At least 20 feet."
+ },
+ {
+  "id": "q-parking-q5-answer",
+  "text": "The answer is: At least 20 feet."
+ },
+ {
+  "id": "q-parking-q6",
+  "text": "You are the blue car. You want to park near this STOP sign. How far away must you park?"
+ },
+ {
+  "id": "q-parking-q6-c0",
+  "text": "At least 10 feet."
+ },
+ {
+  "id": "q-parking-q6-c1",
+  "text": "Right next to it."
+ },
+ {
+  "id": "q-parking-q6-c2",
+  "text": "At least 30 feet."
+ },
+ {
+  "id": "q-parking-q6-c3",
+  "text": "At least 5 feet."
+ },
+ {
+  "id": "q-parking-q6-yes",
+  "text": "Yes! At least 30 feet."
+ },
+ {
+  "id": "q-parking-q6-answer",
+  "text": "The answer is: At least 30 feet."
  }
 ]

@@ -1,7 +1,7 @@
 import type { ActorDef, Pose, SceneDef, StateSet, Zone } from '../types';
 import { SIZES } from '../engine';
 import { feetPx, laneGlow, measureProp, median, stopLineAhead, twoLane } from '../layouts';
-import { changeSpeed, drive, driveUntil, kf, SPEED } from '../paths';
+import { changeSpeed, drive, driveInTo, driveUntil, kf, SPEED } from '../paths';
 
 // School buses, manual page 40. Times are in ms and follow the word timings in
 // public/audio/card-school-bus-*.json (the word each time is tied to is named next to it). Digits get no word
@@ -39,14 +39,7 @@ function slowToStop(stop: Pose, fwd: number, t0: number) {
   return changeSpeed(from, fwd, t0, SPEED, 0);
 }
 /** Blue waits off screen at x -60 (in its lane), then drives at SPEED so it reaches `to` at `t1`. */
-function driveInTo(to: Pose, t1: number) {
-  const start: Pose = { x: -60, y: LANE_Y, heading: 90 };
-  const go = t1 - Math.round(((to.x - start.x) / SPEED) * 1000);
-  if (go <= 0) throw new Error(`driveInTo: blue would have to start before t=0 (t=${go})`);
-  const track = drive(start, to.x - start.x, go);
-  track[track.length - 1].t = t1; // absorb rounding so the slow-down can start exactly at t1
-  return { start, track: [kf(start, go), ...track] };
-}
+const driveBlueTo = (to: Pose, t1: number) => driveInTo({ x: -60, y: LANE_Y, heading: 90 }, to, t1);
 
 // ---------------------------------------------------------------------------------------------
 // 1. Yellow lights: the bus is getting ready to stop, so slow down and get ready to stop too.
@@ -106,7 +99,7 @@ const S_LINE = stopLineAhead('stop-bus', S_BLUE_STOP);
 const S_SLOW = 4111; // "stop"
 const S_SLOW_FWD = 45;
 const S_DOWN = slowToStop(S_BLUE_STOP, S_SLOW_FWD, S_SLOW);
-const S_IN = driveInTo({ ...S_BLUE_STOP, x: S_BLUE_STOP.x - S_SLOW_FWD }, S_SLOW);
+const S_IN = driveBlueTo({ ...S_BLUE_STOP, x: S_BLUE_STOP.x - S_SLOW_FWD }, S_SLOW);
 /** When blue has stopped (before "Stop at least"). */
 export const S_STOP_T = last(S_DOWN).t;
 const S_BUS_ON = 194;
@@ -198,7 +191,7 @@ export const O_LINE = stopLineAhead('stop-bus', O_BLUE_STOP);
 const O_SLOW = 4736; // "stop"
 const O_SLOW_FWD = 40;
 const O_DOWN = slowToStop(O_BLUE_STOP, O_SLOW_FWD, O_SLOW);
-const O_IN = driveInTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - O_SLOW_FWD }, O_SLOW);
+const O_IN = driveBlueTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - O_SLOW_FWD }, O_SLOW);
 const O_STOP_T = last(O_DOWN).t;
 const O_MS = 7700;
 const O_BUS_ON = 180; // "school"
@@ -245,7 +238,7 @@ export const schoolBusOncoming: SceneDef = {
 const D_SLOW = 6000; // "stop"
 const D_SLOW_FWD = 30;
 const D_DOWN = slowToStop(O_BLUE_STOP, D_SLOW_FWD, D_SLOW);
-const D_IN = driveInTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - D_SLOW_FWD }, D_SLOW);
+const D_IN = driveBlueTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - D_SLOW_FWD }, D_SLOW);
 const D_STOP_T = last(D_DOWN).t;
 const D_MS = 7800;
 const D_BUS_ON = 291; // "school"
