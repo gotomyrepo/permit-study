@@ -2661,15 +2661,15 @@
  },
  {
   "id": "card-parking-signs-no-parking",
-  "text": "This sign says NO PARKING. You may stop for a short time, to load or unload things or people."
+  "text": "This sign says No Parking. You may stop for a short time, to load or unload things or people."
  },
  {
   "id": "card-parking-signs-no-standing",
-  "text": "This sign says NO STANDING. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
+  "text": "This sign says No Standing. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
  },
  {
   "id": "card-parking-signs-no-stopping",
-  "text": "This sign says NO STOPPING. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
+  "text": "This sign says No Stopping. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
  },
  {
   "id": "card-parking-signs-reserved",
@@ -2681,7 +2681,7 @@
  },
  {
   "id": "q-parking-signs-q1",
-  "text": "You are the blue car. You see a NO PARKING sign. What may you do here?"
+  "text": "You are the blue car. You see a No Parking sign. What may you do here?"
  },
  {
   "id": "q-parking-signs-q1-c0",
@@ -2709,7 +2709,7 @@
  },
  {
   "id": "q-parking-signs-q2",
-  "text": "You are the blue car. You see a NO STANDING sign. Your friend needs to get out. What may you do?"
+  "text": "You are the blue car. You see a No Standing sign. Your friend needs to get out. What may you do?"
  },
  {
   "id": "q-parking-signs-q2-c0",
@@ -2737,7 +2737,7 @@
  },
  {
   "id": "q-parking-signs-q3",
-  "text": "You see a NO STOPPING sign. When may you stop there?"
+  "text": "You see a No Stopping sign. When may you stop there?"
  },
  {
   "id": "q-parking-signs-q3-c0",

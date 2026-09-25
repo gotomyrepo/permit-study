@@ -4,21 +4,21 @@ title: Parking signs
 icon: "🪧"
 cards:
   - id: parking-signs-no-parking
-    say: "This sign says NO PARKING. You may stop for a short time, to load or unload things or people."
+    say: "This sign says No Parking. You may stop for a short time, to load or unload things or people."
     scene: parking-signs-no-parking
     step: teach
     source:
       page: 43
       quote: "A NO PARKING sign means you can make a temporary stop to load or discharge merchandise or passengers."
   - id: parking-signs-no-standing
-    say: "This sign says NO STANDING. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
+    say: "This sign says No Standing. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
     scene: parking-signs-no-standing
     step: teach
     source:
       page: 43
       quote: "A NO STANDING sign means you can only make a temporary stop to load or discharge passengers. The driver cannot exit the vehicle."
   - id: parking-signs-no-stopping
-    say: "This sign says NO STOPPING. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
+    say: "This sign says No Stopping. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
     scene: parking-signs-no-stopping
     step: teach
     source:
@@ -40,7 +40,7 @@ cards:
       quote: "Do not park in the spaces with diagonal stripes next to reserved parking areas. These spaces are needed to give access to those with wheelchairs and vehicles with special equipment."
 questions:
   - id: parking-signs-q1
-    ask: "You are the blue car. You see a NO PARKING sign. What may you do here?"
+    ask: "You are the blue car. You see a No Parking sign. What may you do here?"
     scene: parking-signs-no-parking
     step: question
     choices: ["Park and go to a movie.", "Stop a short time to load or unload.", "Leave your car here all day.", "Nothing. You may never stop here."]
@@ -51,7 +51,7 @@ questions:
       page: 43
       quote: "A NO PARKING sign means you can make a temporary stop to load or discharge merchandise or passengers."
   - id: parking-signs-q2
-    ask: "You are the blue car. You see a NO STANDING sign. Your friend needs to get out. What may you do?"
+    ask: "You are the blue car. You see a No Standing sign. Your friend needs to get out. What may you do?"
     scene: parking-signs-no-standing
     step: question
     choices: ["Park and walk her inside.", "Get out and unload boxes.", "Stop a short time and let her out.", "Nothing. You may never stop here."]
@@ -62,7 +62,7 @@ questions:
       page: 43
       quote: "A NO STANDING sign means you can only make a temporary stop to load or discharge passengers. The driver cannot exit the vehicle."
   - id: parking-signs-q3
-    ask: "You see a NO STOPPING sign. When may you stop there?"
+    ask: "You see a No Stopping sign. When may you stop there?"
     scene: parking-signs-no-stopping
     step: question
     choices: ["To obey signs, lights, officers, or avoid crashes.", "To drop off a friend.", "To load or unload boxes.", "To park for a short time."]

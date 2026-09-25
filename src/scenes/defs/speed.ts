@@ -153,10 +153,11 @@ export const speedTooSlow: SceneDef = {
 // "the speed limit is" 5375–6346 ("is" 6194), "25 miles" (no timing) 6346–7430, "per hour," 7430–8013,
 // "if no sign says different." 8305–9860.
 // City blocks (grey rooftops) line both sides of the road, with a "NEW YORK CITY" label over them, and no sign.
-// Blue drives across at C_SPEED (25/55 of SPEED, as the limit is 25 here). Its speedometer shows "25" from "is", before "25" is said.
-const C = { gaugeOn: 6194, ms: 10300 };
+// Blue drives across at C_SPEED (25/55 of SPEED, as the limit is 25 here). A SPEED LIMIT 25 sign (no post, on the grass
+// below the road) shows from "is", before "25" is said.
+const C = { signOn: 6194, ms: 10300 };
 const C_SPEED = Math.round((SPEED * 25) / 55);
-const C_GAUGE = speedGauge('gauge-25', 150, 246, 25);
+const C_SIGN = signProp('sign-25', 'speed', 150, 248, { text: '25', size: 92, post: false });
 const block = (x: number, y: number, w: number, h: number, fill: string) =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${fill}" stroke="#455a64" stroke-width="2"/>`;
 const C_CITY: ExtraProp = {
@@ -169,19 +170,19 @@ const C_CITY: ExtraProp = {
 
 export const speedCity: SceneDef = {
   id: 'speed-city', width: 300, height: 300,
-  ...twoLane({ props: [C_CITY, C_GAUGE] }),
-  initialStates: { [C_GAUGE.id]: 'hidden' },
+  ...twoLane({ props: [C_CITY, C_SIGN] }),
+  initialStates: { [C_SIGN.id]: 'hidden' },
   actors: [blueCar(east(-20))],
   steps: [
     {
       id: 'teach', duration: C.ms,
-      states: [set(C_GAUGE.id, '', C.gaugeOn)],
+      states: [set(C_SIGN.id, '', C.signOn)],
       tracks: { blue: driveUntil(east(-20), 0, C.ms, { speed: C_SPEED }) },
     },
     {
-      // Blue on a city street with no sign; no speedometer.
+      // Blue on a city street with no sign.
       id: 'question', duration: 500,
-      states: [set(C_GAUGE.id, 'hidden')],
+      states: [set(C_SIGN.id, 'hidden')],
       at: { blue: east(120) },
     },
   ],

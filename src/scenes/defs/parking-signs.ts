@@ -83,7 +83,7 @@ function stopScene(o: {
   const box = boxProp('box', BOX_X, WALK_TOP);
   const friend = friendProp('friend', FRIEND_X, WALK_TOP);
   const props = o.t.things === undefined ? [sign, friend] : [sign, box, friend];
-  const inTo = driveInTo(east(-30, CURB.parkY), east(STOP_X - SLOW_FWD, CURB.parkY), o.t.stop);
+  const inTo = driveInTo(east(-20, CURB.parkY), east(STOP_X - SLOW_FWD, CURB.parkY), o.t.stop);
   const down = changeSpeed(last(inTo.track), SLOW_FWD, o.t.stop, SPEED, 0);
   const stopT = last(down).t;
   if (stopT > (o.t.things ?? o.t.people)) throw new Error(`${o.id}: blue must stop before anything is unloaded`);
@@ -112,17 +112,17 @@ function stopScene(o: {
   };
 }
 
-// Clip: "This sign says" 111–1138, "NO PARKING." 1291–1999, "You may stop" 2458–3041 ("stop" 2736),
-// "for a short time," 3055–4040, "to load or unload" 4430–5888, "things" 5902, "or people." 6277–6832 ("people" 6388).
+// Clip: "This sign says" 125–846, "No Parking." 861–1583, "You may stop" 2041–2624 ("stop" 2319),
+// "for a short time," 2638–3624, "to load or unload" 4013–5472, "things" 5486, "or people." 5861–6416 ("people" 5972).
 /** The NO PARKING clip's times (exported for tests). */
-export const NO_PARKING_T = { signOn: 1291, signOff: 1999, stop: 2736, things: 5902, people: 6388, ms: 7300 };
+export const NO_PARKING_T = { signOn: 861, signOff: 1583, stop: 2319, things: 5486, people: 5972, ms: 6900 };
 export const psNoParking = stopScene({ id: 'parking-signs-no-parking', kind: 'no-parking', t: NO_PARKING_T });
 
-// Clip: "This sign says" 125–1055, "NO STANDING." 1180–2041, "You may stop" 2513–3041 ("stop" 2750),
-// "for a short time," 3055–3999, "only to pick up or drop off" 4500–6069, "people." 6083–6471,
-// "You must stay in the car." 6930–8082 ("stay" 7263).
+// Clip: "This sign says" 125–832, "No Standing." 847–1582, "You may stop" 2055–2582 ("stop" 2291),
+// "for a short time," 2597–3540, "only to pick up or drop off" 4041–5610, "people." 5625–6013,
+// "You must stay in the car." 6472–7624 ("stay" 6805).
 /** The NO STANDING clip's times (exported for tests). */
-export const NO_STANDING_T = { signOn: 1180, signOff: 2041, stop: 2750, people: 6083, stay: 7263, ms: 8500 };
+export const NO_STANDING_T = { signOn: 847, signOff: 1582, stop: 2291, people: 5625, stay: 6805, ms: 8050 };
 export const psNoStanding = stopScene({ id: 'parking-signs-no-standing', kind: 'no-standing', t: NO_STANDING_T });
 
 // ---------------------------------------------------------------------------------------------
@@ -131,14 +131,14 @@ export const psNoStanding = stopScene({ id: 'parking-signs-no-standing', kind: '
 // its word and ringed while it is named: a STOP sign ("traffic sign"), a traffic light with its red lamp lit
 // ("traffic light") and a police officer ("officer"). A red car drives in the other lane and is ringed on "another
 // car". The question picture has only blue and the sign.
-// Clip: "This sign says" 125–1027, "NO STOPPING." 1152–1943, "You may stop here only to obey" 2402–4208
-// ("obey" 3736), "a traffic sign," 4222–5235 ("traffic" 4291), "a traffic light," 5694–6555 ("traffic" 5736),
-// "or an officer." 7027–7777 ("an" 7111), "Or to avoid a crash" 8236–9486, "with another car." 9500–10401
-// ("another" 9680).
+// Clip: "This sign says" 111–819, "No Stopping." 833–1526, "You may stop here only to obey" 1986–3791
+// ("obey" 3319), "a traffic sign," 3805–4818 ("traffic" 3875), "a traffic light," 5277–6138 ("traffic" 5319),
+// "or an officer." 6611–7360 ("an" 6694), "Or to avoid a crash" 7819–9069, "with another car." 9083–9985
+// ("another" 9263).
 /** The NO STOPPING clip's times (exported for tests). */
 export const ST = {
-  signOn: 1152, signOff: 1943, panelOn: 3736, stopOn: 4291, stopOff: 5235, lightOn: 5736, lightOff: 6555,
-  officerOn: 7111, officerOff: 7777, redGo: 7500, redOn: 9680, ms: 10900,
+  signOn: 833, signOff: 1526, panelOn: 3319, stopOn: 3875, stopOff: 4818, lightOn: 5319, lightOff: 6138,
+  officerOn: 6694, officerOff: 7360, redGo: 7083, redOn: 9263, ms: 10500,
 };
 const BLUE_SLOW = 26;
 const PANEL = { x: 12, y: 8, w: 276, h: 96 };

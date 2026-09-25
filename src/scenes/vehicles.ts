@@ -22,6 +22,22 @@ function blinkers(W: number, L: number): string {
 }
 
 /**
+ * Headlights and taillights, so it is easy to see which way a vehicle points: two yellow lamps sticking a little out
+ * of the front edge and two red lamps at the back edge, each with a dark rim (so red shows on a red car).
+ */
+function endLamps(W: number, L: number): string {
+  const lamp = (cx: number, cy: number, fill: string) =>
+    `<rect x="${cx - 3}" y="${cy - 1.75}" width="6" height="3.5" rx="1.5" fill="${fill}" stroke="#212121" stroke-width="1"/>`;
+  const sx = W / 2 - 4.5;
+  return lamp(-sx, -L / 2, '#ffee58') + lamp(sx, -L / 2, '#ffee58') + lamp(-sx, L / 2 - 1, '#e53935') + lamp(sx, L / 2 - 1, '#e53935');
+}
+
+/** A white arrow on a car's roof, between the windows, pointing to the front. */
+function roofArrow(): string {
+  return `<polygon points="0,-4.5 5,1.5 1.8,1.5 1.8,7 -1.8,7 -1.8,1.5 -5,1.5" fill="#fff" stroke="#212121" stroke-width="0.8" stroke-linejoin="round"/>`;
+}
+
+/**
  * An ambulance's two big roof lights, red on the left and blue on the right, just behind the windshield. They are dim
  * unless the actor's state includes `flashing` (see styles.css); then the lamps stay fully lit and only their
  * halos blink, so a still picture always shows the lights on.
@@ -68,21 +84,21 @@ export function vehicleSvg(a: ActorDef): string {
   switch (a.kind) {
     case 'car':
       return `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="5" fill="${color}" stroke="#0004"/>` + glass(y + 6, 8) + glass(L / 2 - 8, 5) +
-        blinkers(W, L);
+        roofArrow() + endLamps(W, L) + blinkers(W, L);
     case 'bus':
       // Yellow-orange, with a dark lamp bar at the front and back holding two red and two yellow roof lights, and a
       // folding stop arm on the driver's (left) side (see `busLights` and `stopArm`).
       return `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="4" fill="${color}" stroke="#4e342e" stroke-width="1.5"/>` +
         glass(y + 9, 6) + `<rect x="${x}" y="${y + 20}" width="${W}" height="3" fill="#212121"/>` +
-        stopArm(x, y) + busLights(L);
+        endLamps(W, L) + stopArm(x, y) + busLights(L);
     case 'ambulance':
       // A red and a blue emergency light on the roof, behind the windshield (see `emergencyLights`), and a red cross.
       return `<rect x="${x}" y="${y}" width="${W}" height="${L}" rx="4" fill="${color}" stroke="#616161" stroke-width="1.5"/>` + glass(y + 4, 7) +
         `<rect x="-2.5" y="4" width="5" height="13" fill="#d32f2f"/><rect x="-6.5" y="8" width="13" height="5" fill="#d32f2f"/>` +
-        emergencyLights();
+        endLamps(W, L) + emergencyLights();
     case 'truck':
       return `<rect x="${x}" y="${y}" width="${W}" height="14" rx="3" fill="${color}" stroke="#0006"/>` + glass(y + 3, 5) +
-        `<rect x="${x}" y="${y + 16}" width="${W}" height="${L - 16}" rx="2" fill="#cfd8dc" stroke="#0006"/>`;
+        `<rect x="${x}" y="${y + 16}" width="${W}" height="${L - 16}" rx="2" fill="#cfd8dc" stroke="#0006"/>` + endLamps(W, L);
     case 'bike':
       return `<rect x="-1.5" y="${y}" width="3" height="${L}" fill="#212121"/><circle r="3.5" fill="${color}"/>`;
     case 'pedestrian':

@@ -42,8 +42,8 @@ export const signsScenes: SceneDef[] = [
   signCloseup('sign-speed', 'speed', { text: '55', teachMs: 5000 }),
   signCloseup('sign-warning', 'warning', { teachMs: 6000 }),
   signCloseup('sign-work-zone', 'work-zone', { text: 'WORK', teachMs: 4200 }),
-  signCloseup('sign-destination', 'destination', { text: 'ALBANY' }),
+  signCloseup('sign-destination', 'destination', { text: 'ITHACA' }),
   signCloseup('sign-service', 'service', { text: 'GAS' }),
   // Green destination and blue service signs side by side; 5700 ms fits the 5.3 s narration.
-  signPair('sign-guide', { kind: 'destination', text: 'ALBANY' }, { kind: 'service', text: 'GAS' }, 5700),
+  signPair('sign-guide', { kind: 'destination', text: 'ITHACA' }, { kind: 'service', text: 'GAS' }, 5700),
 ];
