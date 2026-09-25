@@ -73,16 +73,16 @@ export const speedSign65 = signCloseup('speed-sign-65', 'speed', { text: '65' })
 
 // ---------------------------------------------------------------------------------------------
 // 3. Fog ahead: the sign says 55, but the safe speed is much lower, so slow down (card speed-fog).
-// A 55 speed limit sign stands on the grass at blue's right (below the road), ringed while it is named. A fog bank
-// covers the right side of the scene from x FOG_X. Blue drives in at SPEED and, on "Slow", slows steadily to a crawl,
+// A 55 speed limit sign stands on the grass at blue's right (below the road), ringed while it is named. A grey-white fog bank
+// labeled "FOG" (ringed on "foggy ahead") covers the road and grass on the right side of the scene from x FOG_X. Blue drives in at SPEED and, on "Slow", slows steadily to a crawl,
 // with its front still short of the fog; it then creeps on slowly into the fog.
 // Clip: "It is foggy ahead." 111–1221, "The sign says" 1694–2347 ("sign" 1763), "55 miles" (no timing) 2347–3444,
 // "per hour." 3444–4000, "The safe speed is much lower." 4472–6291, "Slow down." 6750–7347 ("Slow" 6750).
 const FOG_X = 215;
-const F = { signOn: 1763, signOff: 4000, slow: 6750, ms: 8600 };
+const F = { fogOn: 333, fogOff: 1221, signOn: 1763, signOff: 4000, slow: 6750, ms: 8600 };
 const F_CRAWL = 12;
 const F_SLOW_FWD = 40;
-const F_FOG = fogBank('fog', FOG_X, 300);
+const F_FOG = fogBank('fog', FOG_X, 300, { label: 'FOG', opacity: 0.92 });
 const F_SIGN = signProp('sign-55', 'speed', 96, 232, { text: '55', size: 60 });
 /** Where blue starts slowing: so that it has slowed with its front 4 px short of the fog's soft edge. */
 export const F_SLOW_AT: Pose = east(FOG_X - FOG_EDGE_PX - 4 - F_SLOW_FWD - CAR_HALF);
@@ -99,13 +99,13 @@ export const speedFog: SceneDef = {
   steps: [
     {
       id: 'teach', duration: F.ms,
-      states: [set(F_SIGN.id, 'highlight', F.signOn), set(F_SIGN.id, '', F.signOff)],
+      states: [set(F_FOG.id, 'highlight', F.fogOn), set(F_FOG.id, '', F.fogOff), set(F_SIGN.id, 'highlight', F.signOn), set(F_SIGN.id, '', F.signOff)],
       tracks: { blue: F_TRACK },
     },
     {
       // Blue past the sign, before the fog.
       id: 'question', duration: 500,
-      states: [set(F_SIGN.id, '')],
+      states: [set(F_FOG.id, ''), set(F_SIGN.id, '')],
       at: { blue: east(125) },
     },
   ],
@@ -156,12 +156,12 @@ export const speedTooSlow: SceneDef = {
 
 // ---------------------------------------------------------------------------------------------
 // 5. New York City: 25 mph unless a sign says otherwise (card speed-city).
-// Clip: "Some cities have lower speed limits, with no sign." 125–3208, "In New York City," 3666–4513,
-// "the speed limit is" 4819–5790 ("is" 5638), "25 miles" (no timing) 5790–6875, "per hour," 6875–7457,
-// "if no sign says different." 7750–9304.
+// Clip: "Some cities have lower speed limits that are not always on a sign." 125–3763, "In New York City," 4222–5068,
+// "the speed limit is" 5375–6346 ("is" 6194), "25 miles" (no timing) 6346–7430, "per hour," 7430–8013,
+// "if no sign says different." 8305–9860.
 // City blocks (grey rooftops) line both sides of the road, with a "NEW YORK CITY" label over them, and no sign.
 // Blue drives across at C_SPEED (25/55 of SPEED, as the limit is 25 here). Its speedometer shows "25" from "is", before "25" is said.
-const C = { gaugeOn: 5638, ms: 9700 };
+const C = { gaugeOn: 6194, ms: 10300 };
 const C_SPEED = Math.round((SPEED * 25) / 55);
 const C_GAUGE = speedGauge('gauge-25', 150, 246, 25);
 const block = (x: number, y: number, w: number, h: number, fill: string) =>

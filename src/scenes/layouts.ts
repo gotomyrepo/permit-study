@@ -2,7 +2,7 @@ import type { ActorKind, Lane, Pose, SceneDef, StopLine, Zone } from './types';
 import { SIZES } from './engine';
 import { dir } from './geometry';
 import { turnControl } from './paths';
-import { doubleYellow, grass, line, measure, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
+import { doubleYellow, grass, label, line, measure, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
 
 export type Dir = 'nb' | 'sb' | 'eb' | 'wb';
 export type Control = 'stop' | 'yield' | 'light';
@@ -538,27 +538,35 @@ export function signProp(id: string, kind: SignKind, x: number, y: number, o: Om
   return { id, svg: sign(kind, x, y, { ...o, id }) };
 }
 
-/**
- * A bank of fog as a prop: a see-through white cover from x `x0` to `x1`, the full height of the scene, with a
- * soft, lumpy left edge (and right edge, if it ends before x 300) reaching `FOG_EDGE_PX` past x0, so drivers can see it coming. It is drawn under
- * the cars, so they stay easy to see. Throws unless 0 ≤ x0 < x1 ≤ 300 and the bank is at least 20 px wide.
- */
 /** How far `fogBank`'s soft edge puffs reach out past its ends (px). */
 export const FOG_EDGE_PX = 22;
-export function fogBank(id: string, x0: number, x1: number): ExtraProp {
+
+/**
+ * A bank of fog as a prop: a grey-white cover (opacity `opacity`, default 0.85) from x `x0` to `x1`, the full height
+ * of the scene, over the road and the grass, with a soft, lumpy left edge (and right edge, if it ends before x 300)
+ * reaching `FOG_EDGE_PX` past x0, so drivers can see it coming. It is drawn under the cars, so they stay easy to see.
+ * `label` (e.g. 'FOG') writes a big word near the top of the bank, centered between x0 and x1. The prop takes
+ * `highlight` (a yellow ring around the bank) for when the fog is named.
+ * Throws unless 0 ≤ x0 < x1 ≤ 300, the bank is at least 20 px wide and 0 < opacity ≤ 1.
+ */
+export function fogBank(id: string, x0: number, x1: number, o: { label?: string; opacity?: number } = {}): ExtraProp {
   if (!id) throw new Error('fogBank: id must not be empty');
   if (!Number.isFinite(x0) || !Number.isFinite(x1) || x0 < 0 || x1 > 300 || x1 - x0 < 20) {
     throw new Error(`fogBank: need 0 ≤ x0 < x1 ≤ 300, at least 20 px apart (got ${x0} and ${x1})`);
   }
+  const opacity = o.opacity ?? 0.85;
+  if (!Number.isFinite(opacity) || opacity <= 0 || opacity > 1) throw new Error(`fogBank: opacity must be more than 0 and at most 1 (got ${opacity})`);
+  if (o.label !== undefined && !o.label.trim()) throw new Error('fogBank: label must not be empty');
   const puff = (cx: number, cy: number, r: number) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`;
   const edge = (x: number) => [15, 55, 95, 135, 175, 215, 255, 295].map((cy, i) => puff(x, cy, i % 2 ? FOG_EDGE_PX : 16)).join('');
   // Fill and edge puffs share one see-through group, so where they overlap they don't look thicker.
   return {
     id,
-    svg: `<g class="fog" data-prop="${id}"><g fill="#ffffff" opacity="0.72">` +
+    svg: `<g class="pic fog" data-prop="${id}"><g fill="#e6e9ec" opacity="${opacity}">` +
       `<rect x="${x0}" y="0" width="${x1 - x0}" height="300"/>${edge(x0)}${x1 < 300 ? edge(x1) : ''}</g>` +
-      // A few darker wisps so it reads as fog, not a white patch.
-      [40, 120, 200, 260].map((wy) => line(x0 + 12, wy, x1 - 8, wy + 6, { color: '#b0bec5', width: 3, dash: '26 14' })).join('') +
+      // A few grey wisps so it reads as fog, not a white patch.
+      [95, 130, 225, 270].map((wy) => line(x0 + 12, wy, x1 - 8, wy + 6, { color: '#90a4ae', width: 3, dash: '26 14' })).join('') +
+      (o.label ? label((x0 + x1) / 2, 60, o.label, 22) : '') +
       `</g>`,
   };
 }

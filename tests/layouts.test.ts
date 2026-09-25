@@ -383,6 +383,14 @@ describe('speed helpers', () => {
     expect(() => fogBank('fog', -5, 100)).toThrow();
     expect(() => fogBank('fog', 0, 301)).toThrow();
     expect(() => fogBank('', 0, 100)).toThrow(/id/);
+    expect(f.svg).toContain('opacity="0.85"');
+    expect(f.svg).not.toContain('>FOG<');
+    const l = fogBank('fog', 200, 300, { label: 'FOG', opacity: 0.6 });
+    expect(l.svg).toContain('>FOG<');
+    expect(l.svg).toContain('opacity="0.6"');
+    expect(() => fogBank('fog', 200, 300, { opacity: 0 })).toThrow(/opacity/);
+    expect(() => fogBank('fog', 200, 300, { opacity: 1.5 })).toThrow(/opacity/);
+    expect(() => fogBank('fog', 200, 300, { label: ' ' })).toThrow(/label/);
   });
   test('speedGauge writes only its own number and points the needle along the dial', () => {
     const g = speedGauge('g', 150, 246, 55);
