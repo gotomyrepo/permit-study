@@ -1,0 +1,105 @@
+id: parking-signs
+order: 11
+title: Parking signs
+icon: "🪧"
+cards:
+  - id: parking-signs-no-parking
+    say: "This sign says NO PARKING. You may stop for a short time, to load or unload things or people."
+    scene: parking-signs-no-parking
+    step: teach
+    source:
+      page: 43
+      quote: "A NO PARKING sign means you can make a temporary stop to load or discharge merchandise or passengers."
+  - id: parking-signs-no-standing
+    say: "This sign says NO STANDING. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
+    scene: parking-signs-no-standing
+    step: teach
+    source:
+      page: 43
+      quote: "A NO STANDING sign means you can only make a temporary stop to load or discharge passengers. The driver cannot exit the vehicle."
+  - id: parking-signs-no-stopping
+    say: "This sign says NO STOPPING. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
+    scene: parking-signs-no-stopping
+    step: teach
+    source:
+      page: 43
+      quote: "A NO STOPPING sign means you can stop only to obey a traffic sign, signal or officer or to prevent conflicts with other vehicles."
+  - id: parking-signs-reserved
+    say: "This space is reserved. You may park here only with a permit or plates for persons with disabilities. The person who got them must be in the car."
+    scene: parking-signs-lot
+    step: teach-reserved
+    source:
+      page: 44
+      quote: "You can park in reserved spaces only if you have a permit or vehicle plates for persons with disabilities and only when the person who received the permit or vehicle plates is in the vehicle."
+  - id: parking-signs-stripes
+    say: "Next to it is a space with diagonal stripes. Do not park there. It gives room for people with wheelchairs, and for cars with special equipment."
+    scene: parking-signs-lot
+    step: teach-stripes
+    source:
+      page: 44
+      quote: "Do not park in the spaces with diagonal stripes next to reserved parking areas. These spaces are needed to give access to those with wheelchairs and vehicles with special equipment."
+questions:
+  - id: parking-signs-q1
+    ask: "You are the blue car. You see a NO PARKING sign. What may you do here?"
+    scene: parking-signs-no-parking
+    step: question
+    choices: ["Park and go to a movie.", "Stop a short time to load or unload.", "Leave your car here all day.", "Nothing. You may never stop here."]
+    answer: 1
+    explainCard: parking-signs-no-parking
+    signQuestion: true
+    source:
+      page: 43
+      quote: "A NO PARKING sign means you can make a temporary stop to load or discharge merchandise or passengers."
+  - id: parking-signs-q2
+    ask: "You are the blue car. You see a NO STANDING sign. Your friend needs to get out. What may you do?"
+    scene: parking-signs-no-standing
+    step: question
+    choices: ["Park and walk her inside.", "Get out and unload boxes.", "Stop a short time and let her out.", "Nothing. You may never stop here."]
+    answer: 2
+    explainCard: parking-signs-no-standing
+    signQuestion: true
+    source:
+      page: 43
+      quote: "A NO STANDING sign means you can only make a temporary stop to load or discharge passengers. The driver cannot exit the vehicle."
+  - id: parking-signs-q3
+    ask: "You see a NO STOPPING sign. When may you stop there?"
+    scene: parking-signs-no-stopping
+    step: question
+    choices: ["To obey signs, lights, officers, or avoid crashes.", "To drop off a friend.", "To load or unload boxes.", "To park for a short time."]
+    answer: 0
+    explainCard: parking-signs-no-stopping
+    signQuestion: true
+    source:
+      page: 43
+      quote: "A NO STOPPING sign means you can stop only to obey a traffic sign, signal or officer or to prevent conflicts with other vehicles."
+  - id: parking-signs-q4
+    ask: "What does this sign mean?"
+    scene: parking-signs-reserved-sign
+    step: show
+    choices: ["A gas station is near.", "Anyone may park here.", "No parking at any time.", "This space is reserved for people with disabilities."]
+    answer: 3
+    explainCard: parking-signs-reserved
+    signQuestion: true
+    source:
+      page: 44
+      figure: "Reserved parking sign picture, in the section RESERVED PARKING FOR PEOPLE WITH DISABILITIES (the text says reserved spaces 'must be marked with signs like the one shown above'): a white sign with RESERVED PARKING in black, a white wheelchair symbol on a black square, and a black bar at the bottom"
+  - id: parking-signs-q5
+    ask: "Your friend has a permit for persons with disabilities. You drive her car. When may you park in a reserved space?"
+    scene: parking-signs-lot
+    step: question
+    choices: ["Any time you drive her car.", "Only when your friend is in the car.", "When the parking lot is full.", "Only at night."]
+    answer: 1
+    explainCard: parking-signs-reserved
+    source:
+      page: 44
+      quote: "You can park in reserved spaces only if you have a permit or vehicle plates for persons with disabilities and only when the person who received the permit or vehicle plates is in the vehicle."
+  - id: parking-signs-q6
+    ask: "You are the blue car. There is a space with diagonal stripes next to a reserved space. What is the rule?"
+    scene: parking-signs-lot
+    step: question
+    choices: ["Park there if you have a permit.", "Park there if the lot is full.", "Do not park there.", "Park there at night."]
+    answer: 2
+    explainCard: parking-signs-stripes
+    source:
+      page: 44
+      quote: "Do not park in the spaces with diagonal stripes next to reserved parking areas."

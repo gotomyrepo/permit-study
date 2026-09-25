@@ -2,7 +2,7 @@ import type { ActorKind, Lane, Pose, SceneDef, StopLine, Zone } from './types';
 import { SIZES } from './engine';
 import { dir } from './geometry';
 import { turnControl } from './paths';
-import { doubleYellow, grass, label, line, measure, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
+import { doubleYellow, grass, hydrant as drawHydrant, label, line, measure, road, sign, stopBar, trafficLight, yieldTeeth, COLORS, type SignKind, type SignOpts } from './parts';
 
 export type Dir = 'nb' | 'sb' | 'eb' | 'wb';
 export type Control = 'stop' | 'yield' | 'light';
@@ -179,7 +179,17 @@ export function fourWay(opts: { controls?: Partial<Record<Dir, Control>>; crossw
 }
 
 /** A prop to draw on top of a layout: `svg` should carry `data-prop="<id>"` so steps can set its state. */
-export interface ExtraProp { id: string; svg: string }
+/**
+ * A prop to add with `LayoutExtras`. `parts` names pieces inside it that are props of their own (their svg carries
+ * their own `data-prop`), each with the state it starts in, e.g. a `trafficLightProp`'s lamps. `withExtras` lists
+ * them as props right after `id`; put `partStates(props)` in the scene's `initialStates` so they start in that state.
+ */
+export interface ExtraProp { id: string; svg: string; parts?: Record<string, string> }
+
+/** The starting states of every prop's `parts`, for a scene's `initialStates`. */
+export function partStates(props: ExtraProp[]): Record<string, string> {
+  return Object.assign({}, ...props.map((p) => p.parts ?? {}));
+}
 
 /**
  * Extra things a lesson can add to any layout: props drawn on top of the road (under the cars, e.g. a sign or a
@@ -202,7 +212,7 @@ export function withExtras(base: Layout, o: LayoutExtras): Layout {
     lanes: [...base.lanes, ...(o.lanes ?? [])],
     zones: [...base.zones, ...(o.zones ?? [])],
     lines: [...base.lines, ...(o.lines ?? [])],
-    props: [...base.props, ...(o.props ?? []).map((p) => p.id)],
+    props: [...base.props, ...(o.props ?? []).flatMap((p) => [p.id, ...Object.keys(p.parts ?? {})])],
   };
 }
 
@@ -538,6 +548,26 @@ export function signProp(id: string, kind: SignKind, x: number, y: number, o: Om
   return { id, svg: sign(kind, x, y, { ...o, id }) };
 }
 
+/**
+ * A traffic light as a prop, drawn upright at (x, y) and `scale` times the normal size (e.g. 1.6 for one the
+ * narration names). `highlight` on `id` rings it. Its lamps are the part `<id>-lamps` (see `ExtraProp.parts`), which
+ * starts in state `lamps`: the lit lamps, as for `trafficLight` (e.g. 'red', or 'red yellow green' for "a traffic
+ * light" that is no one color). Default '' (all dark). Throws on an empty id, a position that isn't numbers, or a
+ * scale that isn't more than 0.
+ */
+export function trafficLightProp(id: string, x: number, y: number, o: { scale?: number; lamps?: string } = {}): ExtraProp {
+  const { scale = 1, lamps = '' } = o;
+  if (!id) throw new Error('trafficLightProp: id must not be empty');
+  if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error(`trafficLightProp: x and y must be numbers (got ${x}, ${y})`);
+  if (!(scale > 0) || !Number.isFinite(scale)) throw new Error(`trafficLightProp: scale must be a number more than 0 (got ${scale})`);
+  const lampsId = `${id}-lamps`;
+  return {
+    id,
+    svg: `<g class="pic" data-prop="${id}"><g transform="translate(${x} ${y}) scale(${scale})">${trafficLight(lampsId, 0, 0)}</g></g>`,
+    parts: { [lampsId]: lamps },
+  };
+}
+
 /** How far `fogBank`'s soft edge puffs reach out past its ends (px). */
 export const FOG_EDGE_PX = 22;
 
@@ -791,6 +821,9 @@ export function measureProp(
   };
 }
 
+/** How far `wheelsProp`'s tires stick out past each side of the car (px). */
+export const WHEEL_OUT = 2;
+const CURB_Y = 214;
 /**
  * `curbStreet()` geometry. The street is `twoLane()`'s road (y 110–190, lanes `eb` center 170 and `wb` center 130)
  * with a parking lane below it (y 190–214, no line between them), then the curb (y 214–217) and a sidewalk
@@ -799,9 +832,6 @@ export function measureProp(
  * `crosswalkX[0]`–`crosswalkX[1]`) crosses the street and the parking lane just before it; `'stop'` adds a STOP sign
  * on the sidewalk corner for eastbound traffic, at (`signX`, `signY`).
  */
-/** How far `wheelsProp`'s tires stick out past each side of the car (px). */
-export const WHEEL_OUT = 2;
-const CURB_Y = 214;
 export const CURB = {
   laneId: 'parking',
   parkTop: 190, curbY: CURB_Y, curbBottom: 217, sidewalkBottom: 236,
@@ -854,10 +884,7 @@ export function curbStreet(opts: { hydrant?: number | false; corner?: CurbCorner
   }
   if (hydrant !== false) {
     const hx = hydrant, hy = C.hydrantY;
-    bg += `<g class="pic" data-prop="${C.hydrantId}">` +
-      `<rect x="${hx - 13}" y="${hy - 3.5}" width="26" height="7" rx="2" fill="#b71c1c" stroke="#4a0000" stroke-width="1.5"/>` +
-      `<circle cx="${hx}" cy="${hy}" r="9" fill="#e53935" stroke="#4a0000" stroke-width="2"/>` +
-      `<circle cx="${hx}" cy="${hy}" r="3.5" fill="#ffcdd2"/></g>`;
+    bg += `<g class="pic" data-prop="${C.hydrantId}">${drawHydrant(hx, hy)}</g>`;
     props.push(C.hydrantId);
   }
   return withExtras({

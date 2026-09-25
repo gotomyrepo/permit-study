@@ -18,8 +18,10 @@ describe('parking lesson distances', () => {
   });
   test('blue parks exactly 15 feet from the hydrant, 20 from the crosswalk and 30 from the STOP sign', () => {
     const front = (s: SceneDef) => pose(s, 'blue').x + HALF;
-    expect(parkingHydrant.background).toContain('cx="170"');
-    expect(170 - front(parkingHydrant)).toBeCloseTo(feetPx(15), 3);
+    // The hydrant's x, read from where it is drawn.
+    const drawn = new RegExp(`data-prop="${CURB.hydrantId}">.*?cx="([0-9.]+)"`).exec(parkingHydrant.background);
+    expect(drawn).not.toBeNull();
+    expect(Number(drawn![1]) - front(parkingHydrant)).toBeCloseTo(feetPx(15), 3);
     expect(CURB.crosswalkX[0] - front(parkingCrosswalk)).toBeCloseTo(feetPx(20), 3);
     expect(CURB.signX - front(parkingStopSign)).toBeCloseTo(feetPx(30), 3);
     // Parked by the STOP sign, blue is more than 20 feet from the crosswalk too.

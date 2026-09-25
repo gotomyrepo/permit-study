@@ -2654,5 +2654,197 @@
  {
   "id": "q-parking-q6-answer",
   "text": "The answer is: At least 30 feet."
+ },
+ {
+  "id": "end-parking-signs",
+  "text": "Great job! You're done with Parking signs."
+ },
+ {
+  "id": "card-parking-signs-no-parking",
+  "text": "This sign says NO PARKING. You may stop for a short time, to load or unload things or people."
+ },
+ {
+  "id": "card-parking-signs-no-standing",
+  "text": "This sign says NO STANDING. You may stop for a short time, only to pick up or drop off people. You must stay in the car."
+ },
+ {
+  "id": "card-parking-signs-no-stopping",
+  "text": "This sign says NO STOPPING. You may stop here only to obey a traffic sign, a traffic light, or an officer. Or to avoid a crash with another car."
+ },
+ {
+  "id": "card-parking-signs-reserved",
+  "text": "This space is reserved. You may park here only with a permit or plates for persons with disabilities. The person who got them must be in the car."
+ },
+ {
+  "id": "card-parking-signs-stripes",
+  "text": "Next to it is a space with diagonal stripes. Do not park there. It gives room for people with wheelchairs, and for cars with special equipment."
+ },
+ {
+  "id": "q-parking-signs-q1",
+  "text": "You are the blue car. You see a NO PARKING sign. What may you do here?"
+ },
+ {
+  "id": "q-parking-signs-q1-c0",
+  "text": "Park and go to a movie."
+ },
+ {
+  "id": "q-parking-signs-q1-c1",
+  "text": "Stop a short time to load or unload."
+ },
+ {
+  "id": "q-parking-signs-q1-c2",
+  "text": "Leave your car here all day."
+ },
+ {
+  "id": "q-parking-signs-q1-c3",
+  "text": "Nothing. You may never stop here."
+ },
+ {
+  "id": "q-parking-signs-q1-yes",
+  "text": "Yes! Stop a short time to load or unload."
+ },
+ {
+  "id": "q-parking-signs-q1-answer",
+  "text": "The answer is: Stop a short time to load or unload."
+ },
+ {
+  "id": "q-parking-signs-q2",
+  "text": "You are the blue car. You see a NO STANDING sign. Your friend needs to get out. What may you do?"
+ },
+ {
+  "id": "q-parking-signs-q2-c0",
+  "text": "Park and walk her inside."
+ },
+ {
+  "id": "q-parking-signs-q2-c1",
+  "text": "Get out and unload boxes."
+ },
+ {
+  "id": "q-parking-signs-q2-c2",
+  "text": "Stop a short time and let her out."
+ },
+ {
+  "id": "q-parking-signs-q2-c3",
+  "text": "Nothing. You may never stop here."
+ },
+ {
+  "id": "q-parking-signs-q2-yes",
+  "text": "Yes! Stop a short time and let her out."
+ },
+ {
+  "id": "q-parking-signs-q2-answer",
+  "text": "The answer is: Stop a short time and let her out."
+ },
+ {
+  "id": "q-parking-signs-q3",
+  "text": "You see a NO STOPPING sign. When may you stop there?"
+ },
+ {
+  "id": "q-parking-signs-q3-c0",
+  "text": "To obey signs, lights, officers, or avoid crashes."
+ },
+ {
+  "id": "q-parking-signs-q3-c1",
+  "text": "To drop off a friend."
+ },
+ {
+  "id": "q-parking-signs-q3-c2",
+  "text": "To load or unload boxes."
+ },
+ {
+  "id": "q-parking-signs-q3-c3",
+  "text": "To park for a short time."
+ },
+ {
+  "id": "q-parking-signs-q3-yes",
+  "text": "Yes! To obey signs, lights, officers, or avoid crashes."
+ },
+ {
+  "id": "q-parking-signs-q3-answer",
+  "text": "The answer is: To obey signs, lights, officers, or avoid crashes."
+ },
+ {
+  "id": "q-parking-signs-q4",
+  "text": "What does this sign mean?"
+ },
+ {
+  "id": "q-parking-signs-q4-c0",
+  "text": "A gas station is near."
+ },
+ {
+  "id": "q-parking-signs-q4-c1",
+  "text": "Anyone may park here."
+ },
+ {
+  "id": "q-parking-signs-q4-c2",
+  "text": "No parking at any time."
+ },
+ {
+  "id": "q-parking-signs-q4-c3",
+  "text": "This space is reserved for people with disabilities."
+ },
+ {
+  "id": "q-parking-signs-q4-yes",
+  "text": "Yes! This space is reserved for people with disabilities."
+ },
+ {
+  "id": "q-parking-signs-q4-answer",
+  "text": "The answer is: This space is reserved for people with disabilities."
+ },
+ {
+  "id": "q-parking-signs-q5",
+  "text": "Your friend has a permit for persons with disabilities. You drive her car. When may you park in a reserved space?"
+ },
+ {
+  "id": "q-parking-signs-q5-c0",
+  "text": "Any time you drive her car."
+ },
+ {
+  "id": "q-parking-signs-q5-c1",
+  "text": "Only when your friend is in the car."
+ },
+ {
+  "id": "q-parking-signs-q5-c2",
+  "text": "When the parking lot is full."
+ },
+ {
+  "id": "q-parking-signs-q5-c3",
+  "text": "Only at night."
+ },
+ {
+  "id": "q-parking-signs-q5-yes",
+  "text": "Yes! Only when your friend is in the car."
+ },
+ {
+  "id": "q-parking-signs-q5-answer",
+  "text": "The answer is: Only when your friend is in the car."
+ },
+ {
+  "id": "q-parking-signs-q6",
+  "text": "You are the blue car. There is a space with diagonal stripes next to a reserved space. What is the rule?"
+ },
+ {
+  "id": "q-parking-signs-q6-c0",
+  "text": "Park there if you have a permit."
+ },
+ {
+  "id": "q-parking-signs-q6-c1",
+  "text": "Park there if the lot is full."
+ },
+ {
+  "id": "q-parking-signs-q6-c2",
+  "text": "Do not park there."
+ },
+ {
+  "id": "q-parking-signs-q6-c3",
+  "text": "Park there at night."
+ },
+ {
+  "id": "q-parking-signs-q6-yes",
+  "text": "Yes! Do not park there."
+ },
+ {
+  "id": "q-parking-signs-q6-answer",
+  "text": "The answer is: Do not park there."
  }
 ]

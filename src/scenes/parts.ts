@@ -63,7 +63,11 @@ export function octagonPoints(cx: number, cy: number, r: number): string {
 
 export type SignKind =
   | 'stop' | 'yield' | 'warning' | 'work-zone' | 'speed' | 'school' | 'rr-advance' | 'rr-crossbuck'
-  | 'do-not-enter' | 'one-way' | 'wrong-way' | 'regulation' | 'destination' | 'service';
+  | 'do-not-enter' | 'one-way' | 'wrong-way' | 'regulation' | 'destination' | 'service'
+  | 'no-parking' | 'no-standing' | 'no-stopping' | 'reserved-parking';
+
+/** The second line of the NO PARKING / NO STANDING / NO STOPPING signs (the first line is NO). */
+const NO_WORD: Partial<Record<SignKind, string>> = { 'no-parking': 'PARKING', 'no-standing': 'STANDING', 'no-stopping': 'STOPPING' };
 
 export interface SignOpts { id?: string; size?: number; text?: string; post?: boolean }
 
@@ -128,6 +132,33 @@ export function sign(kind: SignKind, x: number, y: number, o: SignOpts = {}): st
     case 'service':
       body = rect('#1565c0', s * 0.8, s * 0.8) + t(o.text ?? '', s * 0.3, '#fff');
       break;
+    // Regulation signs (manual p.29: white, with black and/or red letters) for the parking rules on p.43, in big red
+    // letters: NO on top, then PARKING, STANDING or STOPPING. Wider than tall.
+    case 'no-parking':
+    case 'no-standing':
+    case 'no-stopping':
+      body = rect('#fff', s, s * 0.72) + t('NO', s * 0.27, '#c62828', -s * 0.15) + t(NO_WORD[kind]!, s * 0.16, '#c62828', s * 0.17);
+      break;
+    // The reserved parking sign pictured on manual p.44: white, taller than wide, RESERVED / PARKING in black, a white
+    // wheelchair symbol on a black square, and a black bar at the bottom.
+    case 'reserved-parking': {
+      const w = s * 0.8, q = s * 0.4, qy = s * 0.11;
+      const k = (v: number) => n(v * q);
+      const white = `stroke="#fff" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
+      const chair = `<g transform="translate(0 ${n(qy)})">` +
+        `<rect x="${n(-q / 2)}" y="${n(-q / 2)}" width="${n(q)}" height="${n(q)}" rx="${n(q * 0.08)}" fill="#212121"/>` +
+        `<circle cx="${k(0.08)}" cy="${k(-0.3)}" r="${k(0.075)}" fill="#fff"/>` +
+        // Body leaning forward, then the thigh out to the knee and the leg down to the foot.
+        `<path d="M${k(0.02)} ${k(-0.18)} L${k(-0.06)} ${k(0.06)} L${k(0.16)} ${k(0.06)} L${k(0.24)} ${k(0.27)}" ${white} stroke-width="${k(0.085)}"/>` +
+        // Arm reaching forward.
+        `<path d="M${k(0)} ${k(-0.1)} L${k(0.17)} ${k(-0.14)}" ${white} stroke-width="${k(0.07)}"/>` +
+        // The wheel: a round arc under and behind the seat, open at the top right.
+        `<path d="M${k(0.13)} ${k(0.28)} A${k(0.22)} ${k(0.22)} 0 1 1 ${k(-0.13)} ${k(-0.06)}" ${white} stroke-width="${k(0.07)}"/>` +
+        `</g>`;
+      body = rect('#fff', w, s) + t('RESERVED', s * 0.125, '#212121', -s * 0.365) + t('PARKING', s * 0.125, '#212121', -s * 0.225) + chair +
+        `<rect x="${n(-w * 0.3)}" y="${n(s * 0.38)}" width="${n(w * 0.6)}" height="${n(s * 0.05)}" fill="#212121"/>`;
+      break;
+    }
   }
   const post = o.post === false ? '' : `<rect x="-1.5" y="${n(r * 0.8)}" width="3" height="${n(s * 0.7)}" fill="#757575"/>`;
   const idAttr = o.id ? ` data-prop="${o.id}"` : '';
@@ -145,8 +176,17 @@ export function trafficLight(id: string, x: number, y: number): string {
     `</g>`;
 }
 
-export function hydrant(x: number, y: number): string {
-  return `<g transform="translate(${n(x)} ${n(y)})"><circle r="5" fill="#d32f2f" stroke="#7f0000"/><circle r="2" fill="#ff8a80"/></g>`;
+/**
+ * A fire hydrant seen from above, centered at (x, y): a red round body of radius `r` (default 9 px, as `curbStreet()`
+ * draws it) with a side outlet bar across it and a light cap. Every size scales with `r`.
+ */
+export function hydrant(x: number, y: number, r = 9): string {
+  if (!(r > 0)) throw new Error(`hydrant: r must be more than 0 (got ${r})`);
+  const k = r / 9;
+  const barW = 26 * k, barH = 7 * k;
+  return `<rect x="${n(x - barW / 2)}" y="${n(y - barH / 2)}" width="${n(barW)}" height="${n(barH)}" rx="2" fill="#b71c1c" stroke="#4a0000" stroke-width="1.5"/>` +
+    `<circle cx="${n(x)}" cy="${n(y)}" r="${n(r)}" fill="#e53935" stroke="#4a0000" stroke-width="2"/>` +
+    `<circle cx="${n(x)}" cy="${n(y)}" r="${n(3.5 * k)}" fill="#ffcdd2"/>`;
 }
 
 export function label(x: number, y: number, text: string, size = 12): string {

@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { CURB, curbStreet, WHEEL_OUT, wheelsProp, fogBank, signPair, signProp, speedGauge, feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { CURB, curbStreet, WHEEL_OUT, wheelsProp, fogBank, signPair, signProp, speedGauge, feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, partStates, planArrow, sameWay, trafficLightProp, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
+import { hydrant, sign } from '../src/scenes/parts';
 
 /** The <line> elements inside the center-line group of a layout's background. */
 function centerLines(bg: string, id = 'center-line'): string[] {
@@ -459,5 +460,63 @@ describe('wheelsProp', () => {
   test('throws clear errors', () => {
     expect(() => wheelsProp('', { x: 1, y: 1, heading: 0 })).toThrow(/id must not be empty/);
     expect(() => wheelsProp('w', { x: NaN, y: 1, heading: 0 })).toThrow(/pose must be numbers/);
+  });
+});
+
+describe('trafficLightProp', () => {
+  test('a ringable light whose lamps are a part that starts lit as asked', () => {
+    const p = trafficLightProp('tl', 170, 58, { scale: 1.6, lamps: 'red' });
+    expect(p.svg).toContain('data-prop="tl"');
+    expect(p.svg).toContain('translate(170 58) scale(1.6)');
+    expect(p.svg).toContain('data-prop="tl-lamps"');
+    expect(p.parts).toEqual({ 'tl-lamps': 'red' });
+    expect(trafficLightProp('x', 0, 0).parts).toEqual({ 'x-lamps': '' });
+    expect(trafficLightProp('x', 0, 0).svg).toContain('scale(1)');
+  });
+  test('withExtras lists parts right after their prop, and partStates gives their starting states', () => {
+    const tl = trafficLightProp('tl', 10, 10, { lamps: 'green' });
+    const L = withExtras(twoLane(), { props: [{ id: 'a', svg: '' }, tl, { id: 'b', svg: '' }] });
+    expect(L.props).toEqual([...twoLane().props, 'a', 'tl', 'tl-lamps', 'b']);
+    expect(partStates([{ id: 'a', svg: '' }, tl])).toEqual({ 'tl-lamps': 'green' });
+    expect(partStates([])).toEqual({});
+  });
+  test('throws clear errors', () => {
+    expect(() => trafficLightProp('', 0, 0)).toThrow(/id must not be empty/);
+    expect(() => trafficLightProp('t', NaN, 0)).toThrow(/x and y must be numbers/);
+    expect(() => trafficLightProp('t', 0, 0, { scale: 0 })).toThrow(/scale must be a number more than 0/);
+    expect(() => trafficLightProp('t', 0, 0, { scale: Infinity })).toThrow(/scale/);
+  });
+});
+
+describe('hydrant', () => {
+  test('default size is the one curbStreet draws; every size scales with r', () => {
+    expect(curbStreet({ corner: 'none', hydrant: 170 }).background).toContain(hydrant(170, CURB.hydrantY));
+    expect(hydrant(0, 0)).toContain('r="9"');
+    const big = hydrant(0, 0, 18);
+    expect(big).toContain('r="18"');
+    expect(big).toContain('width="52" height="14"');
+    expect(big).toContain('r="7"');
+  });
+  test('throws on a size that is not more than 0', () => {
+    expect(() => hydrant(0, 0, 0)).toThrow(/r must be more than 0/);
+    expect(() => hydrant(0, 0, NaN)).toThrow(/r must be more than 0/);
+  });
+});
+
+describe('parking signs', () => {
+  test('NO PARKING, NO STANDING and NO STOPPING are white signs with NO and the word in red', () => {
+    for (const [kind, word] of [['no-parking', 'PARKING'], ['no-standing', 'STANDING'], ['no-stopping', 'STOPPING']] as const) {
+      const svg = sign(kind, 0, 0, { size: 100 });
+      expect(svg).toContain('fill="#fff"');
+      expect(svg).toContain('>NO</text>');
+      expect(svg).toContain(`>${word}</text>`);
+      expect(svg.match(/fill="#c62828"/g)).toHaveLength(2);
+    }
+  });
+  test('the reserved parking sign says RESERVED PARKING over a wheelchair symbol', () => {
+    const svg = sign('reserved-parking', 0, 0, { size: 100 });
+    expect(svg).toContain('>RESERVED</text>');
+    expect(svg).toContain('>PARKING</text>');
+    expect(svg).toContain('fill="#212121"');
   });
 });

@@ -1,7 +1,9 @@
 import type { ActorDef, Pose, SceneDef, StateSet } from '../types';
 import { SIZES } from '../engine';
-import { CURB, curbStreet, feetPx, laneGlow, measureProp, signProp, stopLineAhead, WHEEL_OUT, wheelsProp, type ExtraProp } from '../layouts';
-import { trafficLight } from '../parts';
+import {
+  CURB, curbStreet, feetPx, laneGlow, measureProp, partStates, signProp, stopLineAhead, trafficLightProp, WHEEL_OUT, wheelsProp,
+  type ExtraProp,
+} from '../layouts';
 import { changeSpeed, driveInTo, kf, SPEED } from '../paths';
 
 // Parking, manual pages 42 (How to Park) and 43 (Parking Regulations). Times are in ms and follow the word timings in
@@ -129,12 +131,13 @@ function distanceScene(o: {
   id: string; layout: Parameters<typeof curbStreet>[0]; thing: string; thingX: number; reachTo: number; feet: number;
   arrowY: number; label: 'above' | 'below';
   t: { thingOn: number; thingOff: number; park: number; parkOff?: number; gapOn: number; ms: number };
-  /** Extra props shown only in `teach` (hidden at first and in the question), with their teach states. */
-  /** `fixed`: ids of parts inside those props that keep one state throughout (e.g. a traffic light's lamps). */
-  more?: { props: ExtraProp[]; states: StateSet[]; fixed?: Record<string, string> };
+  /**
+   * Extra props shown only in `teach` (hidden at first and in the question), with their teach states. Their `parts`
+   * (e.g. a traffic light's lamps) keep their starting state throughout.
+   */
+  more?: { props: ExtraProp[]; states: StateSet[] };
 }): SceneDef {
   const more = o.more ?? { props: [], states: [] };
-  const fixed = more.fixed ?? {};
   const hideMore = Object.fromEntries(more.props.map((p) => [p.id, 'hidden']));
   const blue = parked(o.thingX - feetPx(o.feet) - CAR_HALF);
   const grey = parked(40);
@@ -144,8 +147,8 @@ function distanceScene(o: {
   const layout = curbStreet({ ...o.layout, props: [gap, ...more.props], lines: [stop] });
   return {
     id: o.id, width: 300, height: 300,
-    ...layout, props: [...layout.props, ...Object.keys(fixed)],
-    initialStates: { [gap.id]: 'hidden', ...hideMore, ...fixed },
+    ...layout,
+    initialStates: { [gap.id]: 'hidden', ...hideMore, ...partStates(more.props) },
     actors: [car('blue', blue), car('grey', grey, GREY)],
     steps: [
       {
@@ -193,22 +196,18 @@ export const parkingCrosswalk = distanceScene({
 // three lamps lit, so it reads as "a traffic light", not one color) appear on the grass across the street, each
 // ringed on its name; the YIELD sign's ring goes off on "or", the light's stays on to the end.
 const Y_SIGN = signProp('sign-yield', 'yield', 95, 58, { size: 46, post: false });
-const T_LIGHT_RING = 'traffic-light';
-const T_LIGHT: ExtraProp = {
-  id: T_LIGHT_RING,
-  svg: `<g class="pic" data-prop="${T_LIGHT_RING}"><g transform="translate(170 58) scale(1.6)">${trafficLight('traffic-light-lamps', 0, 0)}</g></g>`,
-};
-const sp = { yieldOn: 6013, yieldOff: 7013, lightOn: 7180 };
+const T_LIGHT = trafficLightProp('traffic-light', 170, 58, { scale: 1.6, lamps: 'red yellow green' });
+/** `parkOff`: blue's ring goes off in the gap after "it." (ends 3638), before "Also" (no timing). */
+const sp = { parkOff: 3900, yieldOn: 6013, yieldOff: 7013, lightOn: 7180 };
 export const parkingStopSign = distanceScene({
   id: 'parking-stop-sign', layout: { hydrant: false, corner: 'stop' }, thing: CURB.signId, thingX: CURB.signX,
   reachTo: 284, feet: 30, arrowY: 291, label: 'above',
-  t: { thingOn: 444, thingOff: 1193, park: 1666, parkOff: 3900, gapOn: 2000, ms: 8400 },
+  t: { thingOn: 444, thingOff: 1193, park: 1666, parkOff: sp.parkOff, gapOn: 2000, ms: 8400 },
   more: {
     props: [Y_SIGN, T_LIGHT],
     states: [
       set(Y_SIGN.id, 'highlight', sp.yieldOn), set(Y_SIGN.id, '', sp.yieldOff), set(T_LIGHT.id, 'highlight', sp.lightOn),
     ],
-    fixed: { 'traffic-light-lamps': 'red yellow green' },
   },
 });
 
