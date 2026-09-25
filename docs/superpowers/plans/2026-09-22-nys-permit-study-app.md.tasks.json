@@ -172,7 +172,7 @@
   {
    "id": 18,
    "subject": "Task 18: Lesson: School buses",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 18 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio\"}\n```",
    "blockedBy": [
     8,
@@ -229,5 +229,5 @@
    ]
   }
  ],
- "lastUpdated": "2026-09-25T00:07:35.139Z"
+ "lastUpdated": "2026-09-25T00:32:16.779Z"
 }
