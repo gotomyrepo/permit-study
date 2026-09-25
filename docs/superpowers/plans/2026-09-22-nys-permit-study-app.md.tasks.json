@@ -221,7 +221,7 @@
   {
    "id": 22,
    "subject": "Task 22: Final pass, parent handoff, CLAUDE.md",
-   "status": "pending",
+   "status": "completed",
    "description": "See docs/superpowers/plans/2026-09-22-nys-permit-study-app.md — Task 22 section.\n\n```json:metadata\n{\"verifyCommand\": \"npm test && npm run check -- --audio && npm run e2e && npm run build\"}\n```",
    "blockedBy": [
     11,
