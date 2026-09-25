@@ -1,0 +1,92 @@
+id: speed
+order: 9
+title: Speed
+icon: "🏁"
+cards:
+  - id: speed-no-sign
+    say: "You must obey the speed limit. If there is no speed limit sign, drive no more than 55 miles per hour."
+    scene: speed-no-sign
+    step: teach
+    source:
+      page: 47
+      quote: "You must obey the speed limit. If no limit is posted, drive no more than 55 mph"
+  - id: speed-expressway
+    say: "On an expressway, the speed limit is usually 55 miles per hour. In some country areas, the sign can say 65."
+    scene: speed-expressway-signs
+    step: teach
+    source:
+      page: 62
+      quote: "The speed limit is normally 55 mph (88 km/h), but can be posted at 65 mph (100 km/h) in some rural areas."
+  - id: speed-fog
+    say: "It is foggy ahead. The sign says 55 miles per hour. The safe speed is much lower. Slow down."
+    scene: speed-fog
+    step: teach
+    source:
+      page: 47
+      quote: "Often, it is common sense to keep your actual speed below the posted limit. For example, the legal limit on a slippery or fogged-in expressway might be 55 mph (88 km/h), or even 65 mph (100 km/h), but the safe speed to drive would be much lower."
+  - id: speed-too-slow
+    say: "You are driving very slowly. That can be as dangerous as driving too fast. It gets in the way of other cars."
+    scene: speed-too-slow
+    step: teach
+    source:
+      page: 47
+      quote: "If you drive slower than the minimum speed you can interfere with the traffic flow and create a dangerous condition. Even if there is no minimum speed limit, those driving too slow can be as dangerous as those who drive too fast."
+  - id: speed-city
+    say: "Some cities have lower speed limits, with no sign. In New York City, the speed limit is 25 miles per hour, if no sign says different."
+    scene: speed-city
+    step: teach
+    source:
+      page: 47
+      quote: "Know that some cities have speed limits less than 55 mph (88 km/h) that are not always posted. For example, the speed limit is 25 mph (48 km/h) in New York City unless another limit is posted."
+questions:
+  - id: speed-q1
+    ask: "You are the blue car. There is no speed limit sign. What is the fastest you may drive?"
+    scene: speed-no-sign
+    step: question
+    choices: ["There is no limit.", "55 miles per hour.", "65 miles per hour.", "75 miles per hour."]
+    answer: 1
+    explainCard: speed-no-sign
+    source:
+      page: 47
+      quote: "If no limit is posted, drive no more than 55 mph"
+  - id: speed-q2
+    ask: "You are the blue car. It is foggy ahead. The speed limit sign says 55. How fast should you drive?"
+    scene: speed-fog
+    step: question
+    choices: ["Exactly 55 miles per hour.", "Slower than 55, at a safe speed.", "Faster than 55 miles per hour.", "Any speed you like."]
+    answer: 1
+    explainCard: speed-fog
+    source:
+      page: 47
+      quote: "the legal limit on a slippery or fogged-in expressway might be 55 mph (88 km/h), or even 65 mph (100 km/h), but the safe speed to drive would be much lower."
+  - id: speed-q3
+    ask: "You are the blue car. You are driving very slowly. What is true?"
+    scene: speed-too-slow
+    step: question
+    choices: ["It makes the road safer for everyone.", "It can be as dangerous as driving too fast.", "It makes other cars go faster."]
+    answer: 1
+    explainCard: speed-too-slow
+    source:
+      page: 47
+      quote: "Even if there is no minimum speed limit, those driving too slow can be as dangerous as those who drive too fast."
+  - id: speed-q4
+    ask: "You are driving in New York City. There is no speed limit sign. What is the speed limit?"
+    scene: speed-city
+    step: question
+    choices: ["15 miles per hour.", "25 miles per hour.", "55 miles per hour.", "65 miles per hour."]
+    answer: 1
+    explainCard: speed-city
+    source:
+      page: 47
+      quote: "the speed limit is 25 mph (48 km/h) in New York City unless another limit is posted."
+  - id: speed-q5
+    ask: "What does this sign mean?"
+    scene: speed-sign-65
+    step: show
+    choices: ["The speed limit is 65 miles per hour.", "Exit 65 is next.", "The road is 65 miles long.", "Drive at least 65 miles per hour."]
+    answer: 0
+    explainCard: speed-expressway
+    signQuestion: true
+    source:
+      page: 62
+      quote: "The speed limit is normally 55 mph (88 km/h), but can be posted at 65 mph (100 km/h) in some rural areas."

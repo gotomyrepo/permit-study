@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
+import { fogBank, signPair, signProp, speedGauge, feetPx, FOOT_PX, inchesPx, median, MEDIAN, measureProp, stopLineAhead, lampCarCloseup, lampPropId, LAMP_COLORS, shoulder, SHOULDER, driveway, DRIVEWAY, FOURWAY, fourWay, laneGlow, planArrow, sameWay, stopPose, twoLane, TWOLANE, walkBand, WIDEFOUR, wideFourWay, wideStopPose, withExtras, type CenterLine } from '../src/scenes/layouts';
 import { laneChange, uTurnApex } from '../src/scenes/paths';
 
 /** The <line> elements inside the center-line group of a layout's background. */
@@ -351,5 +351,58 @@ describe('distance scale', () => {
   test('rejects negative or non-number distances', () => {
     expect(() => feetPx(-1)).toThrow(/feetPx: the distance must be a number 0 or more/);
     expect(() => inchesPx(NaN)).toThrow(/inchesPx: the distance must be a number 0 or more/);
+  });
+});
+
+describe('speed helpers', () => {
+  test('signProp is a sign prop with its id, and rejects bad input', () => {
+    const p = signProp('sign-55', 'speed', 96, 232, { text: '55', size: 60 });
+    expect(p.id).toBe('sign-55');
+    expect(p.svg).toContain('data-prop="sign-55"');
+    expect(p.svg).toContain('>55<');
+    expect(() => signProp('', 'speed', 0, 0)).toThrow(/id/);
+    expect(() => signProp('s', 'speed', NaN, 0)).toThrow(/numbers/);
+  });
+  test('signPair ids make both signs props, and existing calls stay the same', () => {
+    const a = signPair('p', { kind: 'speed', text: '55' }, { kind: 'speed', text: '65' }, 3000);
+    expect(a.props).toEqual([]);
+    expect(a.background).not.toContain('data-prop');
+    const b = signPair('p', { kind: 'speed', text: '55' }, { kind: 'speed', text: '65' }, 3000, { ids: ['s55', 's65'] });
+    expect(b.props).toEqual(['s55', 's65']);
+    expect(b.background).toContain('data-prop="s55"');
+    expect(b.background).toContain('data-prop="s65"');
+    expect(() => signPair('p', { kind: 'speed' }, { kind: 'speed' }, 3000, { ids: ['x', 'x'] })).toThrow(/different/);
+    expect(() => signPair('p', { kind: 'speed' }, { kind: 'speed' }, 3000, { ids: ['', 'y'] })).toThrow(/non-empty/);
+  });
+  test('fogBank covers x0..x1 and rejects bad ranges', () => {
+    const f = fogBank('fog', 200, 300);
+    expect(f.svg).toContain('data-prop="fog"');
+    expect(f.svg).toContain('<rect x="200" y="0" width="100" height="300"/>');
+    expect(() => fogBank('fog', 300, 200)).toThrow(/x0 < x1/);
+    expect(() => fogBank('fog', 100, 110)).toThrow(/20 px/);
+    expect(() => fogBank('fog', -5, 100)).toThrow();
+    expect(() => fogBank('fog', 0, 301)).toThrow();
+    expect(() => fogBank('', 0, 100)).toThrow(/id/);
+  });
+  test('speedGauge writes only its own number and points the needle along the dial', () => {
+    const g = speedGauge('g', 150, 246, 55);
+    expect(g.svg).toContain('data-prop="g"');
+    expect(g.svg.match(/>\d+</g)).toEqual(['>55<']);
+    expect(g.svg).toContain('>mph<');
+    // 0 points lower left, max lower right, half-way straight up.
+    const tip = (mph: number) => {
+      const m = speedGauge('g', 0, 0, mph, { max: 80 }).svg.match(/<line x1="0" y1="-6\.9" x2="([-\d.]+)" y2="([-\d.]+)"/)!;
+      return { x: +m[1], y: +m[2] };
+    };
+    expect(tip(0).x).toBeLessThan(0);
+    expect(tip(0).y).toBeGreaterThan(-6.9);
+    expect(tip(40).x).toBeCloseTo(0, 1);
+    expect(tip(40).y).toBeLessThan(-20);
+    expect(tip(80).x).toBeGreaterThan(0);
+    expect(() => speedGauge('g', 0, 0, 90)).toThrow(/0 to 80/);
+    expect(() => speedGauge('g', 0, 0, -1)).toThrow(/0 to 80/);
+    expect(() => speedGauge('g', 0, 0, 10, { max: 0 })).toThrow(/max/);
+    expect(() => speedGauge('g', 0, 0, 10, { r: 10 })).toThrow(/r must/);
+    expect(() => speedGauge('', 0, 0, 10)).toThrow(/id/);
   });
 });

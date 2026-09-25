@@ -2306,5 +2306,165 @@
  {
   "id": "q-school-bus-q6-answer",
   "text": "The answer is: Look for children. Drive slowly past them."
+ },
+ {
+  "id": "end-speed",
+  "text": "Great job! You're done with Speed."
+ },
+ {
+  "id": "card-speed-no-sign",
+  "text": "You must obey the speed limit. If there is no speed limit sign, drive no more than 55 miles per hour."
+ },
+ {
+  "id": "card-speed-expressway",
+  "text": "On an expressway, the speed limit is usually 55 miles per hour. In some country areas, the sign can say 65."
+ },
+ {
+  "id": "card-speed-fog",
+  "text": "It is foggy ahead. The sign says 55 miles per hour. The safe speed is much lower. Slow down."
+ },
+ {
+  "id": "card-speed-too-slow",
+  "text": "You are driving very slowly. That can be as dangerous as driving too fast. It gets in the way of other cars."
+ },
+ {
+  "id": "card-speed-city",
+  "text": "Some cities have lower speed limits, with no sign. In New York City, the speed limit is 25 miles per hour, if no sign says different."
+ },
+ {
+  "id": "q-speed-q1",
+  "text": "You are the blue car. There is no speed limit sign. What is the fastest you may drive?"
+ },
+ {
+  "id": "q-speed-q1-c0",
+  "text": "There is no limit."
+ },
+ {
+  "id": "q-speed-q1-c1",
+  "text": "55 miles per hour."
+ },
+ {
+  "id": "q-speed-q1-c2",
+  "text": "65 miles per hour."
+ },
+ {
+  "id": "q-speed-q1-c3",
+  "text": "75 miles per hour."
+ },
+ {
+  "id": "q-speed-q1-yes",
+  "text": "Yes! 55 miles per hour."
+ },
+ {
+  "id": "q-speed-q1-answer",
+  "text": "The answer is: 55 miles per hour."
+ },
+ {
+  "id": "q-speed-q2",
+  "text": "You are the blue car. It is foggy ahead. The speed limit sign says 55. How fast should you drive?"
+ },
+ {
+  "id": "q-speed-q2-c0",
+  "text": "Exactly 55 miles per hour."
+ },
+ {
+  "id": "q-speed-q2-c1",
+  "text": "Slower than 55, at a safe speed."
+ },
+ {
+  "id": "q-speed-q2-c2",
+  "text": "Faster than 55 miles per hour."
+ },
+ {
+  "id": "q-speed-q2-c3",
+  "text": "Any speed you like."
+ },
+ {
+  "id": "q-speed-q2-yes",
+  "text": "Yes! Slower than 55, at a safe speed."
+ },
+ {
+  "id": "q-speed-q2-answer",
+  "text": "The answer is: Slower than 55, at a safe speed."
+ },
+ {
+  "id": "q-speed-q3",
+  "text": "You are the blue car. You are driving very slowly. What is true?"
+ },
+ {
+  "id": "q-speed-q3-c0",
+  "text": "It makes the road safer for everyone."
+ },
+ {
+  "id": "q-speed-q3-c1",
+  "text": "It can be as dangerous as driving too fast."
+ },
+ {
+  "id": "q-speed-q3-c2",
+  "text": "It makes other cars go faster."
+ },
+ {
+  "id": "q-speed-q3-yes",
+  "text": "Yes! It can be as dangerous as driving too fast."
+ },
+ {
+  "id": "q-speed-q3-answer",
+  "text": "The answer is: It can be as dangerous as driving too fast."
+ },
+ {
+  "id": "q-speed-q4",
+  "text": "You are driving in New York City. There is no speed limit sign. What is the speed limit?"
+ },
+ {
+  "id": "q-speed-q4-c0",
+  "text": "15 miles per hour."
+ },
+ {
+  "id": "q-speed-q4-c1",
+  "text": "25 miles per hour."
+ },
+ {
+  "id": "q-speed-q4-c2",
+  "text": "55 miles per hour."
+ },
+ {
+  "id": "q-speed-q4-c3",
+  "text": "65 miles per hour."
+ },
+ {
+  "id": "q-speed-q4-yes",
+  "text": "Yes! 25 miles per hour."
+ },
+ {
+  "id": "q-speed-q4-answer",
+  "text": "The answer is: 25 miles per hour."
+ },
+ {
+  "id": "q-speed-q5",
+  "text": "What does this sign mean?"
+ },
+ {
+  "id": "q-speed-q5-c0",
+  "text": "The speed limit is 65 miles per hour."
+ },
+ {
+  "id": "q-speed-q5-c1",
+  "text": "Exit 65 is next."
+ },
+ {
+  "id": "q-speed-q5-c2",
+  "text": "The road is 65 miles long."
+ },
+ {
+  "id": "q-speed-q5-c3",
+  "text": "Drive at least 65 miles per hour."
+ },
+ {
+  "id": "q-speed-q5-yes",
+  "text": "Yes! The speed limit is 65 miles per hour."
+ },
+ {
+  "id": "q-speed-q5-answer",
+  "text": "The answer is: The speed limit is 65 miles per hour."
  }
 ]

@@ -510,14 +510,92 @@ export function signCloseup(
 
 export interface PairSign { kind: SignKind; text?: string }
 
-/** Two signs side by side on the close-up background, with a single `teach` still step of `teachMs`. */
-export function signPair(id: string, left: PairSign, right: PairSign, teachMs: number): SceneDef {
-  const one = (p: PairSign, x: number) => sign(p.kind, x, 150, { size: 120, post: false, ...(p.text ? { text: p.text } : {}) });
+/**
+ * Two signs side by side on the close-up background, with a single `teach` still step of `teachMs`.
+ * Pass `ids` to make the two signs props (so a step can `highlight` each one while it is named).
+ */
+export function signPair(id: string, left: PairSign, right: PairSign, teachMs: number, opts: { ids?: [string, string] } = {}): SceneDef {
+  const ids = opts.ids;
+  if (ids && (!ids[0] || !ids[1] || ids[0] === ids[1])) throw new Error(`signPair: ids must be two different, non-empty ids (got ${JSON.stringify(ids)})`);
+  const one = (p: PairSign, x: number, pid?: string) =>
+    sign(p.kind, x, 150, { size: 120, post: false, ...(p.text ? { text: p.text } : {}), ...(pid ? { id: pid } : {}) });
   return {
     id, width: 300, height: 300,
-    background: CLOSEUP_BG + one(left, 80) + one(right, 220),
-    lanes: [], zones: [], lines: [], props: [], actors: [],
+    background: CLOSEUP_BG + one(left, 80, ids?.[0]) + one(right, 220, ids?.[1]),
+    lanes: [], zones: [], lines: [], props: ids ? [...ids] : [], actors: [],
     steps: [{ id: 'teach', duration: teachMs }],
+  };
+}
+
+/**
+ * A road sign as a prop (`ExtraProp`), e.g. a speed limit sign on the grass beside a `twoLane()` road, so a step can
+ * `highlight` it while it is named. `size` defaults to 26 px as in `fourWay`; pass a bigger size for a sign the
+ * narration talks about. Put it on the driver's right: for eastbound traffic, on the grass below the road (y > 190).
+ */
+export function signProp(id: string, kind: SignKind, x: number, y: number, o: Omit<SignOpts, 'id'> = {}): ExtraProp {
+  if (!id) throw new Error('signProp: id must not be empty');
+  if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error(`signProp: x and y must be numbers (got ${x}, ${y})`);
+  return { id, svg: sign(kind, x, y, { ...o, id }) };
+}
+
+/**
+ * A bank of fog as a prop: a see-through white cover from x `x0` to `x1`, the full height of the scene, with a
+ * soft, lumpy left edge (and right edge, if it ends before x 300) reaching `FOG_EDGE_PX` past x0, so drivers can see it coming. It is drawn under
+ * the cars, so they stay easy to see. Throws unless 0 ≤ x0 < x1 ≤ 300 and the bank is at least 20 px wide.
+ */
+/** How far `fogBank`'s soft edge puffs reach out past its ends (px). */
+export const FOG_EDGE_PX = 22;
+export function fogBank(id: string, x0: number, x1: number): ExtraProp {
+  if (!id) throw new Error('fogBank: id must not be empty');
+  if (!Number.isFinite(x0) || !Number.isFinite(x1) || x0 < 0 || x1 > 300 || x1 - x0 < 20) {
+    throw new Error(`fogBank: need 0 ≤ x0 < x1 ≤ 300, at least 20 px apart (got ${x0} and ${x1})`);
+  }
+  const puff = (cx: number, cy: number, r: number) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`;
+  const edge = (x: number) => [15, 55, 95, 135, 175, 215, 255, 295].map((cy, i) => puff(x, cy, i % 2 ? FOG_EDGE_PX : 16)).join('');
+  // Fill and edge puffs share one see-through group, so where they overlap they don't look thicker.
+  return {
+    id,
+    svg: `<g class="fog" data-prop="${id}"><g fill="#ffffff" opacity="0.72">` +
+      `<rect x="${x0}" y="0" width="${x1 - x0}" height="300"/>${edge(x0)}${x1 < 300 ? edge(x1) : ''}</g>` +
+      // A few darker wisps so it reads as fog, not a white patch.
+      [40, 120, 200, 260].map((wy) => line(x0 + 12, wy, x1 - 8, wy + 6, { color: '#b0bec5', width: 3, dash: '26 14' })).join('') +
+      `</g>`,
+  };
+}
+
+/**
+ * A car speedometer dial as a prop: a white dial with a thick ring (default blue, for the blue car), unlabeled ticks,
+ * a red needle pointing at `mph` on a dial from 0 to `max` (default 80), and `mph` written big in the middle with
+ * "mph" under it. Only `mph` is written, so the picture shows no other number. `r` is the dial radius (default 46).
+ * Throws unless 0 ≤ mph ≤ max, max > 0 and r ≥ 20.
+ */
+export function speedGauge(id: string, cx: number, cy: number, mph: number, o: { max?: number; r?: number; ring?: string } = {}): ExtraProp {
+  const max = o.max ?? 80, r = o.r ?? 46, ring = o.ring ?? COLORS.you;
+  if (!id) throw new Error('speedGauge: id must not be empty');
+  if (!Number.isFinite(max) || max <= 0) throw new Error(`speedGauge: max must be more than 0 (got ${max})`);
+  if (!Number.isFinite(mph) || mph < 0 || mph > max) throw new Error(`speedGauge: mph must be from 0 to ${max} (got ${mph})`);
+  if (!Number.isFinite(r) || r < 20) throw new Error(`speedGauge: r must be 20 or more (got ${r})`);
+  if (!Number.isFinite(cx) || !Number.isFinite(cy)) throw new Error(`speedGauge: cx and cy must be numbers (got ${cx}, ${cy})`);
+  const f = (v: number) => +v.toFixed(2);
+  // The needle turns about a hub a little above the middle, so the number below it stays clear.
+  const hy = cy - r * 0.15;
+  // The dial sweeps 270°, from lower left (0) over the top to lower right (max). Angles are SVG-style: 0 = right, clockwise.
+  const ang = (v: number) => ((135 + (270 * v) / max) * Math.PI) / 180;
+  const on = (v: number, rr: number, y0 = cy) => ({ x: f(cx + Math.cos(ang(v)) * rr), y: f(y0 + Math.sin(ang(v)) * rr) });
+  let ticks = '';
+  for (let k = 0; k <= 8; k++) {
+    const v = (max * k) / 8, a = on(v, r - 6), b = on(v, r - (k % 2 ? 11 : 15));
+    ticks += line(a.x, a.y, b.x, b.y, { color: '#212121', width: k % 2 ? 2 : 3 });
+  }
+  const tip = on(mph, r * 0.62, hy);
+  const text = (y: number, size: number, s: string) =>
+    `<text x="${f(cx)}" y="${f(y)}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-weight="700" font-size="${size}" fill="#212121">${s}</text>`;
+  return {
+    id,
+    svg: `<g class="pic" data-prop="${id}">` +
+      `<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="#ffffff" stroke="${ring}" stroke-width="6"/>${ticks}` +
+      line(cx, hy, tip.x, tip.y, { color: '#d32f2f', width: 4 }) + `<circle cx="${f(cx)}" cy="${f(hy)}" r="5" fill="#212121"/>` +
+      text(cy + r * 0.36, Math.round(r * 0.5), String(mph)) + text(cy + r * 0.72, Math.round(r * 0.26), 'mph') + `</g>`,
   };
 }
 
