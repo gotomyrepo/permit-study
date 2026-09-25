@@ -2846,5 +2846,169 @@
  {
   "id": "q-parking-signs-q6-answer",
   "text": "The answer is: Do not park there."
+ },
+ {
+  "id": "end-alcohol",
+  "text": "Great job! You're done with Alcohol and drugs."
+ },
+ {
+  "id": "card-alcohol-effects",
+  "text": "Alcohol makes your driving skills weaker. You react more slowly. You do not see as clearly. You judge speed and distance wrong. You take more chances."
+ },
+ {
+  "id": "card-alcohol-drugs",
+  "text": "Drugs can make your driving unsafe too. This includes marijuana, illegal drugs, and some medicines from a doctor. Alcohol and drugs together are even worse."
+ },
+ {
+  "id": "card-alcohol-bac",
+  "text": "B.A.C. means how much alcohol is in your blood. A B.A.C. of 0.08 or more shows that a driver is drunk."
+ },
+ {
+  "id": "card-alcohol-time",
+  "text": "Only time lowers the alcohol in your blood. Coffee, exercise, and cold showers do not lower it."
+ },
+ {
+  "id": "card-alcohol-under-21",
+  "text": "You are under 21. You may not drive with any alcohol in your blood that a test can find. Never drive after drinking."
+ },
+ {
+  "id": "q-alcohol-q1",
+  "text": "What does alcohol do to your driving?"
+ },
+ {
+  "id": "q-alcohol-q1-c0",
+  "text": "You react more slowly."
+ },
+ {
+  "id": "q-alcohol-q1-c1",
+  "text": "You see more clearly."
+ },
+ {
+  "id": "q-alcohol-q1-c2",
+  "text": "You react faster."
+ },
+ {
+  "id": "q-alcohol-q1-c3",
+  "text": "You drive more carefully."
+ },
+ {
+  "id": "q-alcohol-q1-yes",
+  "text": "Yes! You react more slowly."
+ },
+ {
+  "id": "q-alcohol-q1-answer",
+  "text": "The answer is: You react more slowly."
+ },
+ {
+  "id": "q-alcohol-q2",
+  "text": "You are the blue car. Which of these can make your driving unsafe, like alcohol?"
+ },
+ {
+  "id": "q-alcohol-q2-c0",
+  "text": "A glass of water."
+ },
+ {
+  "id": "q-alcohol-q2-c1",
+  "text": "Marijuana."
+ },
+ {
+  "id": "q-alcohol-q2-c2",
+  "text": "A glass of milk."
+ },
+ {
+  "id": "q-alcohol-q2-c3",
+  "text": "Orange juice."
+ },
+ {
+  "id": "q-alcohol-q2-yes",
+  "text": "Yes! Marijuana."
+ },
+ {
+  "id": "q-alcohol-q2-answer",
+  "text": "The answer is: Marijuana."
+ },
+ {
+  "id": "q-alcohol-q3",
+  "text": "What does a B.A.C. of 0.08 or more show?"
+ },
+ {
+  "id": "q-alcohol-q3-c0",
+  "text": "The driver is drunk."
+ },
+ {
+  "id": "q-alcohol-q3-c1",
+  "text": "The driver is safe to drive."
+ },
+ {
+  "id": "q-alcohol-q3-c2",
+  "text": "The driver had no alcohol."
+ },
+ {
+  "id": "q-alcohol-q3-c3",
+  "text": "The driver is very tired."
+ },
+ {
+  "id": "q-alcohol-q3-yes",
+  "text": "Yes! The driver is drunk."
+ },
+ {
+  "id": "q-alcohol-q3-answer",
+  "text": "The answer is: The driver is drunk."
+ },
+ {
+  "id": "q-alcohol-q4",
+  "text": "What is the only thing that lowers the alcohol in your blood?"
+ },
+ {
+  "id": "q-alcohol-q4-c0",
+  "text": "Coffee."
+ },
+ {
+  "id": "q-alcohol-q4-c1",
+  "text": "Exercise."
+ },
+ {
+  "id": "q-alcohol-q4-c2",
+  "text": "A cold shower."
+ },
+ {
+  "id": "q-alcohol-q4-c3",
+  "text": "Time."
+ },
+ {
+  "id": "q-alcohol-q4-yes",
+  "text": "Yes! Time."
+ },
+ {
+  "id": "q-alcohol-q4-answer",
+  "text": "The answer is: Time."
+ },
+ {
+  "id": "q-alcohol-q5",
+  "text": "You are under 21. How much alcohol may be in your blood when you drive?"
+ },
+ {
+  "id": "q-alcohol-q5-c0",
+  "text": "None that a test can find."
+ },
+ {
+  "id": "q-alcohol-q5-c1",
+  "text": "Less than 0.08."
+ },
+ {
+  "id": "q-alcohol-q5-c2",
+  "text": "The amount in one drink."
+ },
+ {
+  "id": "q-alcohol-q5-c3",
+  "text": "Any amount, if you feel fine."
+ },
+ {
+  "id": "q-alcohol-q5-yes",
+  "text": "Yes! None that a test can find."
+ },
+ {
+  "id": "q-alcohol-q5-answer",
+  "text": "The answer is: None that a test can find."
  }
 ]

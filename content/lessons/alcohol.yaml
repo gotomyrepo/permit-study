@@ -1,0 +1,91 @@
+id: alcohol
+order: 12
+title: Alcohol and drugs
+icon: "🚫"
+cards:
+  - id: alcohol-effects
+    say: "Alcohol makes your driving skills weaker. You react more slowly. You do not see as clearly. You judge speed and distance wrong. You take more chances."
+    scene: alcohol-effects
+    step: teach
+    source:
+      page: 54
+      quote: "Alcohol delays your reaction time, reduces your ability to see clearly, changes your judgment of speed and distances, often makes you less inhibited and makes you more prone to take chances. The important skills you need to drive safely are made weaker."
+  - id: alcohol-drugs
+    say: "Drugs can make your driving unsafe too. This includes marijuana, illegal drugs, and some medicines from a doctor. Alcohol and drugs together are even worse."
+    scene: alcohol-drugs
+    step: teach
+    source:
+      page: 54
+      quote: "It can be a criminal offense to drive while impaired by the effect of drugs, alcohol or the combination of alcohol and drugs, including marijuana/cannabis, and illegal drugs such as, cocaine, LSD, heroin, opium and by some prescription drugs. Drugs can detrimentally affect your reflexes, judgment, vision and alertness and they may have other dangerous effects as well. A combination of alcohol and other drugs severely reduces your ability to drive"
+  - id: alcohol-bac
+    say: "B.A.C. means how much alcohol is in your blood. A B.A.C. of 0.08 or more shows that a driver is drunk."
+    scene: alcohol-bac
+    step: teach
+    source:
+      page: 55
+      quote: "Blood alcohol content (BAC) is the percentage of alcohol in your blood and is normally determined by a chemical test of breath, blood, urine or saliva. A BAC of more than .05 percent is legal evidence that you are impaired, a BAC of .08 percent or higher is evidence of intoxication"
+  - id: alcohol-time
+    say: "Only time lowers the alcohol in your blood. Coffee, exercise, and cold showers do not lower it."
+    scene: alcohol-time
+    step: teach
+    source:
+      page: 56
+      quote: "The only method to effectively reduce your BAC is not to drink over a period of time. Coffee, exercise and cold showers cannot reduce your BAC and the effects of alcohol."
+  - id: alcohol-under-21
+    say: "You are under 21. You may not drive with any alcohol in your blood that a test can find. Never drive after drinking."
+    scene: alcohol-under-21
+    step: teach
+    source:
+      page: 57
+      quote: "Under the state’s “zero tolerance” law, it is a violation for a person under 21 to drive with any BAC that can be measured (.02 to .07)."
+questions:
+  - id: alcohol-q1
+    ask: "What does alcohol do to your driving?"
+    scene: alcohol-effects
+    step: question
+    choices: ["You react more slowly.", "You see more clearly.", "You react faster.", "You drive more carefully."]
+    answer: 0
+    explainCard: alcohol-effects
+    source:
+      page: 54
+      quote: "Alcohol delays your reaction time, reduces your ability to see clearly"
+  - id: alcohol-q2
+    ask: "You are the blue car. Which of these can make your driving unsafe, like alcohol?"
+    scene: alcohol-road
+    step: question
+    choices: ["A glass of water.", "Marijuana.", "A glass of milk.", "Orange juice."]
+    answer: 1
+    explainCard: alcohol-drugs
+    source:
+      page: 54
+      quote: "It can be a criminal offense to drive while impaired by the effect of drugs, alcohol or the combination of alcohol and drugs, including marijuana/cannabis"
+  - id: alcohol-q3
+    ask: "What does a B.A.C. of 0.08 or more show?"
+    scene: alcohol-bac
+    step: question
+    choices: ["The driver is drunk.", "The driver is safe to drive.", "The driver had no alcohol.", "The driver is very tired."]
+    answer: 0
+    explainCard: alcohol-bac
+    source:
+      page: 55
+      quote: "a BAC of .08 percent or higher is evidence of intoxication"
+  - id: alcohol-q4
+    ask: "What is the only thing that lowers the alcohol in your blood?"
+    scene: alcohol-time
+    step: question
+    choices: ["Coffee.", "Exercise.", "A cold shower.", "Time."]
+    answer: 3
+    explainCard: alcohol-time
+    source:
+      page: 56
+      quote: "The only method to effectively reduce your BAC is not to drink over a period of time. Coffee, exercise and cold showers cannot reduce your BAC"
+  - id: alcohol-q5
+    ask: "You are under 21. How much alcohol may be in your blood when you drive?"
+    scene: alcohol-under-21
+    step: question
+    choices: ["None that a test can find.", "Less than 0.08.", "The amount in one drink.", "Any amount, if you feel fine."]
+    answer: 0
+    explainCard: alcohol-under-21
+    source:
+      page: 57
+      quote: "it is a violation for a person under 21 to drive with any BAC that can be measured (.02 to .07)."
