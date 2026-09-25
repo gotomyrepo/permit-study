@@ -71,3 +71,29 @@ export function focusMain(root: HTMLElement): HTMLElement | null {
   el?.focus();
   return el;
 }
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * A speaker drawn in SVG for the "hear it again" buttons. It uses currentColor, so it is white on the
+ * blue icon buttons (about 3.7:1 on #1e88e5; the 🔊 emoji was grey there) and grey when disabled.
+ * Hidden from screen readers: the button's aria-label names it.
+ */
+export function speakerIcon(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'spk');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  const body = document.createElementNS(SVG_NS, 'path');
+  body.setAttribute('d', 'M3 9h4l5-4v14l-5-4H3z');
+  body.setAttribute('fill', 'currentColor');
+  const waves = document.createElementNS(SVG_NS, 'path');
+  waves.setAttribute('d', 'M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13');
+  waves.setAttribute('fill', 'none');
+  waves.setAttribute('stroke', 'currentColor');
+  waves.setAttribute('stroke-width', '2.2');
+  waves.setAttribute('stroke-linecap', 'round');
+  svg.append(body, waves);
+  return svg;
+}

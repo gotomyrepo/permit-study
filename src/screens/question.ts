@@ -3,7 +3,7 @@ import { audioId, PHRASES, TEXT } from '../content/audioLines';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
 import { Caption } from '../ui/caption';
-import { childController, chooseOne, clicked, delay, focusMain, h } from '../ui/dom';
+import { childController, chooseOne, clicked, delay, focusMain, h, speakerIcon } from '../ui/dom';
 import { playCard } from './learn';
 import { speak, topBar, type Ctx } from './ctx';
 
@@ -20,7 +20,7 @@ export async function askQuestion(ctx: Ctx, lesson: Lesson, q: Question, mode: Q
   showQuestionScene();
 
   const ask = new Caption(q.ask);
-  const askSay = h('button', { class: 'btn soft icon', 'aria-label': 'Hear the question' }, '🔊');
+  const askSay = h('button', { class: 'btn soft icon', 'aria-label': 'Hear the question' }, speakerIcon());
   const feedback = h('div', { class: 'feedback' });
   const caps = q.choices.map((c) => new Caption(c, 'choice-text'));
   // The 🔊 buttons use `screen`, which stays live until this question ends (a pick aborts only `reader`).
@@ -42,7 +42,7 @@ export async function askQuestion(ctx: Ctx, lesson: Lesson, q: Question, mode: Q
   };
 
   const tiles = q.choices.map((_, i) => {
-    const say = h('span', { class: 'say', role: 'button', 'aria-label': 'Hear this answer' }, '🔊');
+    const say = h('span', { class: 'say', role: 'button', 'aria-label': 'Hear this answer' }, speakerIcon());
     say.addEventListener('click', (e) => { e.stopPropagation(); void readChoice(i, screen.signal).catch(() => {}); });
     return h('button', { class: 'tile' }, h('span', { class: 'num' }, String(i + 1)), caps[i].el, say);
   });

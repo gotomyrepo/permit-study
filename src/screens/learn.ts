@@ -3,7 +3,7 @@ import { audioId } from '../content/audioLines';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
 import { Caption } from '../ui/caption';
-import { childController, chooseOne, delay, focusMain, h } from '../ui/dom';
+import { childController, chooseOne, delay, focusMain, h, speakerIcon } from '../ui/dom';
 import { speak, topBar, type Ctx } from './ctx';
 
 const AUDIO_FAIL_UNLOCK_MS = 3000;
@@ -27,7 +27,7 @@ export type CardMove = 'next' | 'back' | 'restart';
 export async function learnCard(ctx: Ctx, card: Card, fraction: number, canGoBack: boolean): Promise<CardMove> {
   const stage = h('div', { class: 'stage' });
   const caption = new Caption(card.say);
-  const say = h('button', { class: 'btn soft icon', 'aria-label': 'Hear again' }, '🔊');
+  const say = h('button', { class: 'btn soft icon', 'aria-label': 'Hear again' }, speakerIcon());
   const again = h('button', { class: 'btn soft' }, '🔁 Watch again');
   const back = h('button', { class: 'btn soft' }, '◀ Back');
   const next = h('button', { class: 'btn go', disabled: '' }, '▶ Next');
