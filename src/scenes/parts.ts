@@ -1,5 +1,6 @@
 const n = (v: number) => +v.toFixed(2);
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/** Escapes `&`, `<` and `>` for use as SVG text. */
+export const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export const COLORS = { grass: '#8bc34a', road: '#555555', yellow: '#ffd600', white: '#ffffff', you: '#1e88e5' };
 

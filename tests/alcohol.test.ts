@@ -1,4 +1,5 @@
 import { describe, test, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   alcoholBac, alcoholDrugs, alcoholEffects, alcoholTime, alcoholUnder21,
   BAC_T, DRUGS_T, EFFECTS_T, TIME_T, UNDER21_T,
@@ -6,6 +7,12 @@ import {
 import { frameAt } from '../src/scenes/engine';
 import type { SceneDef } from '../src/scenes/types';
 
+/** A card's word timings, from the generated audio. */
+const clip = (id: string) => {
+  const c = JSON.parse(readFileSync(`public/audio/card-alcohol-${id}.json`, 'utf8')) as { text: string; words: { i: number; start: number; end: number }[] };
+  const words = c.text.split(/\s+/);
+  return { end: Math.max(...c.words.map((w) => w.end)), start: (word: string) => c.words.find((w) => words[w.i] === word)!.start };
+};
 const stateAt = (s: SceneDef, id: string, t: number, step = 0) => frameAt(s, step, t).states[id] ?? '';
 const shown = (s: SceneDef, id: string, t: number, step = 0) => !stateAt(s, id, t, step).includes('hidden');
 const ringed = (s: SceneDef, id: string, t: number) => stateAt(s, id, t).includes('highlight');
@@ -29,7 +36,7 @@ describe('alcohol lesson pictures', () => {
   });
   test('BAC: "0.08" is on screen before it is said, and the question hides "DRUNK" only', () => {
     expect(alcoholBac.background).toContain('>0.08 OR MORE<');
-    expect(BAC_T.limit[0]).toBeLessThan(3736); // "0.08" starts at 3736 in card-alcohol-bac.json.
+    expect(BAC_T.limit[0]).toBeLessThan(clip('bac').start('0.08'));
     expect(ringed(alcoholBac, 'limit', BAC_T.limit[0])).toBe(true);
     expect(shown(alcoholBac, 'drunk', BAC_T.drunk - 1)).toBe(false);
     expect(ringed(alcoholBac, 'drunk', BAC_T.drunk)).toBe(true);
@@ -54,7 +61,7 @@ describe('alcohol lesson pictures', () => {
     expect(shown(alcoholUnder21, 'never', 0, 1)).toBe(false);
   });
   test('each teach step lasts past the end of its clip', () => {
-    const ends: [SceneDef, number][] = [[alcoholEffects, 10054], [alcoholDrugs, 10679], [alcoholBac, 7486], [alcoholTime, 6568], [alcoholUnder21, 7374]];
-    for (const [s, end] of ends) expect(s.steps[0].duration).toBeGreaterThan(end);
+    const scenes: [SceneDef, string][] = [[alcoholEffects, 'effects'], [alcoholDrugs, 'drugs'], [alcoholBac, 'bac'], [alcoholTime, 'time'], [alcoholUnder21, 'under-21']];
+    for (const [s, id] of scenes) expect(s.steps[0].duration).toBeGreaterThan(clip(id).end);
   });
 });

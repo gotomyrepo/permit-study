@@ -1,5 +1,6 @@
 import type { SceneDef, StateSet } from '../types';
 import { twoLane, type ExtraProp } from '../layouts';
+import { esc } from '../parts';
 
 // Alcohol and drugs, manual pages 54 (what alcohol does; other drugs), 55 (BAC), 56 (only time lowers BAC) and 57
 // (zero tolerance for drivers under 21). The pictures are still diagrams on a plain light background: big word cards
@@ -25,7 +26,7 @@ const word = (x: number, y: number, s: string, size: number) => {
 };
 /** Bold text centered at (x, y). */
 const txt = (x: number, y: number, s: string, size: number, color = DARK) =>
-  `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-weight="700" font-size="${size}" fill="${color}">${s}</text>`;
+  `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-weight="700" font-size="${size}" fill="${color}">${esc(s)}</text>`;
 /** Any drawing as a prop (`highlight` rings it, `hidden` hides it). */
 const pic = (id: string, svg: string): ExtraProp => ({ id, svg: `<g class="pic" data-prop="${id}">${svg}</g>` });
 /** A drawing made at (0, 0), moved to (x, y) and scaled by k. */
@@ -156,7 +157,7 @@ function stillScene(id: string, props: ExtraProp[], hidden: ExtraProp[], teach: 
   };
 }
 /** Show a prop ringed from `on`, and stop ringing it (still shown) at `off`. */
-const ringFrom = (id: string, on: number, off: number) => [set(id, 'highlight', on), set(id, '', off)];
+const ringFrom = (id: string, [on, off]: readonly [number, number]) => [set(id, 'highlight', on), set(id, '', off)];
 
 // ---------------------------------------------------------------------------------------------
 // 1. What alcohol does (card alcohol-effects). "ALCOHOL" and a glass at the top, ringed while the first sentence is
@@ -178,15 +179,14 @@ const E_TILES = [
   card('chances', tile(1, 1), big(DICE), ['TAKE MORE', 'CHANCES']),
 ];
 const [E_REACT, E_SEE, E_JUDGE, E_CHANCES] = E_TILES;
-const shownRinged = (p: ExtraProp, [on, off]: readonly [number, number]) => [set(p.id, 'highlight', on), set(p.id, '', off)];
 
 export const alcoholEffects = stillScene('alcohol-effects', [E_TITLE, ...E_TILES], E_TILES,
   {
     ms: EFFECTS_T.ms,
     states: [
-      ...ringFrom(E_TITLE.id, ...EFFECTS_T.title),
-      ...shownRinged(E_REACT, EFFECTS_T.react), ...shownRinged(E_SEE, EFFECTS_T.see),
-      ...shownRinged(E_JUDGE, EFFECTS_T.judge), ...shownRinged(E_CHANCES, EFFECTS_T.chances),
+      ...ringFrom(E_TITLE.id, EFFECTS_T.title),
+      ...ringFrom(E_REACT.id, EFFECTS_T.react), ...ringFrom(E_SEE.id, EFFECTS_T.see),
+      ...ringFrom(E_JUDGE.id, EFFECTS_T.judge), ...ringFrom(E_CHANCES.id, EFFECTS_T.chances),
     ],
   },
   [set(E_TITLE.id, ''), ...E_TILES.map((p) => set(p.id, 'hidden'))]);
@@ -215,8 +215,8 @@ export const alcoholDrugs = stillScene('alcohol-drugs', [D_TITLE, ...D_CARDS], D
   {
     ms: DRUGS_T.ms,
     states: [
-      ...ringFrom(D_TITLE.id, ...DRUGS_T.title),
-      ...shownRinged(D_LEAF, DRUGS_T.leaf), ...shownRinged(D_PILLS, DRUGS_T.pills), ...shownRinged(D_BOTTLE, DRUGS_T.bottle),
+      ...ringFrom(D_TITLE.id, DRUGS_T.title),
+      ...ringFrom(D_LEAF.id, DRUGS_T.leaf), ...ringFrom(D_PILLS.id, DRUGS_T.pills), ...ringFrom(D_BOTTLE.id, DRUGS_T.bottle),
       set(D_BOTH.id, 'highlight', DRUGS_T.both),
     ],
   },
@@ -241,8 +241,8 @@ export const alcoholBac = stillScene('alcohol-bac', [B_BAC, B_MEANS, B_LIMIT, B_
   {
     ms: BAC_T.ms,
     states: [
-      ...ringFrom(B_BAC.id, ...BAC_T.bac), set(B_MEANS.id, '', BAC_T.means),
-      ...ringFrom(B_LIMIT.id, ...BAC_T.limit), set(B_DRUNK.id, 'highlight', BAC_T.drunk),
+      ...ringFrom(B_BAC.id, BAC_T.bac), set(B_MEANS.id, '', BAC_T.means),
+      ...ringFrom(B_LIMIT.id, BAC_T.limit), set(B_DRUNK.id, 'highlight', BAC_T.drunk),
     ],
   },
   [set(B_BAC.id, ''), set(B_MEANS.id, ''), set(B_LIMIT.id, ''), set(B_DRUNK.id, 'hidden')]);
@@ -255,15 +255,16 @@ export const alcoholBac = stillScene('alcohol-bac', [B_BAC, B_MEANS, B_LIMIT, B_
 // Clip: "Only time lowers the alcohol in your blood." 111–2527 ("time" 375), "Coffee," 2986–3486,
 // "exercise," 3722–4541, "and cold showers" 4722–5694 ("cold" 4888), "do not lower it." 5708–6568.
 export const TIME_T = { time: [375, 2527], coffee: [2986, 3722], exercise: [3722, 4722], shower: [4888, 5708], ms: 7000 } as const;
+const T_TILES = [tile(0, 0, 10), tile(1, 0, 10), tile(0, 1, 10), tile(1, 1, 10)];
 const T_CARDS = [
-  card('time', tile(0, 0, 10), at(0, 0, 1.6, CLOCK), ['TIME']),
-  card('coffee', tile(1, 0, 10), at(0, 0, 1.6, COFFEE), ['COFFEE']),
-  card('exercise', tile(0, 1, 10), at(0, 0, 1.6, DUMBBELL), ['EXERCISE']),
-  card('shower', tile(1, 1, 10), at(0, 0, 1.6, SHOWER), ['COLD SHOWER']),
+  card('time', T_TILES[0], at(0, 0, 1.6, CLOCK), ['TIME']),
+  card('coffee', T_TILES[1], at(0, 0, 1.6, COFFEE), ['COFFEE']),
+  card('exercise', T_TILES[2], at(0, 0, 1.6, DUMBBELL), ['EXERCISE']),
+  card('shower', T_TILES[3], at(0, 0, 1.6, SHOWER), ['COLD SHOWER']),
 ];
 /** The mark on each card, at its top-right corner. */
-const mark = (c: ExtraProp, i: number, svg: string) => { const b = tile(i % 2, Math.floor(i / 2), 10); return pic(`${c.id}-mark`, at(b.x + b.w - 22, b.y + 22, 1, svg)); };
-const T_MARKS = T_CARDS.map((c, i) => mark(c, i, i === 0 ? CHECK : CROSS));
+const mark = (id: string, b: Box, svg: string) => pic(`${id}-mark`, at(b.x + b.w - 22, b.y + 22, 1, svg));
+const T_MARKS = T_CARDS.map((c, i) => mark(c.id, T_TILES[i], i === 0 ? CHECK : CROSS));
 const [T_TIME, T_COFFEE, T_EXERCISE, T_SHOWER] = T_CARDS;
 const markOn = (i: number, t: number) => set(T_MARKS[i].id, '', t);
 
@@ -271,10 +272,10 @@ export const alcoholTime = stillScene('alcohol-time', [...T_CARDS, ...T_MARKS], 
   {
     ms: TIME_T.ms,
     states: [
-      ...ringFrom(T_TIME.id, ...TIME_T.time), markOn(0, TIME_T.time[0]),
-      ...ringFrom(T_COFFEE.id, ...TIME_T.coffee), markOn(1, TIME_T.coffee[0]),
-      ...ringFrom(T_EXERCISE.id, ...TIME_T.exercise), markOn(2, TIME_T.exercise[0]),
-      ...ringFrom(T_SHOWER.id, ...TIME_T.shower), markOn(3, TIME_T.shower[0]),
+      ...ringFrom(T_TIME.id, TIME_T.time), markOn(0, TIME_T.time[0]),
+      ...ringFrom(T_COFFEE.id, TIME_T.coffee), markOn(1, TIME_T.coffee[0]),
+      ...ringFrom(T_EXERCISE.id, TIME_T.exercise), markOn(2, TIME_T.exercise[0]),
+      ...ringFrom(T_SHOWER.id, TIME_T.shower), markOn(3, TIME_T.shower[0]),
     ],
   },
   [...T_CARDS.map((c) => set(c.id, '')), ...T_MARKS.map((m) => set(m.id, 'hidden'))]);
@@ -295,7 +296,7 @@ const U_NEVER = card('never', wide(192), noSign(at(-13, -11, 0.85, GLASS) + at(1
 export const alcoholUnder21 = stillScene('alcohol-under-21', [U_UNDER, U_NONE, U_NEVER], [U_NONE, U_NEVER],
   {
     ms: UNDER21_T.ms,
-    states: [...ringFrom(U_UNDER.id, ...UNDER21_T.under), ...ringFrom(U_NONE.id, ...UNDER21_T.none), set(U_NEVER.id, 'highlight', UNDER21_T.never)],
+    states: [...ringFrom(U_UNDER.id, UNDER21_T.under), ...ringFrom(U_NONE.id, UNDER21_T.none), set(U_NEVER.id, 'highlight', UNDER21_T.never)],
   },
   [set(U_UNDER.id, ''), set(U_NONE.id, 'hidden'), set(U_NEVER.id, 'hidden')]);
 
