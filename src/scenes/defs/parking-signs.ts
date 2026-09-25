@@ -5,12 +5,12 @@ import {
 } from '../layouts';
 import { changeSpeed, driveInTo, driveUntil, kf, SPEED } from '../paths';
 import { grass, line, road, type SignKind } from '../parts';
+import { set } from '../steps';
 
 // Parking signs, manual pages 43 (NO PARKING, NO STANDING and NO STOPPING signs) and 44 (reserved parking for people
 // with disabilities). Times are in ms and follow the word timings in public/audio/card-parking-signs-*.json (the word
 // each time is tied to is named next to it).
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const last = <T>(a: T[]) => a[a.length - 1];
 const CAR_HALF = SIZES.car.length / 2;
 const RED = '#e53935';

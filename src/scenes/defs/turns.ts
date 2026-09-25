@@ -1,6 +1,7 @@
-import type { Keyframe, Pose, SceneDef, StateSet } from '../types';
+import type { Keyframe, Pose, SceneDef } from '../types';
 import { laneGlow, planArrow, WIDEFOUR, wideFourWay, type Dir, type WideLane } from '../layouts';
 import { drive, driveUntil, kf, SPEED, turnMs, turnPath, uTurnMs, uTurnPath } from '../paths';
+import { set } from '../steps';
 
 // Turns and U-turns, manual pages 36–37, on the two-lanes-each-way `wideFourWay()`.
 // Times are in ms and follow the word timings in public/audio/card-turn-*.json (the word each time is tied to is
@@ -10,7 +11,6 @@ import { drive, driveUntil, kf, SPEED, turnMs, turnPath, uTurnMs, uTurnPath } fr
 const ORANGE = '#fb8c00';
 const PURPLE = '#8e24aa';
 const RED_GLOW = '#e53935';
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const hidden = (...ids: string[]) => Object.fromEntries(ids.map((id) => [id, 'hidden']));
 const last = <T>(a: T[]) => a[a.length - 1];
 /** Glow over lane `lane` of road direction `d` where that traffic arrives (`in`) or leaves (`out`). */

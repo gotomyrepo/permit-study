@@ -5,9 +5,9 @@ import {
 import { frameAt, SIZES } from '../src/scenes/engine';
 import { CURB } from '../src/scenes/layouts';
 import type { SceneDef } from '../src/scenes/types';
+import { stateAt } from './helpers';
 
 const pose = (s: SceneDef, id: string, step = 0, t = 0) => frameAt(s, step, t).poses[id];
-const stateAt = (s: SceneDef, id: string, t: number, step = 0) => frameAt(s, step, t).states[id] ?? '';
 
 describe('parking signs lesson pictures', () => {
   test('blue has stopped by the curb before anything is unloaded, and the box and person stand apart on the sidewalk', () => {

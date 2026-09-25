@@ -1,6 +1,7 @@
 import type { SceneDef, StateSet } from '../types';
 import { twoLane, type ExtraProp } from '../layouts';
 import { esc } from '../parts';
+import { set } from '../steps';
 
 // Alcohol and drugs, manual pages 54 (what alcohol does; other drugs), 55 (BAC), 56 (only time lowers BAC) and 57
 // (zero tolerance for drivers under 21). The pictures are still diagrams on a plain light background: big word cards
@@ -8,7 +9,6 @@ import { esc } from '../parts';
 // timings in public/audio/card-alcohol-*.json (the word each time is tied to is named next to it). Every number drawn
 // ("0.08", "21") is one the card's quote gives, and each is on screen before it is said.
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const BG = `<rect x="0" y="0" width="300" height="300" fill="#eceff1"/>`;
 const DARK = '#212121';
 const RED = '#d32f2f';

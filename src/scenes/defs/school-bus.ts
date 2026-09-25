@@ -1,7 +1,8 @@
-import type { ActorDef, Pose, SceneDef, StateSet, Zone } from '../types';
+import type { ActorDef, Pose, SceneDef, Zone } from '../types';
 import { SIZES } from '../engine';
 import { feetPx, laneGlow, measureProp, median, stopLineAhead, twoLane } from '../layouts';
 import { changeSpeed, drive, driveInTo, driveUntil, kf, SPEED } from '../paths';
+import { set } from '../steps';
 
 // School buses, manual page 40. Times are in ms and follow the word timings in
 // public/audio/card-school-bus-*.json (the word each time is tied to is named next to it). Digits get no word
@@ -13,7 +14,6 @@ import { changeSpeed, drive, driveInTo, driveUntil, kf, SPEED } from '../paths';
 // Blue always stops with its front FEET_20 px (20 feet at this scale, where a 36 px car is 15 feet) or more from the
 // bus, and a stop line 2 px in front of it (`stopLineAhead`) lets `stopsBehind` prove it stays there.
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const last = <T>(a: T[]) => a[a.length - 1];
 const RED = 'stop-arm flashing';
 const RED_ON = 'stop-arm flashing highlight';

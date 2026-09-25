@@ -5,6 +5,7 @@ import {
   type ExtraProp,
 } from '../layouts';
 import { changeSpeed, driveInTo, kf, SPEED } from '../paths';
+import { set } from '../steps';
 
 // Parking, manual pages 42 (How to Park) and 43 (Parking Regulations). Times are in ms and follow the word timings in
 // public/audio/card-parking-*.json (the word each time is tied to is named next to it). Digits often get no word
@@ -14,7 +15,6 @@ import { changeSpeed, driveInTo, kf, SPEED } from '../paths';
 // with `at` poses. Every distance is drawn to scale with `feetPx` (a 36 px car stands for 15 feet) and labeled exactly
 // as the card's quote gives it. Every parked car in a picture is parked legally by all the rules in this lesson.
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const last = <T>(a: T[]) => a[a.length - 1];
 const LANE_Y = 170;
 const CAR_HALF = SIZES.car.length / 2;

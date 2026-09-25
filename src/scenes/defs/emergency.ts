@@ -1,6 +1,7 @@
-import type { ActorDef, Pose, SceneDef, StateSet, Zone } from '../types';
+import type { ActorDef, Pose, SceneDef, Zone } from '../types';
 import { lampCarCloseup, lampPropId, laneGlow, stopLineAhead, sameWay, shoulder, SHOULDER, twoLane } from '../layouts';
 import { changeSpeed, drive, driveUntil, kf, laneChange, SPEED } from '../paths';
+import { set } from '../steps';
 
 // Emergency vehicles, manual page 35. Times are in ms and follow the word timings in
 // public/audio/card-emergency-*.json (the word each time is tied to is named next to it).
@@ -11,7 +12,6 @@ import { changeSpeed, drive, driveUntil, kf, laneChange, SPEED } from '../paths'
 // by side, so the ambulance swings 19 px left (to y 151, its body over the center line) to get past.
 // The ambulance's roof lights are on (`flashing`) the whole time: the lamps stay lit and only their halos blink.
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const last = <T>(a: T[]) => a[a.length - 1];
 const FLASH = 'flashing';
 const FLASH_ON = 'flashing highlight';

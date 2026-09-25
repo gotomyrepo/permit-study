@@ -1,7 +1,8 @@
-import type { Pose, SceneDef, StateSet } from '../types';
+import type { Pose, SceneDef } from '../types';
 import { driveway, DRIVEWAY, fourWay, FOURWAY, planArrow, stopPose, withExtras } from '../layouts';
 import { COLORS } from '../parts';
 import { drive, driveUntil, kf, SPEED, turnMs, turnPath } from '../paths';
+import { set } from '../steps';
 
 // Every scenario is an example from manual page 34. Times are in ms and follow the word timings in
 // public/audio/card-row-*.json (the word each time is tied to is named next to it).
@@ -11,7 +12,6 @@ import { drive, driveUntil, kf, SPEED, turnMs, turnPath } from '../paths';
 
 const RED = '#e53935';
 const V = SPEED / 1000;
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const on = (id: string, t = 0) => set(id, 'highlight', t);
 const off = (id: string, t = 0) => set(id, '', t);
 const hidden = (...ids: string[]) => Object.fromEntries(ids.map((id) => [id, 'hidden']));

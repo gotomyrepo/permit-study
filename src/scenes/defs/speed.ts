@@ -1,8 +1,9 @@
-import type { ActorDef, Pose, SceneDef, StateSet } from '../types';
+import type { ActorDef, Pose, SceneDef } from '../types';
 import { SIZES } from '../engine';
 import { label } from '../parts';
 import { FOG_EDGE_PX, fogBank, signCloseup, signPair, signProp, speedGauge, twoLane, type ExtraProp } from '../layouts';
 import { changeSpeed, changeSpeedMs, driveInTo, driveUntil, SPEED } from '../paths';
+import { set } from '../steps';
 
 // Speed, manual pages 47 (Speed) and 62 (Expressway Driving: 55 and 65 mph). Times are in ms and follow the word
 // timings in public/audio/card-speed-*.json (the word each time is tied to is named next to it). Digits get no word
@@ -11,7 +12,6 @@ import { changeSpeed, changeSpeedMs, driveInTo, driveUntil, SPEED } from '../pat
 // a steady speed, except where the lesson is about slowing, and then it slows with `changeSpeed`, starting on the
 // word "Slow". Every number drawn (on a sign or a speedometer) is one the card's quote gives.
 
-const set = (id: string, state: string, t = 0): StateSet => ({ t, id, state });
 const last = <T>(a: T[]) => a[a.length - 1];
 const LANE_Y = 170;
 const CAR_HALF = SIZES.car.length / 2;

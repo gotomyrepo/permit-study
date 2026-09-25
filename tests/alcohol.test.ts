@@ -4,8 +4,8 @@ import {
   alcoholBac, alcoholDrugs, alcoholEffects, alcoholTime, alcoholUnder21,
   BAC_T, DRUGS_T, EFFECTS_T, TIME_T, UNDER21_T,
 } from '../src/scenes/defs/alcohol';
-import { frameAt } from '../src/scenes/engine';
 import type { SceneDef } from '../src/scenes/types';
+import { stateAt } from './helpers';
 
 /** A card's word timings, from the generated audio. */
 const clip = (id: string) => {
@@ -13,7 +13,6 @@ const clip = (id: string) => {
   const words = c.text.split(/\s+/);
   return { end: Math.max(...c.words.map((w) => w.end)), start: (word: string) => c.words.find((w) => words[w.i] === word)!.start };
 };
-const stateAt = (s: SceneDef, id: string, t: number, step = 0) => frameAt(s, step, t).states[id] ?? '';
 const shown = (s: SceneDef, id: string, t: number, step = 0) => !stateAt(s, id, t, step).includes('hidden');
 const ringed = (s: SceneDef, id: string, t: number) => stateAt(s, id, t).includes('highlight');
 
