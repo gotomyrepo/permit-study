@@ -2489,7 +2489,7 @@
  },
  {
   "id": "card-parking-stop-sign",
-  "text": "This is a STOP sign. Park at least 30 feet away from it."
+  "text": "This is a STOP sign. Park at least 30 feet away from it. Also park at least 30 feet from a YIELD sign or a traffic light."
  },
  {
   "id": "q-parking-q1",

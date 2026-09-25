@@ -32,7 +32,7 @@ cards:
       page: 43
       quote: "Parking or standing is not allowed: In front of a driveway. Within 20 feet (6 m) of a crosswalk at an intersection."
   - id: parking-stop-sign
-    say: "This is a STOP sign. Park at least 30 feet away from it."
+    say: "This is a STOP sign. Park at least 30 feet away from it. Also park at least 30 feet from a YIELD sign or a traffic light."
     scene: parking-stop-sign
     step: teach
     source:

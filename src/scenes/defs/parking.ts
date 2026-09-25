@@ -1,6 +1,7 @@
 import type { ActorDef, Pose, SceneDef, StateSet } from '../types';
 import { SIZES } from '../engine';
-import { CURB, curbStreet, feetPx, laneGlow, measureProp, stopLineAhead, WHEEL_OUT, wheelsProp } from '../layouts';
+import { CURB, curbStreet, feetPx, laneGlow, measureProp, signProp, stopLineAhead, WHEEL_OUT, wheelsProp, type ExtraProp } from '../layouts';
+import { trafficLight } from '../parts';
 import { changeSpeed, driveInTo, kf, SPEED } from '../paths';
 
 // Parking, manual pages 42 (How to Park) and 43 (Parking Regulations). Times are in ms and follow the word timings in
@@ -35,10 +36,11 @@ const still = (id: string, at: Record<string, Pose>, states: StateSet[], expect?
 // A red car is parked in front of an empty space and a grey car behind it. The space glows while it is named. Blue
 // drives in at SPEED, close to the right edge of its lane, turns on its right signal on "signal", and on "Stop"
 // slows steadily to a stop next to the red car (ringed from "car" to "space."), its side 2 feet from red's side.
-// The "about 2 feet" arrow shows on "about"; blue's signal goes off then, since its lamps would cover the gap.
+// The "about 2 feet" arrow shows on "about", far enough right of the cars that blue's signal lamps don't cover it.
+// Blue's signal stays on to the end.
 const S = { spaceOn: 416, spaceOff: 2055, signal: 3736, slow: 4722, redOn: 5625, redOff: 7055, gapOn: 7680, ms: 10100 };
-const S_RED = parked(150);
-const S_GREY = parked(40);
+const S_RED = parked(160);
+const S_GREY = parked(70);
 /** Blue's side is 2 feet (feetPx(2) px) from red's side. */
 const S_BLUE_Y = CURB.parkY - 2 * CAR_SIDE - feetPx(2);
 const S_BLUE_STOP = east(S_RED.x, S_BLUE_Y);
@@ -49,7 +51,7 @@ const S_DOWN = changeSpeed(last(S_IN.track), S_SLOW_FWD, S.slow, SPEED, 0);
 export const S_STOP_T = last(S_DOWN).t;
 const S_LINE = stopLineAhead('stop-park', S_BLUE_STOP);
 const S_SPACE = laneGlow('glow-space', { x: S_GREY.x + CAR_HALF, y: CURB.parkTop, w: S_RED.x - S_GREY.x - 2 * CAR_HALF, h: CURB.curbY - CURB.parkTop });
-const S_GAP = measureProp('gap-2', S_BLUE_Y + CAR_SIDE, CURB.parkY - CAR_SIDE, S_RED.x + CAR_HALF + 8, 'about 2 feet',
+const S_GAP = measureProp('gap-2', S_BLUE_Y + CAR_SIDE, CURB.parkY - CAR_SIDE, S_RED.x + CAR_HALF + 16, 'about 2 feet',
   { vertical: true, reach: [S_RED.x + CAR_HALF - 2, S_RED.x + CAR_HALF - 2] });
 
 export const parkingStart: SceneDef = {
@@ -62,17 +64,17 @@ export const parkingStart: SceneDef = {
       id: 'teach', duration: S.ms,
       states: [
         set(S_SPACE.id, '', S.spaceOn), set(S_SPACE.id, 'hidden', S.spaceOff), set('blue', 'signal-right', S.signal),
-        set('red', 'highlight', S.redOn), set('red', '', S.redOff), set('blue', '', S.gapOn), set(S_GAP.id, '', S.gapOn),
+        set('red', 'highlight', S.redOn), set('red', '', S.redOff), set(S_GAP.id, '', S.gapOn),
       ],
       tracks: { blue: [...S_IN.track, ...S_DOWN, kf(S_BLUE_STOP, S.ms)] },
       expect: [{ type: 'stopsBehind', actor: 'blue', line: S_LINE.id, from: S_STOP_T, to: S.ms }],
     },
-    // Blue driving along, before the grey car; the space ahead is empty. No signal, glow or arrow.
-    still('question-where', { blue: east(30), red: S_RED, grey: S_GREY },
+    // Blue driving along, clearly behind the grey car (not beside any car); the space ahead is empty. No signal, glow or arrow.
+    still('question-where', { blue: east(15), red: S_RED, grey: S_GREY },
       [set('blue', ''), set('red', ''), set(S_SPACE.id, 'hidden'), set(S_GAP.id, 'hidden')]),
-    // Blue stopped next to the red car (signal off, so the gap shows), with no arrow or number.
+    // Blue stopped next to the red car, signal still on, with no arrow or number.
     still('question-gap', { blue: S_BLUE_STOP, red: S_RED, grey: S_GREY },
-      [set('blue', ''), set('red', ''), set(S_SPACE.id, 'hidden'), set(S_GAP.id, 'hidden')],
+      [set('blue', 'signal-right'), set('red', ''), set(S_SPACE.id, 'hidden'), set(S_GAP.id, 'hidden')],
       [{ type: 'stopsBehind', actor: 'blue', line: S_LINE.id, from: 0, to: 500 }]),
   ],
 };
@@ -126,28 +128,38 @@ export const parkingCurb: SceneDef = {
 function distanceScene(o: {
   id: string; layout: Parameters<typeof curbStreet>[0]; thing: string; thingX: number; reachTo: number; feet: number;
   arrowY: number; label: 'above' | 'below';
-  t: { thingOn: number; thingOff: number; park: number; gapOn: number; ms: number };
+  t: { thingOn: number; thingOff: number; park: number; parkOff?: number; gapOn: number; ms: number };
+  /** Extra props shown only in `teach` (hidden at first and in the question), with their teach states. */
+  /** `fixed`: ids of parts inside those props that keep one state throughout (e.g. a traffic light's lamps). */
+  more?: { props: ExtraProp[]; states: StateSet[]; fixed?: Record<string, string> };
 }): SceneDef {
+  const more = o.more ?? { props: [], states: [] };
+  const fixed = more.fixed ?? {};
+  const hideMore = Object.fromEntries(more.props.map((p) => [p.id, 'hidden']));
   const blue = parked(o.thingX - feetPx(o.feet) - CAR_HALF);
   const grey = parked(40);
   const gap = measureProp(`gap-${o.feet}`, blue.x + CAR_HALF, o.thingX, o.arrowY, `${o.feet} feet`,
     { label: o.label, reach: [CURB.parkY, o.reachTo] });
   const stop = stopLineAhead('stop-park', blue);
+  const layout = curbStreet({ ...o.layout, props: [gap, ...more.props], lines: [stop] });
   return {
     id: o.id, width: 300, height: 300,
-    ...curbStreet({ ...o.layout, props: [gap], lines: [stop] }),
-    initialStates: { [gap.id]: 'hidden' },
+    ...layout, props: [...layout.props, ...Object.keys(fixed)],
+    initialStates: { [gap.id]: 'hidden', ...hideMore, ...fixed },
     actors: [car('blue', blue), car('grey', grey, GREY)],
     steps: [
       {
         id: 'teach', duration: o.t.ms,
         states: [
           set(o.thing, 'highlight', o.t.thingOn), set(o.thing, '', o.t.thingOff),
-          set('blue', 'highlight', o.t.park), set(gap.id, '', o.t.gapOn),
+          set('blue', 'highlight', o.t.park), ...(o.t.parkOff ? [set('blue', '', o.t.parkOff)] : []), set(gap.id, '', o.t.gapOn),
+          ...more.states,
         ],
         expect: [{ type: 'stopsBehind', actor: 'blue', line: stop.id, from: 0, to: o.t.ms }],
       },
-      still('question', { blue: east(60), grey }, [set('blue', ''), set(o.thing, ''), set(gap.id, 'hidden')]),
+      still('question', { blue: east(60), grey }, [
+        set('blue', ''), set(o.thing, ''), set(gap.id, 'hidden'), ...more.props.map((p) => set(p.id, 'hidden')),
+      ]),
     ],
   };
 }
@@ -172,14 +184,32 @@ export const parkingCrosswalk = distanceScene({
   t: { thingOn: 291, thingOff: 2221, park: 2694, gapOn: 3041, ms: 5000 },
 });
 
-// 5. A STOP sign: park at least 30 feet away (card parking-stop-sign). Blue's front is then more than 20 feet from
-//    the crosswalk too.
+// 5. A STOP sign: park at least 30 feet away; the same goes for a YIELD sign or a traffic light (card
+//    parking-stop-sign). Blue's front is then more than 20 feet from the crosswalk too.
 // Clip: "This is a STOP sign." 125–1193 ("STOP" 444), "Park at least" 1666–2319 ("least" 2000),
-// "30 feet" (no timing) 2319–2944, "away from it." 2944–3638.
+// "30 feet" (no timing) 2319–2944, "away from it." 2944–3638, "Also park" (no timing) 3638–4750,
+// "at least 30 feet from" 4750–5957, "a YIELD sign" 5972–6846 ("YIELD" 6013), "or a traffic light." 7013–7943
+// ("traffic" 7180). Blue's ring goes off after "it.", before "Also". A big YIELD sign and a traffic light (all
+// three lamps lit, so it reads as "a traffic light", not one color) appear on the grass across the street, each
+// ringed on its name; the YIELD sign's ring goes off on "or", the light's stays on to the end.
+const Y_SIGN = signProp('sign-yield', 'yield', 95, 58, { size: 46, post: false });
+const T_LIGHT_RING = 'traffic-light';
+const T_LIGHT: ExtraProp = {
+  id: T_LIGHT_RING,
+  svg: `<g class="pic" data-prop="${T_LIGHT_RING}"><g transform="translate(170 58) scale(1.6)">${trafficLight('traffic-light-lamps', 0, 0)}</g></g>`,
+};
+const sp = { yieldOn: 6013, yieldOff: 7013, lightOn: 7180 };
 export const parkingStopSign = distanceScene({
   id: 'parking-stop-sign', layout: { hydrant: false, corner: 'stop' }, thing: CURB.signId, thingX: CURB.signX,
   reachTo: 284, feet: 30, arrowY: 291, label: 'above',
-  t: { thingOn: 444, thingOff: 1193, park: 1666, gapOn: 2000, ms: 4100 },
+  t: { thingOn: 444, thingOff: 1193, park: 1666, parkOff: 3900, gapOn: 2000, ms: 8400 },
+  more: {
+    props: [Y_SIGN, T_LIGHT],
+    states: [
+      set(Y_SIGN.id, 'highlight', sp.yieldOn), set(Y_SIGN.id, '', sp.yieldOff), set(T_LIGHT.id, 'highlight', sp.lightOn),
+    ],
+    fixed: { 'traffic-light-lamps': 'red yellow green' },
+  },
 });
 
 export const parkingScenes: SceneDef[] = [parkingStart, parkingCurb, parkingHydrant, parkingCrosswalk, parkingStopSign];
