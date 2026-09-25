@@ -145,3 +145,5 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .tile .say { color: #fff; }
 .tile .say .spk { width: 26px; height: 26px; }
 @media (max-width: 480px) { .bar .btn.icon { min-width: 64px; } }
+/* The question's speaker sits at the top of its row at its own size (it stretched to the question's height on phones). */
+.ask-row .btn.icon { flex: 0 0 auto; align-self: flex-start; min-width: 64px; }
