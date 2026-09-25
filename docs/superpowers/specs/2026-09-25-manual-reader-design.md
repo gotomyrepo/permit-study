@@ -64,7 +64,7 @@ sections:
 - Numbers are written the way they should be spoken when the TTS misreads them (same practice as the lessons).
 
 **Pictures**
-- Manual figures: `content/reader/figures.yaml` lists `{ id, page, box: [x0, y0, x1, y1] }` in PDF points. `scripts/crop_figures.py` (PyMuPDF, already a dependency of `fetch_manual.py`) renders each one at 2x to `public/reader/figures/<id>.png`. Crops are chosen by eye and checked by looking at the PNGs.
+- Manual figures: `content/reader/figures.yaml` lists `{ id, page, box: [x0, y0, x1, y1] }` in PDF points. `scripts/crop_figures.py` (PyMuPDF, added to `requirements.txt`; pypdf cannot render) renders each one at 2x to `public/reader/figures/<id>.png`. Crops are chosen by eye and checked by looking at the PNGs.
 - Scene stills: `picture: scene:<scene-id>` uses a PNG made with the existing screenshot tool, copied to `public/reader/scenes/<scene-id>.png` by the same script.
 - The validator checks that every `picture` id exists.
 
