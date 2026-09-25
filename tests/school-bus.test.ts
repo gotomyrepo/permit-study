@@ -9,12 +9,16 @@ describe('school bus lesson', () => {
     const f = frameAt(schoolBusStop, 0, S_STOP_T);
     expect(f.poses.blue.x).toBeCloseTo(S_BLUE_STOP.x, 3);
     expect((f.poses.bus.x - BUS) - (f.poses.blue.x + CAR)).toBeGreaterThanOrEqual(FEET_20);
+    const line = schoolBusStop.lines.find((l) => l.id === 'stop-bus')!;
+    expect((f.poses.bus.x - BUS) - line.x).toBeGreaterThanOrEqual(FEET_20);
   });
   test('facing a stopped bus in the other lane (and across a median), blue stops at least 20 feet short of its front', () => {
     for (const scene of [schoolBusOncoming, schoolBusDivided]) {
       const f = frameAt(scene, 0, scene.steps[0].duration);
       expect((f.poses.bus.x - BUS) - (f.poses.blue.x + CAR)).toBeGreaterThanOrEqual(FEET_20);
       expect(f.poses.blue.x + CAR).toBeLessThanOrEqual(O_LINE.x);
+      // The stop line itself is the full 20 feet short of the bus's front.
+      expect((f.poses.bus.x - BUS) - O_LINE.x).toBeGreaterThanOrEqual(FEET_20);
     }
   });
   test('yellow lights: the bus slows first, then blue; blue keeps a clear gap and both stay on screen', () => {

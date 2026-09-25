@@ -4,7 +4,7 @@ title: School buses
 icon: "🚌"
 cards:
   - id: school-bus-yellow
-    say: "The school bus ahead is flashing yellow lights. It is getting ready to stop. Slow down, and get ready to stop too."
+    say: "A school bus is flashing yellow lights. It is getting ready to stop. Slow down, and get ready to stop too."
     scene: school-bus-yellow
     step: teach
     source:

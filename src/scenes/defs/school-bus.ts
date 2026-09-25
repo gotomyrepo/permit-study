@@ -31,7 +31,7 @@ const frontX = (p: Pose, half: number) => p.x + (p.heading === 90 ? half : -half
 
 const blueCar = (start: Pose): ActorDef => ({ id: 'blue', kind: 'car', you: true, start });
 const bus = (start: Pose): ActorDef => ({ id: 'bus', kind: 'bus', start });
-const child = (id: string, x: number): ActorDef => ({ id, kind: 'pedestrian', start: { x, y: 214, heading: 0 } });
+const child = (id: string, x: number, color: string): ActorDef => ({ id, kind: 'pedestrian', color, start: { x, y: 214, heading: 0 } });
 
 /** Blue slows steadily from SPEED to a stop over `fwd` px, starting at t0, ending at `stop`. */
 function slowToStop(stop: Pose, fwd: number, t0: number) {
@@ -50,18 +50,18 @@ function driveInTo(to: Pose, t1: number) {
 
 // ---------------------------------------------------------------------------------------------
 // 1. Yellow lights: the bus is getting ready to stop, so slow down and get ready to stop too.
-// Clip: "school bus ahead" 194–1300, "flashing yellow lights." 1486–3000, "getting ready to stop." 3569–4600,
-// "Slow down," 5152–5900, "get ready to stop too." 6263–7471.
+// Clip: "A school bus" 111–902, "flashing yellow lights." 1111–2457, "getting ready to stop." 3138–4249,
+// "Slow down," 4722–5416, "get ready to stop too." 5833–7041.
 // The bus drives ahead at SPEED with its yellow lights on, ringed while it and its lights are named. On "getting"
 // it slows down to a crawl (8 px/s). Blue follows 70 px behind at SPEED and slows to the same crawl on "Slow".
 const Y_BUS_START: Pose = { x: 32, y: LANE_Y, heading: 90 }; // rear at x 0: fully on screen when named
 const Y_BLUE_START: Pose = { x: Y_BUS_START.x - BUS_HALF - 70 - CAR_HALF, y: LANE_Y, heading: 90 };
-const Y_BUS_ON = 194;
-const Y_BUS_OFF = 3000;
-const Y_BUS_SLOW = 3569; // "getting"
-const Y_BLUE_SLOW = 5152; // "Slow"
+const Y_BUS_ON = 180; // "school"
+const Y_BUS_OFF = 2457;
+const Y_BUS_SLOW = 3138; // "getting"
+const Y_BLUE_SLOW = 4722; // "Slow"
 const CRAWL = 8;
-const Y_MS = 7900;
+const Y_MS = 7400;
 const Y_BUS_TO = drive(Y_BUS_START, (SPEED * Y_BUS_SLOW) / 1000, 0);
 const Y_BUS_DOWN = changeSpeed(last(Y_BUS_TO), 35, Y_BUS_SLOW, SPEED, CRAWL);
 const Y_BUS_TRACK = [...Y_BUS_TO, ...Y_BUS_DOWN, ...driveUntil(last(Y_BUS_DOWN), last(Y_BUS_DOWN).t, Y_MS, { speed: CRAWL })];
@@ -98,7 +98,7 @@ export const schoolBusYellow: SceneDef = {
 // ("stop" 4111), "before you reach the bus." 4416–5600, "Stop at least" 6180–6860, "20 feet" 6860–7444, "away." 7444–7805.
 // The bus stands still with its stop arm out and red lights on, ringed from "school bus" to "flashing". Two children
 // stand at the side of the road by it. Blue drives in at SPEED and, on "stop", slows steadily to a stop 50 px behind
-// the bus; the "20 feet" arrow between them shows on "20".
+// the bus; the "20 feet" arrow (on the grass above the road, with dashed guides down to both) shows on "20".
 const S_BUS: Pose = { x: 230, y: LANE_Y, heading: 90 };
 const S_BUS_REAR = S_BUS.x - BUS_HALF;
 export const S_BLUE_STOP: Pose = { x: S_BUS_REAR - FEET_20 - 2 - CAR_HALF, y: LANE_Y, heading: 90 };
@@ -113,7 +113,7 @@ const S_BUS_ON = 194;
 const S_BUS_OFF = 3300;
 const S_GAP_ON = 6860; // "20"
 const S_MS = 8200;
-const S_GAP = measureProp('gap-20', frontX(S_BLUE_STOP, CAR_HALF), S_BUS_REAR, 200, '20 feet', { reach: [LANE_Y, LANE_Y] });
+const S_GAP = measureProp('gap-20', frontX(S_BLUE_STOP, CAR_HALF), S_BUS_REAR, 96, '20 feet', { reach: [LANE_Y, LANE_Y] });
 /** Where the bus stood: it must drive out of it before blue drives into it. */
 const S_SPOT: Zone = { id: 'bus-spot', x: S_BUS_REAR, y: 150, w: SIZES.bus.length, h: 40 };
 /** The grass at the side of the road, where the children stand. */
@@ -137,7 +137,7 @@ export const schoolBusStop: SceneDef = {
   id: 'school-bus-stop', width: 300, height: 300,
   ...twoLane({ lines: [S_LINE], zones: [S_SPOT, S_ROADSIDE], props: [S_GAP] }),
   initialStates: { bus: RED, [S_GAP.id]: 'hidden' },
-  actors: [blueCar(S_IN.start), bus(S_BUS), child('kid-1', 215), child('kid-2', 242)],
+  actors: [blueCar(S_IN.start), bus(S_BUS), child('kid-1', 200, '#8e24aa'), child('kid-2', 258, '#00897b')],
   steps: [
     {
       id: 'teach', duration: S_MS,
@@ -189,10 +189,11 @@ export const schoolBusStop: SceneDef = {
 // "You must stop" 4416–5000 ("stop" 4736), "for it too," 5041–5708, "at least" 6000–6416, "20 feet" 6416–6958, "away." 6958–7319.
 // The bus stands still in the westbound lane (stop arm out toward blue's lane, red lights on), ringed while it and
 // its lights are named; the other lane glows on "other lane". Blue drives in at SPEED and, on "stop", slows to a
-// stop with its front 48 px short of the bus's front; the "20 feet" arrow shows on "20".
+// stop with its front 50 px short of the bus's front (the stop line is 48 px, 20 feet, short of it); the "20 feet" arrow shows on "20".
 const O_BUS: Pose = { x: 200, y: WB_Y, heading: 270 };
 const O_BUS_FRONT = frontX(O_BUS, BUS_HALF);
-const O_BLUE_STOP: Pose = { x: O_BUS_FRONT - FEET_20 - CAR_HALF, y: LANE_Y, heading: 90 };
+/** Blue's front 2 px short of the stop line, which is FEET_20 px short of the bus's front (blue faces east). */
+const O_BLUE_STOP: Pose = { x: O_BUS_FRONT - FEET_20 - 2 - CAR_HALF, y: LANE_Y, heading: 90 };
 export const O_LINE = stopLineAhead('stop-bus', O_BLUE_STOP);
 const O_SLOW = 4736; // "stop"
 const O_SLOW_FWD = 40;
@@ -201,7 +202,7 @@ const O_IN = driveInTo({ ...O_BLUE_STOP, x: O_BLUE_STOP.x - O_SLOW_FWD }, O_SLOW
 const O_STOP_T = last(O_DOWN).t;
 const O_MS = 7700;
 const O_GLOW = laneGlow('glow-other', { x: 0, y: 110, w: 300, h: 40 });
-const O_GAP = measureProp('gap-20', frontX(O_BLUE_STOP, CAR_HALF), O_BUS_FRONT, 200, '20 feet', { reach: [LANE_Y, WB_Y] });
+const O_GAP = measureProp('gap-20', frontX(O_BLUE_STOP, CAR_HALF), O_BUS_FRONT, 96, '20 feet', { reach: [LANE_Y, WB_Y] });
 
 export const schoolBusOncoming: SceneDef = {
   id: 'school-bus-oncoming', width: 300, height: 300,
@@ -232,7 +233,7 @@ export const schoolBusOncoming: SceneDef = {
 // Clip: "school bus" 291–1000, "is on the other side of a divided highway." 1069–3300 ("other" 1430),
 // "red lights are flashing." 3861–5300, "You must still stop" 5500–6300 ("stop" 6000), "for it." 6319–6693.
 // The bus stands still on the far side of the median, ringed while it and its lights are named; the far side glows
-// from "other" to the end of "highway". Blue drives in at SPEED and, on "stop", slows to a stop 48 px short of the
+// from "other" to the end of "highway". Blue drives in at SPEED and, on "stop", slows to a stop 50 px short of the
 // bus's front.
 const D_SLOW = 6000; // "stop"
 const D_SLOW_FWD = 30;
