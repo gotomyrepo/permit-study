@@ -1,4 +1,16 @@
 import { test, expect, type Page } from '@playwright/test';
+import { readdirSync, readFileSync } from 'node:fs';
+import YAML from 'yaml';
+
+const norm = (s: string | null) => (s ?? '').replace(/\s+/g, ' ').trim();
+/** A question's ask and choices, as one key (some questions share an ask, e.g. "What does this sign mean?"). */
+const key = (ask: string | null, choices: (string | null)[]) => [ask, ...choices].map(norm).join(' | ');
+/** Every lesson question's key → the index of its right answer. */
+const ANSWERS = new Map(
+  readdirSync('content/lessons').flatMap((f) =>
+    (YAML.parse(readFileSync(`content/lessons/${f}`, 'utf8')).questions as { ask: string; choices: string[]; answer: number }[])
+      .map((q) => [key(q.ask, q.choices), q.answer] as const)),
+);
 
 /** Records every clip that starts playing, in order. */
 const hook = () => {
@@ -70,12 +82,15 @@ test('question 🔊 is locked during the replay, then works again', async ({ pag
 test('results verdict does not play over the review screen', async ({ page }) => {
   await page.getByRole('button', { name: /Practice test/ }).click();
   await page.getByRole('button', { name: /Start/ }).click();
-  // Every yield question's first choice is wrong, so this fails the test and offers a review.
-  for (let k = 0; k < 3; k++) {
-    await page.locator('.tile').first().click();
+  // Pick a wrong choice for every question, so the test is failed and a review is offered.
+  const review = page.getByRole('button', { name: /missed/ });
+  for (let k = 0; k < 20; k++) {
+    const q = key(await page.locator('.ask-row .caption').textContent(), await page.locator('.tile .choice-text').allTextContents());
+    const answer = ANSWERS.get(q);
+    expect(answer, `no lesson question matches "${q}"`).toBeDefined();
+    await page.locator('.tile').nth(answer === 0 ? 1 : 0).click();
     await expect(page.locator('.tile.picked')).toHaveCount(0);
   }
-  const review = page.getByRole('button', { name: /missed/ });
   // Note how many clips had started at the moment of the tap, inside the page (no race with the test runner).
   await review.evaluate((b) => b.addEventListener('click', () => { (window as any).atTap = (window as any).plays.length; }, { capture: true }));
   await review.click();
