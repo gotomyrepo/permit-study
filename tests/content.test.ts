@@ -2,9 +2,10 @@ import { readFileSync } from 'node:fs';
 import { describe, test, expect } from 'vitest';
 import { normalizeForMatch } from '../src/content/normalize';
 import { validateLessons } from '../src/content/validate';
-import { audioLines, audioId, TEXT } from '../src/content/audioLines';
+import { audioLines, audioId, TEXT, audioPath, readerClip, PHRASES } from '../src/content/audioLines';
 import { LessonSchema, type Lesson } from '../src/content/types';
 import type { ManualPage } from '../src/content/validate';
+import { ChapterSchema } from '../src/reader/types';
 
 const pages = [
   { page: 29, text: 'MEANING: Decrease speed \nas you reach the intersec-\ntion. Y ou must come to a full stop at \na YIELD sign if traffic conditions require it.' },
@@ -157,6 +158,29 @@ describe('audioLines', () => {
     expect(TEXT.yes(q)).toBe('Yes! Red.');
     expect(TEXT.answerIs(q)).toBe('The answer is: Red.');
     expect(audioId.choice(q, 1)).toBe('q-yield-q1-c1');
+  });
+});
+
+describe('audioLines: reader', () => {
+  const ch = ChapterSchema.parse({
+    id: 'ch04', number: 4, title: 'Traffic Control', sections: [{ id: 'ch04-a', title: 'A', paragraphs: [
+      { id: 'ch04-a-1', say: 'Traffic signs tell you about the rules.', source: { page: 29, quote: 'Traffic signs tell you about traffic rules' } },
+    ] }],
+  });
+  test('one line per paragraph, in the reader folder', () => {
+    const lines = audioLines([lesson()], [ch]);
+    expect(lines).toContainEqual({ id: 'reader-ch04-a-1', text: 'Traffic signs tell you about the rules.', dir: 'reader' });
+    expect(lines.find((l) => l.id === 'card-yield-1')!.dir).toBeUndefined();
+    expect(new Set(lines.map((l) => l.id)).size).toBe(lines.length);
+  });
+  test('clip paths', () => {
+    expect(readerClip({ id: 'ch04-a-1' })).toBe('reader/reader-ch04-a-1');
+    expect(audioPath({ id: 'card-yield-1' })).toBe('card-yield-1');
+    expect(audioPath({ id: 'reader-x', dir: 'reader' })).toBe('reader/reader-x');
+  });
+  test('the finished phrase is spoken', () => {
+    expect(PHRASES['phrase-reader-done']).toBe('You finished the manual. Great job!');
+    expect(audioLines([]).map((l) => l.id)).toContain('phrase-reader-done');
   });
 });
 

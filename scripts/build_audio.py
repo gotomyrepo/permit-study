@@ -66,6 +66,23 @@ def line_hash(text: str, voice: dict) -> str:
     return hashlib.sha1(f"{voice['voice']}|{voice.get('rate', '+0%')}|{text}".encode()).hexdigest()
 
 
+def line_dir(out: pathlib.Path, line: dict) -> pathlib.Path:
+    """Where a line's files go: `out`, or its subfolder (e.g. public/audio/reader) when the line has a "dir"."""
+    return out / line["dir"] if line.get("dir") else out
+
+
+def stale_files(out: pathlib.Path, lines: list[dict]) -> list[pathlib.Path]:
+    """Generated .mp3/.json files in `out` and its subfolders that no line makes any more (never manifest.json)."""
+    keep = {(line.get("dir", ""), line["id"]) for line in lines}
+    found: list[pathlib.Path] = []
+    for folder in [out, *sorted(d for d in out.iterdir() if d.is_dir())]:
+        rel = "" if folder == out else folder.name
+        for f in sorted(folder.iterdir()):
+            if f.is_file() and f.suffix in (".mp3", ".json") and f.name != "manifest.json" and (rel, f.stem) not in keep:
+                found.append(f)
+    return found
+
+
 async def synth(text: str, voice: dict) -> tuple[bytes, list[dict]]:
     comm = edge_tts.Communicate(text, voice["voice"], rate=voice.get("rate", "+0%"), boundary="WordBoundary")
     audio = bytearray()
@@ -82,8 +99,10 @@ async def synth(text: str, voice: dict) -> tuple[bytes, list[dict]]:
 
 async def build_one(line: dict, voice: dict, manifest: dict, sem: asyncio.Semaphore) -> bool:
     h = line_hash(line["text"], voice)
-    mp3 = OUT / f"{line['id']}.mp3"
-    js = OUT / f"{line['id']}.json"
+    folder = line_dir(OUT, line)
+    folder.mkdir(parents=True, exist_ok=True)
+    mp3 = folder / f"{line['id']}.mp3"
+    js = folder / f"{line['id']}.json"
     if manifest.get(line["id"]) == h and mp3.exists() and js.exists():
         return False
     async with sem:
@@ -108,6 +127,8 @@ async def main() -> None:
     lines = json.loads(LINES.read_text(encoding="utf-8"))
     for line in lines:
         assert ID_RE.match(line["id"]), f"invalid audio line id: {line['id']!r}"
+        if "dir" in line:
+            assert ID_RE.match(line["dir"]), f"invalid audio dir: {line['dir']!r}"
     voice = json.loads(VOICE.read_text(encoding="utf-8"))
     OUT.mkdir(parents=True, exist_ok=True)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {}
@@ -120,18 +141,10 @@ async def main() -> None:
             if k not in keep:
                 del manifest[k]
         MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8")
-    removed = 0
-    for f in OUT.iterdir():
-        if f.is_dir():
-            continue
-        if f.suffix not in (".mp3", ".json"):
-            continue
-        if f.name == "manifest.json":
-            continue
-        if f.stem not in keep:
-            f.unlink()
-            removed += 1
-    print(f"{sum(made)} generated, {len(lines) - sum(made)} unchanged, {removed} stale files removed")
+    stale = stale_files(OUT, lines)
+    for f in stale:
+        f.unlink()
+    print(f"{sum(made)} generated, {len(lines) - sum(made)} unchanged, {len(stale)} stale files removed")
 
 
 if __name__ == "__main__":

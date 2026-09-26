@@ -2,7 +2,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "scripts"))
-from build_audio import match_words  # noqa: E402
+from build_audio import line_dir, match_words, stale_files  # noqa: E402
 
 
 def b(text, ms):
@@ -54,3 +54,25 @@ def test_short_word_matches_at_current_token():
     ]
     words = match_words(text, boundaries)
     assert [w["i"] for w in words] == [0, 1, 2, 2, 3, 4, 5, 5, 6]
+
+
+def test_line_dir_uses_the_subfolder(tmp_path):
+    assert line_dir(tmp_path, {"id": "card-a", "text": "x"}) == tmp_path
+    assert line_dir(tmp_path, {"id": "reader-a", "text": "x", "dir": "reader"}) == tmp_path / "reader"
+
+
+def test_stale_files_looks_in_subfolders(tmp_path):
+    (tmp_path / "reader").mkdir()
+    for p in ["card-a.mp3", "card-a.json", "card-old.mp3", "manifest.json",
+              "reader/reader-a.mp3", "reader/reader-a.json", "reader/reader-old.json", "reader/notes.txt"]:
+        (tmp_path / p).write_text("x")
+    lines = [{"id": "card-a", "text": "x"}, {"id": "reader-a", "text": "y", "dir": "reader"}]
+    stale = sorted(f.relative_to(tmp_path).as_posix() for f in stale_files(tmp_path, lines))
+    assert stale == ["card-old.mp3", "reader/reader-old.json"]
+
+
+def test_a_clip_in_the_wrong_folder_is_stale(tmp_path):
+    (tmp_path / "reader").mkdir()
+    (tmp_path / "reader-a.mp3").write_text("x")
+    lines = [{"id": "reader-a", "text": "y", "dir": "reader"}]
+    assert [f.name for f in stale_files(tmp_path, lines)] == ["reader-a.mp3"]

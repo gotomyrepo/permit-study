@@ -1,4 +1,5 @@
 import type { Lesson, Question } from './types';
+import type { Chapter } from '../reader/types';
 
 export const PHRASES: Record<string, string> = {
   'phrase-home': 'Hi! Tap the green button to keep learning.',
@@ -11,6 +12,7 @@ export const PHRASES: Record<string, string> = {
   'phrase-not-yet': "Not yet. Let's keep practicing.",
   'phrase-test-start': "Let's do a practice test. Listen to each question, then tap your answer.",
   'phrase-review-missed': "Let's practice the ones you missed.",
+  'phrase-reader-done': 'You finished the manual. Great job!',
 };
 
 const trimEnd = (s: string) => s.trim().replace(/[.!?]+$/, '');
@@ -30,11 +32,19 @@ export const audioId = {
   answerIs: (q: { id: string }) => `q-${q.id}-answer`,
   lessonEnd: (l: { id: string }) => `end-${l.id}`,
   score: (n: number, t: number) => `score-${n}-of-${t}`,
+  reader: (p: { id: string }) => `reader-${p.id}`,
 };
 
-export interface AudioLine { id: string; text: string }
+/** Reader clips live in public/audio/reader/, so the PWA can cache them at runtime instead of precaching them. */
+export const READER_AUDIO_DIR = 'reader';
 
-export function audioLines(lessons: Lesson[]): AudioLine[] {
+export interface AudioLine { id: string; text: string; dir?: string }
+
+/** A clip's path under public/audio without the extension: what AudioPlayer.play() takes. */
+export const audioPath = (l: { id: string; dir?: string }): string => (l.dir ? `${l.dir}/${l.id}` : l.id);
+export const readerClip = (p: { id: string }): string => audioPath({ id: audioId.reader(p), dir: READER_AUDIO_DIR });
+
+export function audioLines(lessons: Lesson[], chapters: readonly Chapter[] = []): AudioLine[] {
   const out: AudioLine[] = Object.entries(PHRASES).map(([id, text]) => ({ id, text }));
   for (let t = 1; t <= 20; t++) for (let n = 0; n <= t; n++) out.push({ id: audioId.score(n, t), text: TEXT.score(n, t) });
   for (const l of lessons) {
@@ -46,5 +56,8 @@ export function audioLines(lessons: Lesson[]): AudioLine[] {
       out.push({ id: audioId.yes(q), text: TEXT.yes(q) }, { id: audioId.answerIs(q), text: TEXT.answerIs(q) });
     }
   }
+  for (const ch of chapters)
+    for (const s of ch.sections)
+      for (const p of s.paragraphs) out.push({ id: audioId.reader(p), text: p.say, dir: READER_AUDIO_DIR });
   return out;
 }

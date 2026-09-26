@@ -40,6 +40,10 @@
   "text": "Let's practice the ones you missed."
  },
  {
+  "id": "phrase-reader-done",
+  "text": "You finished the manual. Great job!"
+ },
+ {
   "id": "score-0-of-1",
   "text": "You got 0 out of 1."
  },
