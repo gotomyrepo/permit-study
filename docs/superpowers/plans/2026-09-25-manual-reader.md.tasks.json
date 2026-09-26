@@ -77,7 +77,7 @@
     {
       "id": 9,
       "subject": "Task 9: \"📖 Learn more\" from lessons",
-      "status": "pending",
+      "status": "completed",
       "description": "See docs/superpowers/plans/2026-09-25-manual-reader.md — Task 9 section.\n\n**Goal:** Lesson card screens (top bar) and the lesson-end screen show \"📖 Learn more\" when the lesson has a `readerStart`. It leaves the lesson the way 🏠 does (her card place is kept) and opens the reader at that section.\n\n**Files:**\n- Modify: `src/screens/ctx.ts`, `src/screens/learn.ts`, `src/screens/lessonEnd.ts`, `src/app.ts`, `src/styles.css`\n- Create: `e2e/learn-more.spec.ts`\n\n**Acceptance Criteria:**\n- [ ] Yield → Learn more opens \"Chapter 4 · Signs\" and plays `reader-ch04-signs-1`; 🏠 → Yield resumes at the card she left\n- [ ] Traffic lights → Learn more opens \"Chapter 4 · Traffic Signals\"\n- [ ] The lesson-end screen shows Learn more for Yield; lessons without `readerStart` (Parking) show no Learn more\n- [ ] At 360 px the lesson top bar shows only 📖 (accessible name still \"Learn more\") and does not scroll sideways\n\n**Verify:** `npx playwright test e2e/learn-more.spec.ts` → all pass; look at `screenshots/learn-more-phone.png`\n\n```json:metadata\n{\"files\": [\"src/screens/ctx.ts\", \"src/screens/learn.ts\", \"src/screens/lessonEnd.ts\", \"src/app.ts\", \"src/styles.css\", \"e2e/learn-more.spec.ts\"], \"verifyCommand\": \"npx playwright test e2e/learn-more.spec.ts\", \"acceptanceCriteria\": [\"Yield → Learn more opens \\\"Chapter 4 · Signs\\\" and plays `reader-ch04-signs-1`; 🏠 → Yield resumes at the card she left\", \"Traffic lights → Learn more opens \\\"Chapter 4 · Traffic Signals\\\"\", \"The lesson-end screen shows Learn more for Yield; lessons without `readerStart` (Parking) show no Learn more\", \"At 360 px the lesson top bar shows only 📖 (accessible name still \\\"Learn more\\\") and does not scroll sideways\"]}\n```",
       "blockedBy": [
         8
@@ -105,5 +105,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-09-26T01:06:21.124819"
+  "lastUpdated": "2026-09-26T01:18:47.067489"
 }
