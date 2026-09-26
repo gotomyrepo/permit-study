@@ -35,7 +35,7 @@ export function topBar(ctx: Ctx, fraction: number, ...extra: HTMLElement[]): HTM
 
 /** "📖 Learn more": leaves the lesson like 🏠 (her card is already saved) and opens the reader at `section`. */
 export function learnMoreButton(ctx: Ctx, section: string): HTMLElement {
-  const b = h('button', { class: 'btn soft learn-more', 'aria-label': 'Learn more' }, h('span', {}, '📖'), h('span', { class: 'lm-text' }, ' Learn more'));
+  const b = h('button', { class: 'btn soft learn-more', 'aria-label': 'Learn more' }, h('span', { 'aria-hidden': 'true' }, '📖'), h('span', { class: 'lm-text' }, ' Learn more'));
   b.addEventListener('click', () => ctx.openReader(section));
   return b;
 }

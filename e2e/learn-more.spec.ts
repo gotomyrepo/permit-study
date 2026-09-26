@@ -63,11 +63,21 @@ test('the lesson-end screen offers Learn more', async ({ page }) => {
   await expect(page.locator('.reader-where')).toHaveText('Chapter 4 · Signs');
 });
 
-test('phone: Learn more shrinks to its icon and nothing scrolls sideways', async ({ page }) => {
+test('phone: Learn more shrinks to its icon and nothing scrolls sideways', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.getByRole('button', { name: /Yield/ }).click();
   await expect(learnMore(page)).toBeVisible();
   await expect(page.locator('.learn-more .lm-text')).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.screenshot({ path: 'screenshots/learn-more-phone.png', fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('learn-more-phone.png'), fullPage: true });
+});
+
+test('double-tap Learn more opens the reader once, then Home returns Home (not the reader again)', async ({ page }) => {
+  await page.getByRole('button', { name: /Yield/ }).click();
+  const btn = learnMore(page);
+  await btn.dblclick();
+  await expect(page.locator('.reader-where')).toHaveText('Chapter 4 · Signs');
+  await page.getByRole('button', { name: 'Home' }).click();
+  await expect(page.locator('.home-grid')).toBeVisible();
+  await expect(page.locator('.reader-where')).toHaveCount(0);
 });

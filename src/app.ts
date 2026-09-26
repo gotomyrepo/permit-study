@@ -29,7 +29,11 @@ export class App {
     const c = new AbortController();
     return {
       root: this.root, player: this.player, signal: c.signal, goHome: () => c.abort(),
-      openReader: (section) => { this.pending = { kind: 'reader', section }; c.abort(); },
+      openReader: (section) => {
+        if (c.signal.aborted) return; // a stale/second tap after this flow already left must not hijack the next Home choice
+        this.pending = { kind: 'reader', section };
+        c.abort();
+      },
     };
   }
 
