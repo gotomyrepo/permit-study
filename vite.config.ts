@@ -33,12 +33,28 @@ export default defineConfig({
         skipWaiting: false,
         clientsClaim: false,
         globPatterns: ['**/*.{js,css,html,svg,png,mp3,json}'],
-        globIgnores: ['**/scene-preview.html'],
+        globIgnores: ['**/scene-preview.html', '**/audio/reader/**'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // The parent fact-check page opens manual/mv21.pdf#page=N as a navigation
         // in a new tab. Without this, the SW's navigateFallback would answer that
         // navigation with index.html instead of letting the PDF request through.
         navigateFallbackDenylist: [/\/manual\//],
+        // Manual reader clips are not precached (hours of audio). Each clip and its word timings are
+        // cached the first time they are fetched. The reader fetch()es the current and next clip without
+        // a Range header so a full 200 response gets cached; rangeRequests then serves <audio>'s ranged
+        // requests from it.
+        runtimeCaching: [
+          {
+            urlPattern: /\/audio\/reader\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'reader-audio-v1',
+              expiration: { maxEntries: 2000 },
+              cacheableResponse: { statuses: [0, 200] },
+              rangeRequests: true,
+            },
+          },
+        ],
       },
     }),
   ],
