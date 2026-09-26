@@ -47,7 +47,7 @@
     {
       "id": 6,
       "subject": "Task 6: Chapter 4 retelling, narration and lesson links",
-      "status": "pending",
+      "status": "completed",
       "description": "See docs/superpowers/plans/2026-09-25-manual-reader.md — Task 6 section.\n\n**Goal:** Write `content/reader/ch04.yaml`: all four sections of Chapter 4 (pp. 29–33), 40 paragraphs, each citing the passage it retells. Voice it, listen to it, and link the four matching lessons with `readerStart`. Add the reader writing rules to `content/AUTHORING.md`.\n\n**Files:**\n- Create: `content/reader/ch04.yaml`, `public/audio/reader/reader-ch04-*.mp3|json` (generated)\n- Modify: `content/lessons/signs.yaml`, `content/lessons/yield.yaml`, `content/lessons/lights.yaml`, `content/lessons/markings.yaml`, `content/AUTHORING.md`, `content/audio-lines.json`, `public/audio/manifest.json`\n- Test: `tests/reader.test.ts`\n\n**Acceptance Criteria:**\n- [ ] `ch04.yaml` has exactly the sections, paragraph ids, pages, quotes and pictures listed below, in that order\n- [ ] Every paragraph's `say` covers every fact in its \"Must cover\" line (conditions and exceptions included), adds nothing from outside the manual, and is 15–130 words\n- [ ] `signs` and `yield` have `readerStart: ch04-signs`, `lights` has `ch04-signals`, and `markings` has `ch04-markings`\n- [ ] `npm run check -- --audio` passes and prints `Reader: 1 chapters, 4 sections, 40 paragraphs, ...`\n- [ ] Every Chapter 4 clip has been listened to on `review.html` (Task 10 adds the tab; until then play `public/audio/reader/*.mp3` directly), and misread words were reworded\n\n**Verify:** `npx vitest run tests/reader.test.ts` → pass; `npm run check -- --audio` → `OK: 12 lessons, ...` and `Reader: 1 chapters, 4 sections, 40 paragraphs, <words> words, about <m> minutes of listening, 0 picture-only sources`\n\n```json:metadata\n{\"files\": [\"content/reader/ch04.yaml\", \"public/audio/reader/reader-ch04-*.mp3|json\", \"content/lessons/signs.yaml\", \"content/lessons/yield.yaml\", \"content/lessons/lights.yaml\", \"content/lessons/markings.yaml\", \"content/AUTHORING.md\", \"content/audio-lines.json\", \"public/audio/manifest.json\", \"tests/reader.test.ts\"], \"verifyCommand\": \"npx vitest run tests/reader.test.ts && npm run check -- --audio\", \"acceptanceCriteria\": [\"`ch04.yaml` has exactly the sections, paragraph ids, pages, quotes and pictures listed below, in that order\", \"Every paragraph's `say` covers every fact in its \\\"Must cover\\\" line (conditions and exceptions included), adds nothing from outside the manual, and is 15–130 words\", \"`signs` and `yield` have `readerStart: ch04-signs`, `lights` has `ch04-signals`, and `markings` has `ch04-markings`\", \"`npm run check -- --audio` passes and prints `Reader: 1 chapters, 4 sections, 40 paragraphs, ...`\", \"Every Chapter 4 clip has been listened to on `review.html` (Task 10 adds the tab; until then play `public/audio/reader/*.mp3` directly), and misread words were reworded\"]}\n```",
       "blockedBy": [
         3,
@@ -105,5 +105,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-09-26T00:23:46.187279"
+  "lastUpdated": "2026-09-26T00:31:57.235883"
 }
