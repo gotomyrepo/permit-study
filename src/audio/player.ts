@@ -13,31 +13,34 @@ export class AudioPlayer {
 
   constructor(private base: string) { this.audio.preload = 'auto'; }
 
-  private async timings(id: string): Promise<WordTiming[]> {
-    if (!this.words.has(id)) {
+  private async timings(id: string, suffix = ''): Promise<WordTiming[]> {
+    const key = id + suffix;
+    if (!this.words.has(key)) {
       try {
-        const r = await fetch(`${this.base}audio/${id}.json`);
-        this.words.set(id, r.ok ? ((await r.json()).words as WordTiming[]) : []);
-      } catch { this.words.set(id, []); }
+        const r = await fetch(`${this.base}audio/${id}.json${suffix}`);
+        this.words.set(key, r.ok ? ((await r.json()).words as WordTiming[]) : []);
+      } catch { this.words.set(key, []); }
     }
-    return this.words.get(id)!;
+    return this.words.get(key)!;
   }
 
   /**
    * Resolves when the clip ends. Rejects with AbortError if aborted, replaced by another play() or stopped,
-   * or with Error if it fails. Always settles.
+   * or with Error if it fails. Always settles. `suffix` (e.g. `?v=<hash>`) is appended after the .mp3/.json
+   * extension of both URLs, so a reader clip can be given a version query without changing lesson audio,
+   * whose calls omit it and so are byte-for-byte unchanged.
    */
-  async play(id: string, signal: AbortSignal, onWord?: (i: number) => void): Promise<void> {
+  async play(id: string, signal: AbortSignal, onWord?: (i: number) => void, suffix = ''): Promise<void> {
     if (signal.aborted) throw signal.reason; // a dead signal must not stop what is playing now
     const gen = ++this.gen;
     this.cancelCurrent?.();
     this.paused = false; // a new play() always starts fresh, not paused
-    const words = onWord ? await this.timings(id) : [];
+    const words = onWord ? await this.timings(id, suffix) : [];
     if (signal.aborted) throw signal.reason;
     if (gen !== this.gen) throw new DOMException('replaced', 'AbortError');
     const a = this.audio;
     a.pause();
-    a.src = `${this.base}audio/${id}.mp3`;
+    a.src = `${this.base}audio/${id}.mp3${suffix}`;
     await new Promise<void>((resolve, reject) => {
       let raf = 0;
       let rafStarted = false;

@@ -1407,7 +1407,7 @@ git commit -m "feat(reader): cache reader audio at runtime, not in the precache"
 
 **Files:**
 - Create: `src/screens/reader.ts`, `e2e/reader.spec.ts`
-- Modify: `src/screens/home.ts`, `src/app.ts`, `src/main.ts`, `src/styles.css`
+- Modify: `src/screens/home.ts`, `src/app.ts`, `src/main.ts`, `src/styles.css`, `src/screens/ctx.ts` (`speak()` gains an optional `suffix` parameter, forwarded to `player.play()`, so reader clips can be played with the same versioned URL they were prefetched with — see Task 7's `readerClipQuery`)
 
 **Acceptance Criteria:**
 - [ ] Home → Listen starts at Chapter 4 paragraph 1 when there is no saved place, and at the saved paragraph otherwise (also after a reload)
@@ -1572,7 +1572,7 @@ Run: `npx playwright test e2e/reader.spec.ts` → FAIL (no Listen button)
 
 ```ts
 import type { ProgressStore } from '../progress/store';
-import { PHRASES, readerClip } from '../content/audioLines';
+import { PHRASES, readerClip, readerClipQuery } from '../content/audioLines';
 import type { Playlist } from '../reader/playlist';
 import { picturePath } from '../reader/types';
 import { Caption } from '../ui/caption';
@@ -1600,9 +1600,11 @@ export async function runReader(ctx: Ctx, list: Playlist, progress: ProgressStor
 /**
  * Starts downloading a clip and its word timings without a Range header, so the service worker's
  * CacheFirst rule stores a full copy (see vite.config.ts) and the next paragraph starts without a gap.
+ * `query` is that paragraph's `readerClipQuery()` version string: it must be the exact same query
+ * playback below fetches with, or the prefetch caches a different URL than <audio> ever requests.
  */
-function prefetch(clip: string): void {
-  for (const ext of ['mp3', 'json']) void fetch(`${base}audio/${clip}.${ext}`).catch(() => {});
+function prefetch(clip: string, query: string): void {
+  for (const ext of ['mp3', 'json']) void fetch(`${base}audio/${clip}.${ext}${query}`).catch(() => {});
 }
 
 function picture(list: Playlist, i: number): HTMLElement {
@@ -1632,8 +1634,9 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
 
   const after = list.next(i);
   const clip = readerClip(paragraph);
-  prefetch(clip);
-  if (after !== null) prefetch(readerClip(list.at(after).paragraph));
+  const query = readerClipQuery(paragraph);
+  prefetch(clip, query); // the CURRENT clip too: a ranged <audio> request alone is never a cacheable 200
+  if (after !== null) { const nextP = list.at(after).paragraph; prefetch(readerClip(nextP), readerClipQuery(nextP)); }
 
   const para = childController(ctx.signal);
   let paused = false;
@@ -1648,7 +1651,7 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
     if (para.signal.aborted) reject(para.signal.reason);
     else para.signal.addEventListener('abort', () => reject(para.signal.reason), { once: true });
   });
-  const played = speak(ctx, clip, caption, para.signal).then((r): Move | Promise<never> => {
+  const played = speak(ctx, clip, caption, para.signal, query).then((r): Move | Promise<never> => {
     if (r === 'ok') return after ?? 'end';
     if (r === 'failed') { note.hidden = false; pause.setAttribute('disabled', ''); }
     return untilLeft();

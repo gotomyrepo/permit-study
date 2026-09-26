@@ -17,6 +17,7 @@ LINES = ROOT / "content" / "audio-lines.json"
 VOICE = ROOT / "content" / "voice.json"
 OUT = ROOT / "public" / "audio"
 MANIFEST = OUT / "manifest.json"
+READER_VERSIONS = ROOT / "src" / "content" / "readerAudioVersions.json"
 
 
 def norm(s: str) -> str:
@@ -131,6 +132,15 @@ async def build_one(line: dict, voice: dict, manifest: dict, sem: asyncio.Semaph
     return True
 
 
+def reader_versions(lines: list[dict], manifest: dict) -> dict[str, str]:
+    """id -> first 8 chars of its manifest hash, for every line whose dir is "reader".
+
+    Read by the browser (src/content/readerAudioVersions.json) so a corrected paragraph's clip gets
+    a new URL and isn't served forever from a device's old runtime cache of the previous recording.
+    """
+    return {line["id"]: manifest[line["id"]][:8] for line in lines if line.get("dir") == "reader"}
+
+
 ID_RE = re.compile(r"^[a-z0-9_-]+$")
 
 
@@ -163,6 +173,7 @@ async def main() -> None:
             if k not in keep:
                 del manifest[k]
         MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=True), encoding="utf-8")
+        READER_VERSIONS.write_text(json.dumps(reader_versions(lines, manifest), indent=1, sort_keys=True) + "\n", encoding="utf-8")
     stale = stale_files(OUT, lines)
     for f in stale:
         f.unlink()

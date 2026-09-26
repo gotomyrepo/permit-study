@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readChapters, readFigures, readLessons, readPages, readPictureIds } from './lib';
 import { validateLessons, validateReader } from '../src/content/validate';
-import { audioLines, audioPath } from '../src/content/audioLines';
+import { audioLines, audioPath, READER_AUDIO_DIR, READER_AUDIO_VERSIONS } from '../src/content/audioLines';
 import { readerStats } from '../src/reader/playlist';
 import { sceneIndex } from '../src/scenes/registry';
 
@@ -15,8 +15,12 @@ const figures = readFigures(errors);
 errors.push(...validateReader(chapters, pages, pictures, new Set(figures.map((f) => f.id)), lessons));
 for (const f of figures) if (!pictures.has(f.id)) errors.push(`figure ${f.id} has no PNG (run: npm run figures)`);
 if (process.argv.includes('--audio')) {
-  for (const line of audioLines(lessons, chapters))
+  for (const line of audioLines(lessons, chapters)) {
     if (!existsSync(`public/audio/${audioPath(line)}.mp3`)) errors.push(`missing audio for ${audioPath(line)} (run: npm run audio)`);
+    if (line.dir === READER_AUDIO_DIR && !(line.id in READER_AUDIO_VERSIONS)) {
+      errors.push(`missing reader audio version for ${line.id} (run: npm run audio)`);
+    }
+  }
 }
 const pictureOnly = lessons.flatMap((l) => [...l.cards, ...l.questions]).filter((x) => !x.source.quote).length;
 const questions = lessons.reduce((n, l) => n + l.questions.length, 0);

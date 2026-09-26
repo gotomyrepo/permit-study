@@ -49,8 +49,8 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'reader-audio-v1',
-              expiration: { maxEntries: 2000 },
-              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 2000, purgeOnQuotaError: true },
+              cacheableResponse: { statuses: [200] },
               rangeRequests: true,
             },
           },

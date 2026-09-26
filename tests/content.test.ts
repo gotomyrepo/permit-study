@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, test, expect } from 'vitest';
 import { normalizeForMatch } from '../src/content/normalize';
 import { validateLessons } from '../src/content/validate';
-import { audioLines, audioId, TEXT, audioPath, readerClip, PHRASES } from '../src/content/audioLines';
+import { audioLines, audioId, TEXT, audioPath, readerClip, readerClipQuery, PHRASES } from '../src/content/audioLines';
 import { LessonSchema, type Lesson } from '../src/content/types';
 import type { ManualPage } from '../src/content/validate';
 import { ChapterSchema } from '../src/reader/types';
@@ -181,6 +181,15 @@ describe('audioLines: reader', () => {
   test('the finished phrase is spoken', () => {
     expect(PHRASES['phrase-reader-done']).toBe('You finished the manual. Great job!');
     expect(audioLines([]).map((l) => l.id)).toContain('phrase-reader-done');
+  });
+});
+
+describe('readerClipQuery', () => {
+  test('returns a version query string from the map', () => {
+    expect(readerClipQuery({ id: 'ch04-a-1' }, { 'reader-ch04-a-1': 'abcd1234' })).toBe('?v=abcd1234');
+  });
+  test('throws naming the id when it is missing from the map (a forgotten npm run audio)', () => {
+    expect(() => readerClipQuery({ id: 'ch04-a-1' }, {})).toThrow('reader-ch04-a-1');
   });
 });
 

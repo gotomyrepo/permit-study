@@ -1,5 +1,6 @@
 import type { Lesson, Question } from './types';
 import type { Chapter } from '../reader/types';
+import readerAudioVersionsJson from './readerAudioVersions.json';
 
 export const PHRASES: Record<string, string> = {
   'phrase-home': 'Hi! Tap the green button to keep learning.',
@@ -43,6 +44,23 @@ export interface AudioLine { id: string; text: string; dir?: string }
 /** A clip's path under public/audio without the extension: what AudioPlayer.play() takes. */
 export const audioPath = (l: { id: string; dir?: string }): string => (l.dir ? `${l.dir}/${l.id}` : l.id);
 export const readerClip = (p: { id: string }): string => audioPath({ id: audioId.reader(p), dir: READER_AUDIO_DIR });
+
+/** id -> first 8 chars of the manifest hash of its recording, written by scripts/build_audio.py. */
+export const READER_AUDIO_VERSIONS: Record<string, string> = readerAudioVersionsJson;
+
+/**
+ * The `?v=<hash>` query string for a reader paragraph's clip: appending it to the clip's URL gives a
+ * corrected (re-voiced) recording a new URL, so a device that already cached the old one under
+ * CacheFirst fetches and caches the new one instead of playing the stale clip forever. Throws if the
+ * id is missing from the map (a forgotten `npm run audio`), so `npm test`/`npm run check` catch it
+ * rather than silently playing a stale or missing clip.
+ */
+export function readerClipQuery(p: { id: string }, versions: Record<string, string> = READER_AUDIO_VERSIONS): string {
+  const id = audioId.reader(p);
+  const v = versions[id];
+  if (!v) throw new Error(`no audio version for ${id} (run: npm run audio)`);
+  return `?v=${v}`;
+}
 
 export function audioLines(lessons: Lesson[], chapters: readonly Chapter[] = []): AudioLine[] {
   const out: AudioLine[] = Object.entries(PHRASES).map(([id, text]) => ({ id, text }));

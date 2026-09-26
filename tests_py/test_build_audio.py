@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "scripts"))
 import pytest
 
-from build_audio import check_unique_ids, line_dir, match_words, stale_files  # noqa: E402
+from build_audio import check_unique_ids, line_dir, match_words, reader_versions, stale_files  # noqa: E402
 
 
 def b(text, ms):
@@ -88,3 +88,13 @@ def test_check_unique_ids_rejects_a_duplicate_id():
     lines = [{"id": "card-a", "text": "x"}, {"id": "card-a", "text": "y", "dir": "reader"}]
     with pytest.raises(SystemExit, match="card-a"):
         check_unique_ids(lines)
+
+
+def test_reader_versions_keys_only_reader_lines_by_first_8_hash_chars():
+    lines = [{"id": "card-a", "text": "x"}, {"id": "reader-a", "text": "y", "dir": "reader"}]
+    manifest = {"card-a": "1111111111111111111111111111111111111111", "reader-a": "abcdef0123456789"}
+    assert reader_versions(lines, manifest) == {"reader-a": "abcdef01"}
+
+
+def test_reader_versions_is_empty_when_there_are_no_reader_lines():
+    assert reader_versions([{"id": "card-a", "text": "x"}], {"card-a": "1111111111111111111111111111111111111111"}) == {}

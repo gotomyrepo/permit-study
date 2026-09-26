@@ -190,6 +190,23 @@ describe('AudioPlayer', () => {
     expect((s.error as DOMException).name).toBe('AbortError');
   });
 
+  test('an optional suffix is appended to both the mp3 and json URLs', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const urls: string[] = [];
+    vi.stubGlobal('fetch', (url: string) => {
+      urls.push(String(url));
+      return Promise.resolve({ ok: true, json: async () => ({ words: [] }) });
+    });
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal, () => {}, '?v=abcd1234'));
+    await flush();
+    expect(urls).toEqual(['/audio/a.json?v=abcd1234']);
+    expect(FakeAudio.last.plays).toEqual(['/audio/a.mp3?v=abcd1234']);
+    FakeAudio.last.end();
+    await flush();
+    expect(s).toEqual({ done: true, error: undefined });
+  });
+
   test('elapsedMs is 0 after stop()', async () => {
     const { AudioPlayer } = await import('../src/audio/player');
     const p = new AudioPlayer('/');

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsx scripts/check-content.ts --audio && tsc --noEmit && vite build",
+    "build": "tsx scripts/check-content.ts --audio && tsc --noEmit && vite build && tsx scripts/check-sw.ts",
     "preview": "vite preview",
     "test": "vitest run",
     "check": "tsx scripts/check-content.ts",
