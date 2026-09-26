@@ -3,9 +3,9 @@ import type { ProgressStore } from '../progress/store';
 import { focusMain, h } from '../ui/dom';
 import { speak, type Ctx } from './ctx';
 
-export type HomeChoice = { kind: 'lesson'; lesson: Lesson } | { kind: 'practice' };
+export type HomeChoice = { kind: 'lesson'; lesson: Lesson } | { kind: 'practice' } | { kind: 'reader'; section?: string };
 
-export function showHome(ctx: Ctx, lessons: Lesson[], progress: ProgressStore): Promise<HomeChoice> {
+export function showHome(ctx: Ctx, lessons: Lesson[], progress: ProgressStore, hasReader = false): Promise<HomeChoice> {
   const next = progress.keepGoing(lessons);
   const tiles = lessons.map((l) => {
     const cls = ['lesson-tile', progress.isCompleted(l.id) ? 'done' : '', l === next ? 'next' : ''].filter(Boolean).join(' ');
@@ -13,13 +13,15 @@ export function showHome(ctx: Ctx, lessons: Lesson[], progress: ProgressStore): 
   });
   const keep = h('button', { class: 'btn go' }, '▶ Keep going');
   const practice = h('button', { class: 'btn soft' }, '📝 Practice test');
+  const listen = h('button', { class: 'btn soft wide' }, '📖 Listen to the manual');
   if (!next) keep.setAttribute('disabled', '');
-  ctx.root.replaceChildren(h('div', { class: 'home-grid' }, ...tiles), h('div', { class: 'bar' }, keep, practice));
+  ctx.root.replaceChildren(h('div', { class: 'home-grid' }, ...tiles), ...(hasReader ? [listen] : []), h('div', { class: 'bar' }, keep, practice));
   focusMain(ctx.root);
   void speak(ctx, 'phrase-home').catch(() => {});
   return new Promise((resolve, reject) => {
     keep.addEventListener('click', () => next && resolve({ kind: 'lesson', lesson: next }));
     practice.addEventListener('click', () => resolve({ kind: 'practice' }));
+    listen.addEventListener('click', () => resolve({ kind: 'reader' }));
     tiles.forEach((t, i) => t.addEventListener('click', () => resolve({ kind: 'lesson', lesson: lessons[i] })));
     ctx.signal.addEventListener('abort', () => reject(ctx.signal.reason), { once: true });
   });

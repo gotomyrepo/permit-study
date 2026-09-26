@@ -147,3 +147,24 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 @media (max-width: 480px) { .bar .btn.icon { min-width: 64px; } }
 /* The question's speaker sits at the top of its row at its own size (it stretched to the question's height on phones). */
 .ask-row .btn.icon { flex: 0 0 auto; align-self: flex-start; min-width: 64px; }
+
+/* ---- manual reader ---- */
+.btn.wide { width: 100%; }
+.reader-where { font-size: 22px; font-weight: 700; color: var(--soft-ink); }
+.stage.reader-pic { background: #fff; border: 2px solid #eee; align-items: center; padding: 12px; }
+.stage.reader-pic img { display: block; max-width: 100%; max-height: 34vh; object-fit: contain; }
+.stage.reader-title { background: var(--soft); color: var(--soft-ink); align-items: center; min-height: 22vh; padding: 16px; font-size: 40px; font-weight: 800; text-align: center; }
+.caption.reader-cap { font-size: 24px; flex: 0 0 auto; }
+.reader-note { background: #fff3e0; border: 2px solid #ffb74d; border-radius: var(--radius); padding: 8px 12px; font-size: 20px; font-weight: 700; }
+.reader-bar .btn.go.icon:not([disabled]) { background: var(--go); border-color: #2e7d32; }
+/* Back, Pause and Next share the row: big, even targets at every width. */
+.reader-bar .btn.icon { flex: 1 1 0; min-width: 0; }
+.reader-menu { display: flex; flex-direction: column; gap: 10px; }
+.reader-menu-ch { display: flex; flex-direction: column; gap: 10px; }
+.reader-menu h2 { margin: 8px 0 0; font-size: 22px; }
+.reader-menu-sec { width: 100%; text-align: left; }
+.reader-menu-sec.here { border-color: var(--you); box-shadow: 0 0 0 4px #bbdefb; }
+@media (max-width: 480px) {
+  .caption.reader-cap { font-size: 21px; }
+  .stage.reader-title { font-size: 30px; }
+}

@@ -8,12 +8,19 @@ import { learnCard } from './screens/learn';
 import { askQuestion } from './screens/question';
 import { lessonEnd } from './screens/lessonEnd';
 import { runPractice } from './screens/practice';
+import type { Chapter } from './reader/types';
+import { Playlist } from './reader/playlist';
+import { runReader } from './screens/reader';
 
 export class App {
   private player = new AudioPlayer(import.meta.env.BASE_URL);
   private progress = new ProgressStore(safeStorage());
 
-  constructor(private root: HTMLElement, private lessons: Lesson[]) {}
+  private playlist: Playlist;
+
+  constructor(private root: HTMLElement, private lessons: Lesson[], chapters: Chapter[] = []) {
+    this.playlist = new Playlist(chapters);
+  }
 
   private newCtx(): Ctx {
     const c = new AbortController();
@@ -24,9 +31,10 @@ export class App {
     for (;;) {
       const ctx = this.newCtx();
       try {
-        const choice = await showHome(ctx, this.lessons, this.progress);
+        const choice = await showHome(ctx, this.lessons, this.progress, this.playlist.length > 0);
         this.player.stop();
         if (choice.kind === 'lesson') await this.runLesson(ctx, choice.lesson);
+        else if (choice.kind === 'reader') await this.runReader(ctx, choice.section);
         else await runPractice(ctx, this.lessons, this.progress);
       } catch (e) {
         if (!isAbort(e)) console.error(e);
@@ -54,5 +62,11 @@ export class App {
     this.progress.completeLesson(lesson.id);
     this.progress.clearPlace(lesson.id);
     await lessonEnd(ctx, lesson);
+  }
+
+  /** Opens the reader at `section`'s first paragraph, or where she left off. */
+  private async runReader(ctx: Ctx, section?: string): Promise<void> {
+    const at = section === undefined ? -1 : this.playlist.sectionStart(section);
+    await runReader(ctx, this.playlist, this.progress, at >= 0 ? at : this.playlist.resume(this.progress.readerPlace()));
   }
 }

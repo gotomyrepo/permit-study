@@ -5,10 +5,13 @@ import { h, isAbort } from '../ui/dom';
 export interface Ctx { root: HTMLElement; player: AudioPlayer; signal: AbortSignal; goHome: () => void }
 export type SpeakResult = 'ok' | 'failed' | 'interrupted';
 
-/** Never rejects unless the whole flow (ctx.signal) was aborted. */
-export async function speak(ctx: Ctx, id: string, caption?: Caption, signal: AbortSignal = ctx.signal): Promise<SpeakResult> {
+/**
+ * Never rejects unless the whole flow (ctx.signal) was aborted. `suffix` is appended to the clip's URLs
+ * (the reader's `?v=<hash>` version query, see readerClipQuery).
+ */
+export async function speak(ctx: Ctx, id: string, caption?: Caption, signal: AbortSignal = ctx.signal, suffix = ''): Promise<SpeakResult> {
   try {
-    await ctx.player.play(id, signal, caption ? (i) => caption.highlight(i) : undefined);
+    await ctx.player.play(id, signal, caption ? (i) => caption.highlight(i) : undefined, suffix);
     return 'ok';
   } catch (e) {
     if (ctx.signal.aborted) throw e;
