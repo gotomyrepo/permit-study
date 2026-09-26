@@ -58,7 +58,7 @@
     {
       "id": 7,
       "subject": "Task 7: Offline caching for reader audio",
-      "status": "pending",
+      "status": "completed",
       "description": "See docs/superpowers/plans/2026-09-25-manual-reader.md — Task 7 section.\n\n**Goal:** Reader clips are left out of the precache and cached at runtime (CacheFirst, dedicated cache) the first time they are fetched. Lesson audio stays precached.\n\n**Files:**\n- Modify: `vite.config.ts`\n- Create: `scripts/check-sw.ts`\n\n**Acceptance Criteria:**\n- [ ] `dist/sw.js` precaches lesson audio and no file under `audio/reader/`\n- [ ] `dist/sw.js` has a CacheFirst route for `/audio/reader/` using the cache `reader-audio-v1`, with range request support\n- [ ] `skipWaiting: false` and the other PWA settings are unchanged\n\n**Verify:** `npm run build && npx tsx scripts/check-sw.ts` → `OK: <n> precached audio files, none under audio/reader/; reader-audio-v1 runtime cache present`\n\n```json:metadata\n{\"files\": [\"vite.config.ts\", \"scripts/check-sw.ts\"], \"verifyCommand\": \"npm run build && npx tsx scripts/check-sw.ts\", \"acceptanceCriteria\": [\"`dist/sw.js` precaches lesson audio and no file under `audio/reader/`\", \"`dist/sw.js` has a CacheFirst route for `/audio/reader/` using the cache `reader-audio-v1`, with range request support\", \"`skipWaiting: false` and the other PWA settings are unchanged\"]}\n```",
       "blockedBy": [
         6
@@ -105,5 +105,5 @@
       ]
     }
   ],
-  "lastUpdated": "2026-09-26T00:31:57.235883"
+  "lastUpdated": "2026-09-26T00:40:04.580239"
 }
