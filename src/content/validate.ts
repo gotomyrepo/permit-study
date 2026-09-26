@@ -1,4 +1,5 @@
 import type { Lesson, Source } from './types';
+import type { Chapter } from '../reader/types';
 import { normalizeForMatch, normalizeIndexed } from './normalize';
 import { audioLines } from './audioLines';
 
@@ -58,17 +59,10 @@ function quoteFound(norm: string, t: string, idx: number[], quote: string): bool
   }
 }
 
-export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: SceneIndex): string[] {
-  const errors: string[] = [];
+/** Returns a checker that pushes an error for a source whose page is unknown or whose quote isn't on that page (or continuing onto the next). */
+export function sourceChecker(pages: ManualPage[], errors: string[]): (s: Source, where: string) => void {
   const indexed = new Map(pages.map((p) => [p.page, normalizeIndexed(p.text)]));
-  const ids = new Set<string>();
-  const orders = new Set<number>();
-
-  const checkId = (id: string, where: string) => {
-    if (ids.has(id)) errors.push(`${where}: duplicate id "${id}"`);
-    ids.add(id);
-  };
-  const checkSource = (s: Source, where: string) => {
+  return (s, where) => {
     const here = indexed.get(s.page);
     if (here === undefined) { errors.push(`${where}: page ${s.page} is not in the manual`); return; }
     if (s.quote) {
@@ -87,6 +81,18 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
       if (!quoteFound(norm, t, idx, normQuote)) errors.push(`${where}: quote not found on page ${s.page}: "${s.quote}"`);
     }
   };
+}
+
+export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: SceneIndex): string[] {
+  const errors: string[] = [];
+  const ids = new Set<string>();
+  const orders = new Set<number>();
+
+  const checkId = (id: string, where: string) => {
+    if (ids.has(id)) errors.push(`${where}: duplicate id "${id}"`);
+    ids.add(id);
+  };
+  const checkSource = sourceChecker(pages, errors);
   const checkScene = (scene: string, step: string, where: string) => {
     const steps = scenes[scene];
     if (!steps) errors.push(`${where}: unknown scene "${scene}"`);
@@ -126,5 +132,42 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
     // while building feedback text; skip the audio-id check in that case.
   }
 
+  return errors;
+}
+
+/**
+ * Reader chapters: unique ids (chapters, sections, paragraphs share one namespace) and chapter numbers,
+ * quotes on their pages, pictures that have a PNG (`pictures` holds fig-<id> and scene:<id> ids),
+ * and every lesson readerStart naming a real section.
+ */
+export function validateReader(
+  chapters: readonly Chapter[], pages: ManualPage[], pictures: ReadonlySet<string>,
+  lessons: readonly { id: string; readerStart?: string }[],
+): string[] {
+  const errors: string[] = [];
+  const checkSource = sourceChecker(pages, errors);
+  const ids = new Set<string>();
+  const numbers = new Set<number>();
+  const checkId = (id: string, where: string) => {
+    if (ids.has(id)) errors.push(`${where}: duplicate id "${id}"`);
+    ids.add(id);
+  };
+  for (const ch of chapters) {
+    checkId(ch.id, `chapter ${ch.id}`);
+    if (numbers.has(ch.number)) errors.push(`chapter ${ch.id}: duplicate number ${ch.number}`);
+    numbers.add(ch.number);
+    for (const s of ch.sections) {
+      checkId(s.id, `${ch.id}/${s.id}`);
+      for (const p of s.paragraphs) {
+        const where = `${ch.id}/${s.id}/${p.id}`;
+        checkId(p.id, where);
+        checkSource(p.source, where);
+        if (p.picture && !pictures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" has no PNG (run: npm run figures)`);
+      }
+    }
+  }
+  const sections = new Set(chapters.flatMap((c) => c.sections.map((s) => s.id)));
+  for (const l of lessons)
+    if (l.readerStart !== undefined && !sections.has(l.readerStart)) errors.push(`lesson ${l.id}: readerStart "${l.readerStart}" is not a reader section`);
   return errors;
 }

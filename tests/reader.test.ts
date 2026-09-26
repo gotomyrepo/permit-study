@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { ChapterSchema, FigureSchema, ParagraphSchema, picturePath, type Chapter } from '../src/reader/types';
 import { BACK_RESTART_MS, Playlist, readerStats } from '../src/reader/playlist';
 import { LessonSchema } from '../src/content/types';
+import { validateReader } from '../src/content/validate';
 
 const src = { page: 29, quote: 'Traffic signs tell you about traffic rules' };
 const para = (id: string, picture?: string) => ({ id, say: `Words for ${id}.`, source: src, ...(picture ? { picture } : {}) });
@@ -93,5 +94,31 @@ describe('reader schemas', () => {
 describe('readerStats', () => {
   test('counts chapters, sections, paragraphs and words', () => {
     expect(readerStats([ch4, ch5])).toEqual({ chapters: 2, sections: 3, paragraphs: 7, words: 21, minutes: 0 });
+  });
+});
+
+describe('validateReader', () => {
+  const pages = [{ page: 29, text: 'SIGNS\n Traffic signs tell you about traffic rules, special \nhazards, where you are.' }];
+  const pics = new Set(['fig-one', 'fig-two']);
+  const lessons = [{ id: 'signs', readerStart: 'ch04-a' }, { id: 'parking' }];
+  test('valid chapters have no errors', () => {
+    expect(validateReader([ch4], pages, pics, lessons)).toEqual([]);
+  });
+  test('quote not on the cited page', () => {
+    const bad = ChapterSchema.parse(structuredClone(ch4));
+    bad.sections[0].paragraphs[0].source = { page: 29, quote: 'Traffic lights are normally red, yellow and green' };
+    expect(validateReader([bad], pages, pics, lessons).join()).toContain('ch04/ch04-a/ch04-a-1: quote not found on page 29');
+  });
+  test('picture with no PNG', () => {
+    expect(validateReader([ch4], pages, new Set(['fig-one']), lessons).join()).toContain('picture "fig-two" has no PNG');
+  });
+  test('readerStart that is not a section', () => {
+    expect(validateReader([ch4], pages, pics, [{ id: 'lights', readerStart: 'ch04-nope' }]).join())
+      .toContain('lesson lights: readerStart "ch04-nope" is not a reader section');
+  });
+  test('duplicate ids and chapter numbers', () => {
+    const e = validateReader([ch4, ch4], pages, pics, lessons).join('\n');
+    expect(e).toContain('duplicate id "ch04-a-1"');
+    expect(e).toContain('duplicate number 4');
   });
 });
