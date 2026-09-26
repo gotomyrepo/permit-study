@@ -320,8 +320,8 @@ sections:
       - id: ch04-markings-9
         say: >-
           You only have to stop at a stop line or a crosswalk if a light, a sign, or a traffic officer
-          tells you to. You also have to stop there to yield to a pedestrian, an in-line skater, or a
-          scooter at a crosswalk, whether the crosswalk is marked or unmarked.
+          requires it, or to yield to a pedestrian, an in-line skater, or a scooter at a marked or
+          unmarked crosswalk.
         source:
           page: 32
           quote: "You need only stop at a stop line or crosswalk if required to by a light, sign or traffic officer, or to yield to a pedestrian, in-line skater or scooter at a marked or unmarked crosswalk."
