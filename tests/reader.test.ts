@@ -3,6 +3,10 @@ import { ChapterSchema, FigureSchema, ParagraphSchema, picturePath, type Chapter
 import { BACK_RESTART_MS, Playlist, readerStats } from '../src/reader/playlist';
 import { LessonSchema } from '../src/content/types';
 import { validateReader } from '../src/content/validate';
+import { readChapters } from '../scripts/lib';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 const src = { page: 29, quote: 'Traffic signs tell you about traffic rules' };
 const para = (id: string, picture?: string) => ({ id, say: `Words for ${id}.`, source: src, ...(picture ? { picture } : {}) });
@@ -101,24 +105,45 @@ describe('validateReader', () => {
   const pages = [{ page: 29, text: 'SIGNS\n Traffic signs tell you about traffic rules, special \nhazards, where you are.' }];
   const pics = new Set(['fig-one', 'fig-two']);
   const lessons = [{ id: 'signs', readerStart: 'ch04-a' }, { id: 'parking' }];
+  const figs = new Set(['fig-one', 'fig-two']);
   test('valid chapters have no errors', () => {
-    expect(validateReader([ch4], pages, pics, lessons)).toEqual([]);
+    expect(validateReader([ch4], pages, pics, figs, lessons)).toEqual([]);
   });
   test('quote not on the cited page', () => {
     const bad = ChapterSchema.parse(structuredClone(ch4));
     bad.sections[0].paragraphs[0].source = { page: 29, quote: 'Traffic lights are normally red, yellow and green' };
-    expect(validateReader([bad], pages, pics, lessons).join()).toContain('ch04/ch04-a/ch04-a-1: quote not found on page 29');
+    expect(validateReader([bad], pages, pics, figs, lessons).join()).toContain('ch04/ch04-a/ch04-a-1: quote not found on page 29');
   });
   test('picture with no PNG', () => {
-    expect(validateReader([ch4], pages, new Set(['fig-one']), lessons).join()).toContain('picture "fig-two" has no PNG');
+    expect(validateReader([ch4], pages, new Set(['fig-one']), figs, lessons).join()).toContain('picture "fig-two" has no PNG');
+  });
+  test('fig picture with a PNG but not listed in figures.yaml (a stale PNG)', () => {
+    expect(validateReader([ch4], pages, pics, new Set(['fig-one']), lessons).join())
+      .toContain('ch04/ch04-a/ch04-a-3: picture "fig-two" is not listed in content/reader/figures.yaml');
   });
   test('readerStart that is not a section', () => {
-    expect(validateReader([ch4], pages, pics, [{ id: 'lights', readerStart: 'ch04-nope' }]).join())
+    expect(validateReader([ch4], pages, pics, figs, [{ id: 'lights', readerStart: 'ch04-nope' }]).join())
       .toContain('lesson lights: readerStart "ch04-nope" is not a reader section');
   });
   test('duplicate ids and chapter numbers', () => {
-    const e = validateReader([ch4, ch4], pages, pics, lessons).join('\n');
+    const e = validateReader([ch4, ch4], pages, pics, figs, lessons).join('\n');
     expect(e).toContain('duplicate id "ch04-a-1"');
     expect(e).toContain('duplicate number 4');
+  });
+});
+
+describe('readChapters', () => {
+  test('reports a yaml file in content/reader that is not ch<N>.yaml or figures.yaml', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'reader-'));
+    try {
+      writeFileSync(join(dir, 'ch04.yaml'), JSON.stringify(ch4));
+      for (const f of ['figures.yaml', 'chapter5.yaml', 'ch06.yml', 'notes.txt']) writeFileSync(join(dir, f), '[]');
+      const errors: string[] = [];
+      expect(readChapters(errors, dir).map((c) => c.id)).toEqual(['ch04']);
+      expect(errors).toEqual([
+        `${dir}/ch06.yml: not a chapter file name (chapters are ch<number>.yaml, e.g. ch04.yaml)`,
+        `${dir}/chapter5.yaml: not a chapter file name (chapters are ch<number>.yaml, e.g. ch04.yaml)`,
+      ]);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });

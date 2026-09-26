@@ -19,11 +19,14 @@ export function readPages(): ManualPage[] {
   return JSON.parse(readFileSync('content/manual/pages.json', 'utf8')) as ManualPage[];
 }
 
-export function readChapters(errors: string[]): Chapter[] {
-  const dir = 'content/reader';
+/** Chapters from content/reader/ch<N>.yaml. Any other .yaml/.yml file there (except figures.yaml) is an error, not skipped. */
+export function readChapters(errors: string[], dir = 'content/reader'): Chapter[] {
   if (!existsSync(dir)) return [];
   const chapters: Chapter[] = [];
-  for (const f of readdirSync(dir).filter((f) => /^ch\d+\.yaml$/.test(f)).sort()) {
+  const files = readdirSync(dir).sort();
+  for (const f of files.filter((f) => /\.ya?ml$/i.test(f) && f !== 'figures.yaml' && !/^ch\d+\.yaml$/.test(f)))
+    errors.push(`${dir}/${f}: not a chapter file name (chapters are ch<number>.yaml, e.g. ch04.yaml)`);
+  for (const f of files.filter((f) => /^ch\d+\.yaml$/.test(f))) {
     try { chapters.push(ChapterSchema.parse(YAML.parse(readFileSync(`${dir}/${f}`, 'utf8')))); }
     catch (e) { errors.push(`${f}: ${(e as Error).message}`); }
   }

@@ -138,10 +138,11 @@ export function validateLessons(lessons: Lesson[], pages: ManualPage[], scenes: 
 /**
  * Reader chapters: unique ids (chapters, sections, paragraphs share one namespace) and chapter numbers,
  * quotes on their pages, pictures that have a PNG (`pictures` holds fig-<id> and scene:<id> ids),
+ * fig-<id> pictures that are also listed in figures.yaml (`figures`, so a stale PNG can't pass),
  * and every lesson readerStart naming a real section.
  */
 export function validateReader(
-  chapters: readonly Chapter[], pages: ManualPage[], pictures: ReadonlySet<string>,
+  chapters: readonly Chapter[], pages: ManualPage[], pictures: ReadonlySet<string>, figures: ReadonlySet<string>,
   lessons: readonly { id: string; readerStart?: string }[],
 ): string[] {
   const errors: string[] = [];
@@ -163,6 +164,7 @@ export function validateReader(
         checkId(p.id, where);
         checkSource(p.source, where);
         if (p.picture && !pictures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" has no PNG (run: npm run figures)`);
+        if (p.picture?.startsWith('fig-') && !figures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" is not listed in content/reader/figures.yaml`);
       }
     }
   }
