@@ -2,6 +2,7 @@ id: signs
 order: 1
 title: Signs
 icon: "🛑"
+readerStart: ch04-signs
 cards:
   - id: signs-stop
     say: "A stop sign is red. Stop all the way, before the stop line. Let other cars go first. Then go when it is safe."

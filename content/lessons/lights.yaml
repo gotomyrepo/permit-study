@@ -2,6 +2,7 @@ id: lights
 order: 3
 title: Traffic lights
 icon: "🚦"
+readerStart: ch04-signals
 cards:
   - id: lights-red
     say: "A red light means stop. Stop before the line. Wait until the light is green."

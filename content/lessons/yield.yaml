@@ -2,6 +2,7 @@ id: yield
 order: 2
 title: Yield
 icon: "🔻"
+readerStart: ch04-signs
 cards:
   - id: yield-1
     say: "This is a yield sign. Yield means: let cars and people that are coming go first."

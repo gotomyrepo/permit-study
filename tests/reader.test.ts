@@ -4,7 +4,8 @@ import { BACK_RESTART_MS, Playlist, readerStats } from '../src/reader/playlist';
 import { LessonSchema } from '../src/content/types';
 import { validateReader } from '../src/content/validate';
 import { readChapters } from '../scripts/lib';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import YAML from 'yaml';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -145,5 +146,24 @@ describe('readChapters', () => {
         `${dir}/chapter5.yaml: not a chapter file name (chapters are ch<number>.yaml, e.g. ch04.yaml)`,
       ]);
     } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+});
+
+describe('content/reader/ch04.yaml', () => {
+  const ch = ChapterSchema.parse(YAML.parse(readFileSync('content/reader/ch04.yaml', 'utf8')));
+  const count = (s: string) => s.trim().split(/\s+/).length;
+  test('the four sections, in manual order', () => {
+    expect(ch.sections.map((s) => [s.id, s.title, s.paragraphs.length])).toEqual([
+      ['ch04-signs', 'Signs', 13],
+      ['ch04-signals', 'Traffic Signals', 12],
+      ['ch04-markings', 'Pavement Markings', 13],
+      ['ch04-officers', 'Traffic Officers', 2],
+    ]);
+  });
+  test('paragraph ids are <section>-<n>, numbered from 1', () => {
+    for (const s of ch.sections) expect(s.paragraphs.map((p) => p.id)).toEqual(s.paragraphs.map((_, k) => `${s.id}-${k + 1}`));
+  });
+  test('every paragraph is 15 to 130 words', () => {
+    for (const p of ch.sections.flatMap((s) => s.paragraphs)) expect([p.id, count(p.say) >= 15 && count(p.say) <= 130]).toEqual([p.id, true]);
   });
 });

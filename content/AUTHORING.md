@@ -83,3 +83,22 @@ The learner is 18, autistic, and reads at a 1st–2nd grade level. Everything is
 5. `npm run shots -- <each scene id>` and inspect the images.
 6. `npm run audio`, then `npm run check -- --audio`.
 7. Commit.
+
+# Writing the manual reader
+
+- **Listening level:** she understands speech near her age level. Write normal spoken sentences at about a 9th–10th grade level, and talk to her as "you". She is *not* reading this, so sentences can be 15–25 words. Avoid stacked clauses.
+- **Retell everything, in the manual's order.** Every fact in the paragraph's quote must be in its `say`, with its conditions and exceptions ("except to make a left turn into a driveway", "unless a sign that permits it is posted"). Simplify the words, never the meaning.
+- **Nothing from outside the manual.** Don't name a sign's shape unless the text states it (the stop and yield shapes are picture-only; leave them out). When a figure is on screen and the text refers to it ("as shown in the sample signs", "In this illustration"), you may point at it: "In the picture, ...". Describe only what the picture plainly shows (e.g. the words NARROW BRIDGE on a sign).
+- **Leave out** cross-references ("see Chapter 5", "Read Chapter 6 ...", "(See “Pedestrians” in Chapter 11)"), metric conversions ("(40 km/h)") and the chapter-end QUESTIONS list.
+- **Section openers:** the first paragraph of a section starts by naming the topic ("Next, traffic signals."). The first paragraph of the chapter says "Chapter 4 is about traffic control."
+- **Numbers:** write them as digits with spoken units: "25 miles per hour" (not "MPH"). Write "New York City" in full.
+- **Length:** 40–120 words per paragraph. A one-sentence manual item (flag person, destination signs, flashing red, steady green, green arrow) may be shorter, down to 15 words. Don't pad it with facts from outside the manual.
+- **YAML:** use `say: >-` (folded) for multi-line text. Copy each `quote` exactly as given below; they were all checked with the real validator.
+- **After voicing:** listen to every clip. If the voice misreads something (e.g. "HOV", "U.S."), reword the `say` (e.g. "H O V lanes, for high-occupancy vehicles") and run `npm run audio` again.
+
+## Reader files
+- One file per chapter: `content/reader/chNN.yaml` (`id: chNN`, `number`, `title`, `sections`). Section ids are `chNN-<topic>`; paragraph ids are `<section id>-<n>` from 1.
+- `source.quote` is the whole contiguous manual passage the paragraph retells (it may continue onto the next page). `npm run check` verifies it.
+- `picture` is `fig-<id>` (a crop listed in `content/reader/figures.yaml`, made with `npm run figures`, then looked at) or `scene:<scene-id>` (run `npm run shots -- <scene-id>` first; `npm run figures` copies it). A paragraph with no picture keeps the section's latest picture, or shows the section title.
+- A lesson's `readerStart` names the reader section that its "📖 Learn more" button opens.
+- After writing: `npm run check`, `npm run audio`, listen to every new clip on `review.html#reader`, then `npm run check -- --audio`.

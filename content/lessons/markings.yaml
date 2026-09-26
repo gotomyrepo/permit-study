@@ -2,6 +2,7 @@ id: markings
 order: 4
 title: Pavement markings
 icon: "🛣️"
+readerStart: ch04-markings
 cards:
   - id: markings-yellow
     say: "Yellow lines split cars going opposite ways. You go one way. The red car goes the other way."

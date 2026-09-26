@@ -1,0 +1,386 @@
+id: ch04
+number: 4
+title: Traffic Control
+sections:
+  - id: ch04-signs
+    title: Signs
+    paragraphs:
+      - id: ch04-signs-1
+        say: >-
+          Chapter 4 is about traffic control, and it starts with signs. Traffic signs tell you about
+          the rules of the road and about special hazards. They also tell you where you are, how to get
+          where you are going, and where you can find services. The shape and the color of a sign give
+          you a clue about what kind of information it has.
+        source:
+          page: 29
+          quote: "Traffic signs tell you about traffic rules, special hazards, where you are, how to get where you are going and where services are available. The shape and color of traffic signs give indications to the type of information they provide:"
+      - id: ch04-signs-2
+        say: >-
+          There are four main kinds of signs. Regulation signs are normally white rectangles with black
+          letters or symbols. But some regulation signs have different shapes, and some use red letters
+          or symbols. Warning signs are normally yellow and shaped like a diamond, with black letters or
+          symbols. Destination signs are green with white letters and symbols. Service signs are blue
+          with white letters and symbols. Know the signs that come next and what they mean, because
+          you will be asked about them on your written test.
+        source:
+          page: 29
+          quote: "REGULATION SIGNS normally are white rectangles with black letters or symbols, but some are different shapes, and some can use red letters or symbols. WARNING SIGNS normally are yellow and diamond-shaped, with black letters or symbols. DESTINATION SIGNS are green with white letters and symbols. SERVICE SIGNS are blue with white letters and symbols. Know the signs shown below and what they indicate. You will be asked about them on your written test."
+      - id: ch04-signs-3
+        say: >-
+          Now for the most common signs, starting with regulation signs. The stop sign is red with white
+          letters. At a stop sign, come to a full stop. Then yield the right-of-way to vehicles and
+          pedestrians that are in the intersection or heading toward it, and go only when it is safe.
+          If there is a stop line painted on the road, you must stop before the stop line. If there is
+          no stop line, you must stop before you enter the crosswalk.
+        source:
+          page: 29
+          quote: "Stop Sign COLOR: Red, with white letters MEANING: Come to a full stop, yield the right-of-way to vehicles and pedestrians in or heading toward the intersection. Go when it is safe. You must come to a stop before the stop line, if there is one. If not, you must stop before you enter the crosswalk."
+        picture: fig-stop-sign
+      - id: ch04-signs-4
+        say: >-
+          What if there is no stop line and no crosswalk? Then you must stop before you enter the
+          intersection. Stop at the point closest to the intersection where you can see the traffic
+          coming along the road that crosses yours.
+        source:
+          page: 29
+          quote: "If there is no stop line or crosswalk, you must stop before you enter the intersection, at the point nearest the intersection that gives you a view of traffic on the intersecting roadway."
+      - id: ch04-signs-5
+        say: >-
+          Next is the yield sign. It is red and white, with red letters. When you see a yield sign, slow
+          down as you reach the intersection. Get ready to stop, and yield the right-of-way to vehicles
+          and pedestrians that are in the intersection or heading toward it. If traffic makes it
+          necessary, you must come to a full stop at a yield sign. So when you come up to one, check
+          carefully for traffic, and be prepared to stop.
+        source:
+          page: 29
+          quote: "Yield Sign COLOR: Red and white, with red letters. MEANING: Decrease speed as you reach the intersection. Prepare to stop and yield the right-of-way to vehicles and pedestrians in or heading toward the intersection. You must come to a full stop at a YIELD sign if traffic conditions require it. When you approach a YIELD sign, check carefully for traffic, and be prepared to stop."
+        picture: fig-yield-sign
+      - id: ch04-signs-6
+        say: >-
+          Other regulation signs are white, with black letters or symbols, red ones, or both. These
+          signs tell you the rules about which direction traffic goes, how to use the lanes, turns,
+          speed, parking, and other special requirements. In the picture you can see a few of them: Do
+          Not Pass, No Turn On Red, and Speed Limit 55.
+        source:
+          page: 29
+          quote: "Other Regulation Signs COLOR: White, with black and/or red letters or symbols MEANING: These signs give information about rules for traffic direction, lane use, turns, speed, parking and other special requirements."
+        picture: fig-regulation-signs
+      - id: ch04-signs-7
+        say: >-
+          Some regulation signs show a symbol with a red circle and a slash over it. That means an
+          action is not allowed, like making a right turn, or that some vehicles are not allowed on the
+          road. White rectangle signs with black or red letters or symbols tell you to be alert for
+          special rules.
+        source:
+          page: 29
+          quote: "Some regulation signs have a red circle with a slash over a symbol. This indicates that an action, like a right turn, is not allowed or that some vehicles are restricted from the road. Rectangular white signs with black or red letters or symbols are indications to be alert for special rules."
+      - id: ch04-signs-8
+        say: >-
+          Now, warning signs. They are yellow, with black letters or symbols. A warning sign means you
+          are coming up to a dangerous spot, or to a place where there is a special rule, like the
+          sample signs in the picture. Sometimes a warning sign has a yellow and black recommended
+          speed sign with it. That means a slower speed is advised in that area.
+        source:
+          page: 30
+          quote: "COLOR: Yellow, with black letters or symbols MEANING: You are approaching a hazardous location or a location where there is a special rule, as shown in the sample signs. Sometimes a warning sign is joined with a yellow and black “recommended speed” sign. This indicates reduced speed is advised in that area."
+        picture: fig-warning-signs
+      - id: ch04-signs-9
+        say: >-
+          Work area signs are orange, with black letters or symbols. They mean people are working on
+          the road or near it, and a flag person may be controlling traffic. A work area speed limit as
+          low as 25 miles per hour can be posted. Even if no speed limit is posted, you must drive at a
+          slower speed through the work zone. And you must always obey the flag persons.
+        source:
+          page: 30
+          quote: "Work Area Signs COLOR: Orange, with black letters or symbols MEANING: People are at work on or near the roadway and traffic can be controlled by a flag person. A work area speed limit as low as 25 MPH (40 km/h) can be posted. Even if no speed limit is provided, you must drive at a reduced speed through the work zone and you must always obey the flag persons."
+        picture: fig-work-area-signs
+      - id: ch04-signs-10
+        say: >-
+          These pictures show some of the signals a flag person will use: the signals for stop, for
+          proceed, and for slow. Know these signals and obey them.
+        source:
+          page: 30
+          quote: "These illustrations show some signals a flag person will use. Know and obey them."
+        picture: fig-flag-person
+      - id: ch04-signs-11
+        say: >-
+          Destination signs are green, with white letters. They show the direction and the distance to
+          places. The sign in the picture points left to Rochester, 55, and right to Lockport, 10.
+        source:
+          page: 30
+          quote: "DESTINATION SIGNS: COLOR: Green, with white letters MEANING: Show the direction and distance to locations."
+        picture: fig-destination-sign
+      - id: ch04-signs-12
+        say: >-
+          Route signs come in different colors. They mark interstate, U.S., state, or county routes, and
+          the shape of the sign tells you what type of route you are on. In the picture, from left to
+          right, are signs for a state route, a U.S. route, and an interstate route. When you plan a trip,
+          use a highway map to decide which routes to take. Then, during the trip, watch for destination
+          signs, so you won't get lost or have to turn or stop suddenly.
+        source:
+          page: 30
+          quote: "Route Signs COLOR: Varied. MEANING: Indicate interstate, U.S., state or county routes. The shape tells you the type of route you are on. The sample signs, left to right, are for state, U.S., and interstate routes. When you plan a trip, use a highway map to decide which routes to take. During the trip, watch for destination signs so you will not get lost, or have to turn or stop suddenly."
+        picture: fig-route-signs
+      - id: ch04-signs-13
+        say: >-
+          Last are service signs. They are blue, with white letters or symbols. They show you where to
+          find services, like rest areas, gas stations, camping, or medical facilities.
+        source:
+          page: 30
+          quote: "SERVICE SIGNS: COLOR: Blue, with white letters or symbols MEANING: Show the location of services, like rest areas, gas stations, camping or medical facilities."
+        picture: fig-service-signs
+
+  - id: ch04-signals
+    title: Traffic Signals
+    paragraphs:
+      - id: ch04-signals-1
+        say: >-
+          Next, traffic signals. Traffic lights are normally red, yellow, and green, in that order from
+          top to bottom or from left to right. At some intersections, there is just one red, yellow, or
+          green light by itself. Some traffic lights stay steady, and others flash. Some are round, and
+          some are arrows.
+        source:
+          page: 30
+          quote: "Traffic lights are normally red, yellow and green from the top to bottom or left to right. At some intersections, there are lone red, yellow or green lights. Some traffic lights are steady, others flash. Some are round, and some are arrows."
+        picture: fig-traffic-light
+      - id: ch04-signals-2
+        say: >-
+          State law says what to do if the traffic lights or controls are out of service, or are not
+          working correctly, when you come to an intersection. You must stop, the same way you would for
+          a stop sign. Then go ahead by following the rules of right-of-way, unless a traffic officer
+          tells you to go.
+        source:
+          page: 30
+          quote: "State law requires that if the traffic lights or controls are out of service or do not operate correctly when you approach an intersection, you must come to a stop as you would for a stop sign. You must then continue according to the rules of right-of-way, unless you are told to continue by a traffic officer."
+      - id: ch04-signals-3
+        say: >-
+          Here is what each light means. A steady red light means stop. Do not go until the light turns
+          green. If a green arrow is showing along with the red light, you can go only in the direction
+          of the arrow, and only if the intersection is clear.
+        source:
+          page: 31
+          quote: "STEADY RED: Stop. Do not go until the light is green. If a green arrow is shown with the red light, you can go only toward the arrow and only if the intersection is clear."
+      - id: ch04-signals-4
+        say: >-
+          You can turn right at a steady red light, after you come to a full stop and yield the
+          right-of-way to oncoming traffic and pedestrians. You can turn left at a steady red light only
+          when you are turning from a one-way road onto another one-way road. Here too, you must first
+          come to a full stop and yield the right-of-way to oncoming traffic and pedestrians. But there
+          are exceptions, which come next.
+        source:
+          page: 31
+          quote: "You can make a right turn at a steady red light after you come to a full stop and yield the right-of-way to oncoming traffic and pedestrians. You can make a left turn at a steady red light when you turn from a one-way road into another one-way road after you come to a full stop and yield the right-of-way to oncoming traffic and pedestrians."
+      - id: ch04-signals-5
+        say: >-
+          You cannot turn at a red light if a No Turn On Red sign is posted, or if another sign, signal,
+          or pavement marking prevents the turn. In New York City, you are not allowed to turn on a red
+          light at all, unless a sign is posted that permits it. And the driver of a school bus with
+          students on it cannot turn right on any red light.
+        source:
+          page: 31
+          quote: "You cannot make a turn at a red light if there is a NO TURN ON RED sign posted or another sign, signal or pavement marking prevents the turn. You are not allowed to turn on a red light in New York City unless a sign that permits it is posted. The driver of a school bus containing students cannot turn right on any red light."
+      - id: ch04-signals-6
+        say: >-
+          A flashing red light means the same thing as a stop sign. Stop, yield the right-of-way, and go
+          when it is safe.
+        source:
+          page: 31
+          quote: "FLASHING RED: Means the same as a STOP sign: Stop, yield the right-of-way, and go when it is safe."
+        picture: fig-light-flashing-red
+      - id: ch04-signals-7
+        say: >-
+          A red arrow means do not go in the direction of the arrow until the red arrow turns off and a
+          green light or a green arrow turns on. You are not allowed to make a right or left turn on red
+          at a red arrow.
+        source:
+          page: 31
+          quote: "RED ARROW: Do not go in the direction of the arrow until the red arrow light is off and a green light or arrow light goes on. A right or left turn on red is not permitted at a red arrow."
+        picture: fig-traffic-light
+      - id: ch04-signals-8
+        say: >-
+          A steady yellow light means be prepared to stop, because the traffic signal is about to turn
+          red. A flashing yellow light means drive with caution.
+        source:
+          page: 31
+          quote: "STEADY YELLOW: Be prepared to stop. A steady yellow light means the traffic signal is about to turn red. FLASHING YELLOW: Drive with caution."
+        picture: fig-light-steady-yellow
+      - id: ch04-signals-9
+        say: >-
+          A yellow arrow means the protection of the green arrow is about to end. If you plan to turn in
+          the direction of the arrow, be prepared to stop.
+        source:
+          page: 31
+          quote: "YELLOW ARROW: The protection of a green arrow will end. If you intend to turn in the direction of the arrow, be prepared to stop."
+        picture: fig-traffic-light
+      - id: ch04-signals-10
+        say: >-
+          A steady green light means go. But you still have to yield the right-of-way to other traffic
+          at the intersection, as the law requires.
+        source:
+          page: 31
+          quote: "STEADY GREEN: Go, but yield the right-of-way to other traffic at the intersection as required by law"
+        picture: fig-light-steady-green
+      - id: ch04-signals-11
+        say: >-
+          A green arrow means you can go in the direction of the arrow. But you must still yield the
+          right-of-way to other traffic at the intersection, as the law requires.
+        source:
+          page: 31
+          quote: "GREEN ARROW: You can go in the direction of the arrow, but you must yield the right-of-way to other traffic at the intersection as required by law"
+        picture: fig-light-green-arrow
+      - id: ch04-signals-12
+        say: >-
+          Some highways have special lane use control lights above the pavement. They show which lanes
+          can be used at certain times. A steady red X means do not drive in this lane. A steady yellow
+          X means move out of this lane. A flashing yellow X means this lane can only be used for a left
+          turn. And a green arrow means you can use this lane.
+        source:
+          page: 31
+          quote: "Lane Use Control Lights Special above the pavement lights are sometimes used to indicate which lanes of a highway can be used at certain times: STEADY RED “X”: Do not drive in this lane. STEADY YELLOW “X”: Move from this lane. FLASHING YELLOW “X”: This lane can only be used for a left turn. GREEN ARROW: You can use this lane."
+        picture: fig-lane-use-lights
+
+  - id: ch04-markings
+    title: Pavement Markings
+    paragraphs:
+      - id: ch04-markings-1
+        say: >-
+          Next, pavement markings. The lines and symbols on the road divide the lanes. They tell you
+          when you can pass other vehicles or change lanes. They also tell you which lanes to use for
+          turns, and where you must stop for signs or traffic signals. In the pictures for this part,
+          the arrows show which way the traffic is moving.
+        source:
+          page: 31
+          quote: "Lines and symbols on the roadway divide lanes and tell you when you can pass other vehicles or change lanes. They also tell you which lanes to use for turns and where you must stop for signs or traffic signals. The arrows on these illustrations show the direction of traffic."
+      - id: ch04-markings-2
+        say: >-
+          Solid lines along the side of the road show you where its edge is. That is where the travel
+          lane ends and the shoulder begins. It is illegal to drive across this edge line, except when a
+          police officer or another authorized official tells you to, or when an official sign allows
+          it. If the edge line angles in toward the center of the road, it means the road gets narrower
+          ahead.
+        source:
+          page: 31
+          quote: "Solid lines along the side of the road tell you where its edge is – where the travel lane ends and the shoulder begins. It is illegal to drive across the edge line, except when told to by a police officer or other authorized official or when allowed by an official sign. An edge line that angles towards the center of the road shows that the road is narrower ahead."
+        picture: fig-edge-line-narrows
+      - id: ch04-markings-3
+        say: >-
+          Lines between lanes of traffic going the same direction are white. Lines between traffic going
+          in opposite directions are yellow. There may be two lines between lanes, and the lines can be
+          solid or broken.
+        source:
+          page: 32
+          quote: "Lines that separate lanes of traffic that move in the same direction are white. Lines that separate traffic that moves in opposite directions are yellow. There may be two lines between lanes and lines can be solid or broken."
+        picture: fig-line-solid-broken
+      - id: ch04-markings-4
+        say: >-
+          Here is what the lines mean. With one broken line, you can pass other vehicles or change lanes,
+          if you can do it safely without getting in the way of traffic.
+        source:
+          page: 32
+          quote: "One broken line: You can pass other vehicles or change lanes if you can do so safely without interfering with traffic."
+        picture: fig-line-broken
+      - id: ch04-markings-5
+        say: >-
+          Sometimes there is a solid line next to a broken line. If you are on the side with the solid
+          line, you cannot pass other vehicles or cross the line, except to make a left turn into a
+          driveway. If you are on the side with the broken line, you can pass, if it is safe and you will
+          not get in the way of traffic.
+        source:
+          page: 32
+          quote: "Solid line with broken line: If you are on the side with the solid line, you cannot pass other vehicles or go across the line except to make a left turn into a driveway. If you are on the side with the broken line, you can pass if it is safe to and you will not interfere with traffic."
+        picture: fig-line-solid-broken
+      - id: ch04-markings-6
+        say: >-
+          With double solid lines, you cannot pass or change lanes. You cannot cross the lines, except to
+          turn left to enter or leave the highway. For example, you may cross them to turn into or out of
+          a driveway, or to make a U-turn.
+        source:
+          page: 32
+          quote: "Double solid lines: You cannot pass or change lanes. You cannot go across the lines except to turn left to enter or leave the highway (e.g. to or from a driveway or to do a U-turn, see Chapter 5)."
+        picture: fig-line-double-solid
+      - id: ch04-markings-7
+        say: >-
+          With one solid line, you can pass other vehicles or change lanes, but only when something
+          blocking the road, or the traffic conditions, make it necessary.
+        source:
+          page: 32
+          quote: "One solid line: You can pass other vehicles or change lanes, but you can only do so when obstructions in the road or traffic conditions make it necessary."
+        picture: fig-line-solid
+      - id: ch04-markings-8
+        say: >-
+          Now, stop lines and crosswalks. At an intersection controlled by a stop sign, a yield sign, or
+          a traffic light, there can be a white line painted across your lane, called a stop line. There
+          can also be two parallel lines painted across the road, called a crosswalk, or there can be
+          both. When a sign or a light makes you stop, you must stop before you reach the stop line, if
+          there is one. If there isn't, stop before the crosswalk.
+        source:
+          page: 32
+          quote: "Stop and Crosswalk Lines: At an intersection controlled by a STOP sign, YIELD sign or traffic light, there can be a white stop line painted across the lane, (called a Stop Line) and/or two parallel lines painted across the road (called a Crosswalk). When required to stop because of a sign or light, you must stop before you reach the stop line, if there is one, or the crosswalk."
+        picture: fig-stop-crosswalk
+      - id: ch04-markings-9
+        say: >-
+          You only have to stop at a stop line or a crosswalk if a light, a sign, or a traffic officer
+          tells you to. You also have to stop there to yield to a pedestrian, an in-line skater, or a
+          scooter at a crosswalk, whether the crosswalk is marked or unmarked.
+        source:
+          page: 32
+          quote: "You need only stop at a stop line or crosswalk if required to by a light, sign or traffic officer, or to yield to a pedestrian, in-line skater or scooter at a marked or unmarked crosswalk."
+      - id: ch04-markings-10
+        say: >-
+          At some intersections, a single stop line may be placed farther back. This leaves room for
+          larger vehicles, like tractor-trailers, buses, and trucks, to turn without forcing other
+          traffic to back up. It's important that you stop before you reach this stop line.
+        source:
+          page: 32
+          quote: "A single stop line may be placed at intersections to allow room for larger vehicles (such as tractor-trailers, buses, and trucks) to turn without forcing other traffic to back up. It’s important that you stop before you reach this stop line"
+      - id: ch04-markings-11
+        say: >-
+          Arrows on the road show which lanes you must use. In this picture, for example, you can turn
+          right only from the right lane. To go straight, you must use the left lane. You must be in the
+          correct lane before you reach the solid line that separates the lanes.
+        source:
+          page: 32
+          quote: "Arrows: Arrows show which lanes you must use. In this illustration, for example, you can turn right only from the right lane. To go straight, you must use the left lane. You must be in the correct lane before you reach the solid line that separates the lanes."
+        picture: fig-lane-arrows
+      - id: ch04-markings-12
+        say: >-
+          A diamond symbol marks a reserved lane. These lanes are for buses, for high-occupancy vehicles
+          like car pools and van pools, for bicycles, or for other special vehicles. You cannot enter or
+          use one of these lanes unless your vehicle meets the rules shown on the signs, such as how many
+          people must be riding in it. Those rules apply during the times the signs say they are in effect.
+        source:
+          page: 33
+          quote: "Diamond Symbol: This symbol indicates the lane is reserved lanes for buses, HOV (High-Occupancy Vehicles) like car-pools and van-pools, bicycles or other special vehicles. You cannot enter and use these lanes unless your vehicle complies with the occupancy or other requirements indicated by signs for the times the special conditions are in effect."
+        picture: fig-diamond-lane
+      - id: ch04-markings-13
+        say: >-
+          On city streets, parts of the solid white line between a diamond lane and the normal lanes can
+          be replaced by broken white lines. In those places, vehicles that are
+          not high-occupancy vehicles can enter the reserved lane if they make a right turn at the next
+          intersection. Bus lanes and high-occupancy vehicle lanes help make the best use of the limited
+          space on streets and highways. They make sure that the most important vehicles move the
+          fastest.
+        source:
+          page: 33
+          quote: "When used to designate reserved lanes on city streets, sections of the solid white line that separates the diamond lanes from the normal lanes can be replaced by broken white lines. In these locations, non-HOV can enter the HOV lane if they make a right turn at the next intersection. Bus lanes and HOV lanes are to promote the most efficient use of limited street and highway capacity. They assure that vehicles with the highest importance move the fastest."
+
+  - id: ch04-officers
+    title: Traffic Officers
+    paragraphs:
+      - id: ch04-officers-1
+        say: >-
+          Last in this chapter, traffic officers. Directions from a traffic officer come before signs,
+          signals, or pavement markings. For example, if a traffic officer signals you to stop at a green
+          light, you must stop. And if an officer signals you to drive through a red light or a stop sign,
+          you must do it.
+        source:
+          page: 33
+          quote: "Directions given by traffic officers take precedence over signs, signals or pavement markings. If a traffic officer signals you to stop at a green light, for example, you must stop. If an officer signals you to drive through a red light or stop sign, you must do it."
+      - id: ch04-officers-2
+        say: >-
+          Many kinds of people are allowed to direct traffic. They include police officers, fire police,
+          highway work area flag persons, school crossing persons, and school bus drivers.
+        source:
+          page: 33
+          quote: "Among the persons authorized to direct traffic are police officers, fire police, highway work area flag persons and school crossing persons, and school bus drivers."
+        picture: fig-flag-person
