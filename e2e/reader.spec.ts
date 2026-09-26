@@ -127,6 +127,10 @@ test('screenshots to look at', async ({ page }) => {
     await listen(page).click();
     await expect(page.locator('.reader-title')).toBeVisible();
     await page.screenshot({ path: `screenshots/reader-title-${name}.png`, fullPage: true });
+    // What she actually sees (Signs 1 is the longest paragraph): the controls must be on screen without scrolling.
+    await page.screenshot({ path: `screenshots/reader-title-${name}-viewport.png` });
+    const bar = await page.locator('.reader-bar').boundingBox();
+    expect(bar!.y + bar!.height).toBeLessThanOrEqual(size.height + 1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await btn(page, 'Chapters').click();
     await page.screenshot({ path: `screenshots/reader-menu-${name}.png`, fullPage: true });

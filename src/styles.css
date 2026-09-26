@@ -159,6 +159,8 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .reader-bar .btn.go.icon:not([disabled]) { background: var(--go); border-color: #2e7d32; }
 /* Back, Pause and Next share the row: big, even targets at every width. */
 .reader-bar .btn.icon { flex: 1 1 0; min-width: 0; }
+/* The controls stay on screen: a long caption scrolls behind the bar instead of pushing it below the fold. */
+.reader-bar { position: sticky; bottom: 0; z-index: 1; background: var(--bg); margin: 0 -16px -12px; padding: 8px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
 .reader-menu { display: flex; flex-direction: column; gap: 10px; }
 .reader-menu-ch { display: flex; flex-direction: column; gap: 10px; }
 .reader-menu h2 { margin: 8px 0 0; font-size: 22px; }

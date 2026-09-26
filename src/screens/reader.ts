@@ -57,7 +57,10 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
     picture(list, i), caption.el, note,
     h('div', { class: 'bar reader-bar' }, back, pause, next),
   );
-  focusMain(ctx.root);
+  // Each paragraph starts at the top; focusing Next must not scroll the page (the bar is sticky, and a
+  // scroll-into-view would push the top bar with 🏠 off screen on short phones).
+  window.scrollTo(0, 0);
+  next.focus({ preventScroll: true });
 
   const after = list.next(i);
   const clip = readerClip(paragraph);
