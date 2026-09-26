@@ -93,7 +93,7 @@ The learner is 18, autistic, and reads at a 1st–2nd grade level. Everything is
 - **Section openers:** the first paragraph of a section starts by naming the topic ("Next, traffic signals."). The first paragraph of the chapter says "Chapter 4 is about traffic control."
 - **Numbers:** write them as digits with spoken units: "25 miles per hour" (not "MPH"). Write "New York City" in full.
 - **Length:** 40–120 words per paragraph. A one-sentence manual item (flag person, destination signs, flashing red, steady green, green arrow) may be shorter, down to 15 words. Don't pad it with facts from outside the manual.
-- **YAML:** use `say: >-` (folded) for multi-line text. Copy each `quote` exactly as given below; they were all checked with the real validator.
+- **YAML:** use `say: >-` (folded) for multi-line text. Copy each `quote` exactly from `content/manual/mv21.txt` (same words, same order); `npm run check` verifies it against that page.
 - **After voicing:** listen to every clip. If the voice misreads something (e.g. "HOV", "U.S."), reword the `say` (e.g. "H O V lanes, for high-occupancy vehicles") and run `npm run audio` again.
 
 ## Reader files

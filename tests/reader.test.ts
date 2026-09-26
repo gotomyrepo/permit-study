@@ -178,6 +178,10 @@ describe('content/reader/ch04.yaml', () => {
     for (const s of ch.sections) expect(s.paragraphs.map((p) => p.id)).toEqual(s.paragraphs.map((_, k) => `${s.id}-${k + 1}`));
   });
   test('every paragraph is 15 to 130 words', () => {
-    for (const p of ch.sections.flatMap((s) => s.paragraphs)) expect([p.id, count(p.say) >= 15 && count(p.say) <= 130]).toEqual([p.id, true]);
+    const bad = ch.sections
+      .flatMap((s) => s.paragraphs)
+      .map((p) => ({ id: p.id, words: count(p.say) }))
+      .filter((p) => p.words < 15 || p.words > 130);
+    expect(bad).toEqual([]);
   });
 });
