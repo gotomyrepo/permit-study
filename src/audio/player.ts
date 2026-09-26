@@ -69,9 +69,11 @@ export class AudioPlayer {
       const start = () => {
         a.play().then(
           () => { if (onWord && !rafStarted && !settled) { rafStarted = true; raf = requestAnimationFrame(tick); } },
-          // The browser rejects an in-flight play() with AbortError when our own pause() interrupts it;
-          // that is not a real failure and must not end the clip.
-          (e) => { if (!this.paused) done(e); },
+          // The browser rejects an in-flight play() with AbortError when a pause() interrupts it, even one
+          // already undone by a quick resume() (the rejection is queued and can arrive after `paused` flips
+          // back to false). Either way it is not a real failure and must not end the clip. stop()/abort call
+          // done() directly, and load failures go through onerror, so this can only ever be that rejection.
+          (e) => { if (!(e instanceof DOMException && e.name === 'AbortError')) done(e); },
         );
       };
       this.startPlayback = start;

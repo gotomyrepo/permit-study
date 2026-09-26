@@ -149,6 +149,19 @@ describe('AudioPlayer', () => {
     expect(s).toEqual({ done: true, error: undefined });
   });
 
+  test('a quick pause then resume, before the browser rejects the interrupted play(), does not end the clip', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal));
+    p.pause();
+    p.resume(); // resume before FakeAudio's queued AbortError rejection for the first play() fires
+    await flush(); // lets that queued rejection run
+    expect(s.done).toBe(false);
+    FakeAudio.last.end();
+    await flush();
+    expect(s).toEqual({ done: true, error: undefined });
+  });
+
   test('pause() during the timings fetch keeps playback from starting until resume()', async () => {
     const { AudioPlayer } = await import('../src/audio/player');
     const p = new AudioPlayer('/');
