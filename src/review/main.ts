@@ -1,6 +1,6 @@
 import '../styles.css';
 import { loadLessons } from '../content/load';
-import { audioId, readerClip } from '../content/audioLines';
+import { audioId, readerClip, readerClipQuery } from '../content/audioLines';
 import type { Source } from '../content/types';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
@@ -11,12 +11,12 @@ import { picturePath } from '../reader/types';
 
 const base = import.meta.env.BASE_URL;
 const audio = new Audio();
-const listen = (id: string, small = false) => {
+const listen = (id: string, small = false, query = '') => {
   const b = h('button', { class: small ? 'listen listen-sm' : 'listen' }, '▶ Listen');
   const warn = h('span', { class: 'audio-warn', hidden: '' }, '⚠ audio missing');
   b.addEventListener('click', () => {
     warn.hidden = true;
-    audio.src = `${base}audio/${id}.mp3`;
+    audio.src = `${base}audio/${id}.mp3${query}`;
     audio.play().catch((e: unknown) => { if ((e as { name?: string })?.name !== 'AbortError') warn.hidden = false; });
   });
   return h('span', { class: 'listen-wrap' }, b, warn);
@@ -76,9 +76,9 @@ if (flagged.length) {
   readerPane.append(h('div', { class: 'flags' },
     h('p', {}, `⚠ ${flagged.length} paragraph${flagged.length === 1 ? '' : 's'} rely on a picture in the manual (no quoted text). Please check these especially:`),
     h('ul', {}, ...flagged.map((e) => {
-      const a = h('a', { href: 'javascript:void(0)' }, `${e.paragraph.id}: ${e.paragraph.say}`);
-      a.addEventListener('click', () => document.getElementById(`p-${e.paragraph.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
-      return h('li', {}, a);
+      const b = h('button', { class: 'flag-link' }, `${e.paragraph.id}: ${e.paragraph.say}`);
+      b.addEventListener('click', () => document.getElementById(`p-${e.paragraph.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      return h('li', {}, b);
     }))));
 }
 readerPane.append(h('p', {},
@@ -93,7 +93,7 @@ list.entries.forEach((e, i) => {
     : h('div', { class: 'thumb title-card' }, e.section.title);
   readerPane.append(h('div', { class: 'row', id: `p-${e.paragraph.id}` },
     shown,
-    h('div', {}, h('p', { class: 'say' }, e.paragraph.say), h('p', { class: 'pid' }, e.paragraph.id), listen(readerClip(e.paragraph))),
+    h('div', {}, h('p', { class: 'say' }, e.paragraph.say), h('p', { class: 'pid' }, e.paragraph.id), listen(readerClip(e.paragraph), false, readerClipQuery(e.paragraph))),
     source(e.paragraph.source)));
 });
 

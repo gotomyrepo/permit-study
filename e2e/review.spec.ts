@@ -11,6 +11,13 @@ test('Manual reader tab lists every paragraph beside its quote', async ({ page }
   await expect(page.locator('.reader-pane .row')).toHaveCount(PARAGRAPHS);
   await expect(page.locator('.lessons-pane')).toBeHidden();
   await expect(page.locator('.reader-pane .row').first().getByRole('link', { name: 'Manual page 29' })).toBeVisible();
+
+  const [req] = await Promise.all([
+    page.waitForRequest((r) => r.url().includes('/audio/reader/reader-')),
+    page.locator('.reader-pane .row').first().getByRole('button', { name: '▶ Listen' }).click(),
+  ]);
+  expect(req.url()).toMatch(/\/audio\/reader\/reader-[a-z0-9-]+\.mp3\?v=/);
+
   await page.getByRole('link', { name: 'Lessons' }).click();
   await expect(page.locator('.lessons-pane')).toBeVisible();
   await expect(page.locator('.reader-pane')).toBeHidden();
