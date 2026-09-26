@@ -62,6 +62,19 @@ export function readerClipQuery(p: { id: string }, versions: Record<string, stri
   return `?v=${v}`;
 }
 
+/**
+ * Like `readerClipQuery`, but for a display like the parent review page where one paragraph missing
+ * from the version map (a forgotten `npm run audio`) must not break the whole page: it returns an
+ * empty query and `missing: true` instead of throwing.
+ */
+export function safeReaderClipQuery(p: { id: string }, versions: Record<string, string> = READER_AUDIO_VERSIONS): { query: string; missing: boolean } {
+  try {
+    return { query: readerClipQuery(p, versions), missing: false };
+  } catch {
+    return { query: '', missing: true };
+  }
+}
+
 export function audioLines(lessons: Lesson[], chapters: readonly Chapter[] = []): AudioLine[] {
   const out: AudioLine[] = Object.entries(PHRASES).map(([id, text]) => ({ id, text }));
   for (let t = 1; t <= 20; t++) for (let n = 0; n <= t; n++) out.push({ id: audioId.score(n, t), text: TEXT.score(n, t) });

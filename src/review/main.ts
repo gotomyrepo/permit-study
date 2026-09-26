@@ -1,6 +1,6 @@
 import '../styles.css';
 import { loadLessons } from '../content/load';
-import { audioId, readerClip, readerClipQuery } from '../content/audioLines';
+import { audioId, readerClip, safeReaderClipQuery } from '../content/audioLines';
 import type { Source } from '../content/types';
 import { getScene, stepIndexOf } from '../scenes/registry';
 import { ScenePlayer } from '../scenes/render';
@@ -11,9 +11,9 @@ import { picturePath } from '../reader/types';
 
 const base = import.meta.env.BASE_URL;
 const audio = new Audio();
-const listen = (id: string, small = false, query = '') => {
+const listen = (id: string, small = false, query = '', missing = false) => {
   const b = h('button', { class: small ? 'listen listen-sm' : 'listen' }, '▶ Listen');
-  const warn = h('span', { class: 'audio-warn', hidden: '' }, '⚠ audio missing');
+  const warn = h('span', missing ? { class: 'audio-warn' } : { class: 'audio-warn', hidden: '' }, '⚠ audio missing');
   b.addEventListener('click', () => {
     warn.hidden = true;
     audio.src = `${base}audio/${id}.mp3${query}`;
@@ -74,7 +74,9 @@ const list = new Playlist(chapters);
 const flagged = list.entries.filter((e) => e.paragraph.source.figure);
 if (flagged.length) {
   readerPane.append(h('div', { class: 'flags' },
-    h('p', {}, `⚠ ${flagged.length} paragraph${flagged.length === 1 ? '' : 's'} rely on a picture in the manual (no quoted text). Please check these especially:`),
+    h('p', {}, flagged.length === 1
+      ? '⚠ 1 paragraph relies on a picture in the manual (no quoted text). Please check it especially:'
+      : `⚠ ${flagged.length} paragraphs rely on a picture in the manual (no quoted text). Please check these especially:`),
     h('ul', {}, ...flagged.map((e) => {
       const b = h('button', { class: 'flag-link' }, `${e.paragraph.id}: ${e.paragraph.say}`);
       b.addEventListener('click', () => document.getElementById(`p-${e.paragraph.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
@@ -89,11 +91,12 @@ list.entries.forEach((e, i) => {
   if (e.paragraph === e.section.paragraphs[0]) readerPane.append(h('h3', {}, e.section.title));
   const pic = list.pictureAt(i);
   const shown = pic
-    ? h('img', { class: 'thumb', src: `${base}${picturePath(pic)}`, alt: pic })
+    ? h('img', { class: 'thumb', src: `${base}${picturePath(pic)}`, alt: e.section.title })
     : h('div', { class: 'thumb title-card' }, e.section.title);
+  const { query, missing } = safeReaderClipQuery(e.paragraph);
   readerPane.append(h('div', { class: 'row', id: `p-${e.paragraph.id}` },
     shown,
-    h('div', {}, h('p', { class: 'say' }, e.paragraph.say), h('p', { class: 'pid' }, e.paragraph.id), listen(readerClip(e.paragraph), false, readerClipQuery(e.paragraph))),
+    h('div', {}, h('p', { class: 'say' }, e.paragraph.say), h('p', { class: 'pid' }, e.paragraph.id), listen(readerClip(e.paragraph), false, query, missing)),
     source(e.paragraph.source)));
 });
 
@@ -103,6 +106,8 @@ const show = () => {
   readerPane.hidden = !reader;
   lessonsTab.classList.toggle('on', !reader);
   readerTab.classList.toggle('on', reader);
+  if (reader) { readerTab.setAttribute('aria-current', 'page'); lessonsTab.removeAttribute('aria-current'); }
+  else { lessonsTab.setAttribute('aria-current', 'page'); readerTab.removeAttribute('aria-current'); }
 };
 window.addEventListener('hashchange', show);
 show();

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, test, expect } from 'vitest';
 import { normalizeForMatch } from '../src/content/normalize';
 import { validateLessons } from '../src/content/validate';
-import { audioLines, audioId, TEXT, audioPath, readerClip, readerClipQuery, PHRASES } from '../src/content/audioLines';
+import { audioLines, audioId, TEXT, audioPath, readerClip, readerClipQuery, safeReaderClipQuery, PHRASES } from '../src/content/audioLines';
 import { LessonSchema, type Lesson } from '../src/content/types';
 import type { ManualPage } from '../src/content/validate';
 import { ChapterSchema } from '../src/reader/types';
@@ -190,6 +190,15 @@ describe('readerClipQuery', () => {
   });
   test('throws naming the id when it is missing from the map (a forgotten npm run audio)', () => {
     expect(() => readerClipQuery({ id: 'ch04-a-1' }, {})).toThrow('reader-ch04-a-1');
+  });
+});
+
+describe('safeReaderClipQuery', () => {
+  test('returns the version query and missing: false when present', () => {
+    expect(safeReaderClipQuery({ id: 'ch04-a-1' }, { 'reader-ch04-a-1': 'abcd1234' })).toEqual({ query: '?v=abcd1234', missing: false });
+  });
+  test('returns an empty query and missing: true instead of throwing', () => {
+    expect(safeReaderClipQuery({ id: 'ch04-a-1' }, {})).toEqual({ query: '', missing: true });
   });
 });
 
