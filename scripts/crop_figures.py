@@ -29,10 +29,29 @@ def load_figures(path: pathlib.Path) -> list[dict]:
         if f["id"] in seen:
             raise ValueError(f"duplicate figure id: {f['id']}")
         seen.add(f["id"])
-        x0, y0, x1, y1 = f["box"]
+        page = f.get("page")
+        if not isinstance(page, int) or isinstance(page, bool):
+            raise ValueError(f"{f['id']}: missing page (a whole page number)")
+        box = f.get("box")
+        if not (isinstance(box, list) and len(box) == 4
+                and all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in box)):
+            raise ValueError(f"{f['id']}: box must be 4 numbers [x0, y0, x1, y1]")
+        x0, y0, x1, y1 = box
         if not (x0 < x1 and y0 < y1):
             raise ValueError(f"{f['id']}: box must be [x0, y0, x1, y1] with x0 < x1 and y0 < y1")
     return figs
+
+
+def check_pages(doc: fitz.Document, figs: list[dict]) -> None:
+    """Every figure's page is in the manual and its box lies inside that page."""
+    for f in figs:
+        n = f["page"]
+        if not 1 <= n <= doc.page_count:
+            raise ValueError(f"{f['id']}: page {n} is not in the manual (1\u2013{doc.page_count})")
+        rect = doc[n - 1].rect
+        if not rect.contains(fitz.Rect(*f["box"])):
+            raise ValueError(f"{f['id']}: box {f['box']} is outside page {n} "
+                             f"(0, 0, {rect.width:g}, {rect.height:g})")
 
 
 def crop(doc: fitz.Document, fig: dict, out_dir: pathlib.Path) -> pathlib.Path:
@@ -58,6 +77,7 @@ def main() -> None:
     figs = load_figures(FIGURES)
     OUT_FIG.mkdir(parents=True, exist_ok=True)
     doc = fitz.open(PDF)
+    check_pages(doc, figs)
     for f in figs:
         print(crop(doc, f, OUT_FIG).relative_to(ROOT).as_posix())
     keep = {f["id"] for f in figs}
@@ -66,7 +86,8 @@ def main() -> None:
             png.unlink()
             print(f"removed {png.name}")
     missing = []
-    for sid in sorted(scene_pictures(READER)):
+    scenes = scene_pictures(READER)
+    for sid in sorted(scenes):
         src = SHOTS / f"{sid}.png"
         if not src.exists():
             missing.append(sid)
@@ -74,6 +95,10 @@ def main() -> None:
         OUT_SCENE.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, OUT_SCENE / f"{sid}.png")
         print(f"public/reader/scenes/{sid}.png")
+    for png in sorted(OUT_SCENE.glob("*.png")):
+        if png.stem not in scenes:
+            png.unlink()
+            print(f"removed scenes/{png.name}")
     if missing:
         sys.exit("missing screenshots, run: npm run shots -- " + " ".join(missing))
 
