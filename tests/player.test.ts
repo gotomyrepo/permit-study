@@ -10,9 +10,27 @@ class FakeAudio {
   onended: (() => void) | null = null;
   onerror: (() => void) | null = null;
   plays: string[] = [];
+  // The real browser rejects an in-flight play() promise with AbortError if pause() interrupts it
+  // before it resolves. Resolves on its own on the next microtask if nothing interrupts it first.
+  private pendingPlay: { reject: (e: unknown) => void } | null = null;
   constructor() { FakeAudio.last = this; }
-  play() { this.paused = false; this.plays.push(this.src); return Promise.resolve(); }
-  pause() { this.paused = true; }
+  play() {
+    this.paused = false;
+    this.plays.push(this.src);
+    return new Promise<void>((resolve, reject) => {
+      const mine = { reject };
+      this.pendingPlay = mine;
+      queueMicrotask(() => { if (this.pendingPlay === mine) { this.pendingPlay = null; resolve(); } });
+    });
+  }
+  pause() {
+    if (this.pendingPlay) {
+      const p = this.pendingPlay;
+      this.pendingPlay = null;
+      p.reject(new DOMException('The play() request was interrupted by a call to pause().', 'AbortError'));
+    }
+    this.paused = true;
+  }
   end() { this.paused = true; this.onended?.(); }
 }
 
@@ -116,5 +134,59 @@ describe('AudioPlayer', () => {
     const p = new AudioPlayer('/');
     p.resume();
     expect(FakeAudio.last.plays).toEqual([]);
+  });
+
+  test('pause() before the browser accepts play() does not end the clip', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal));
+    p.pause(); // interrupts FakeAudio's in-flight play() promise, which rejects with AbortError
+    await flush();
+    expect(s.done).toBe(false);
+    p.resume();
+    FakeAudio.last.end();
+    await flush();
+    expect(s).toEqual({ done: true, error: undefined });
+  });
+
+  test('pause() during the timings fetch keeps playback from starting until resume()', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal, () => {}));
+    await flush();
+    p.pause();
+    pendingFetches.forEach((f) => f());
+    await flush(); await flush();
+    expect(FakeAudio.last.plays).toEqual([]);
+    p.resume();
+    expect(FakeAudio.last.plays).toEqual(['/audio/a.mp3']);
+    FakeAudio.last.end();
+    await flush();
+    expect(s).toEqual({ done: true, error: undefined });
+  });
+
+  test('stop() while paused rejects the pending play() with AbortError', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal));
+    await flush();
+    p.pause();
+    p.stop();
+    await flush();
+    expect(s.done).toBe(true);
+    expect((s.error as DOMException).name).toBe('AbortError');
+  });
+
+  test('elapsedMs is 0 after stop()', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal));
+    await flush();
+    FakeAudio.last.currentTime = 3;
+    expect(p.elapsedMs()).toBe(3000);
+    p.stop();
+    expect(p.elapsedMs()).toBe(0);
+    await flush();
+    expect(s.done).toBe(true);
   });
 });
