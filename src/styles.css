@@ -172,3 +172,5 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 }
 /* The failed-clip live region stays in the page while empty (display:none would stop announcements); cancel its flex gap. */
 .reader-status:empty { margin-top: -12px; }
+/* ---- Learn more: icon only on phones, so the lesson top bar fits ---- */
+@media (max-width: 480px) { .learn-more .lm-text { display: none; } }

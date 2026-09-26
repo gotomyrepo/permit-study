@@ -2,7 +2,11 @@ import type { AudioPlayer } from '../audio/player';
 import type { Caption } from '../ui/caption';
 import { h, isAbort } from '../ui/dom';
 
-export interface Ctx { root: HTMLElement; player: AudioPlayer; signal: AbortSignal; goHome: () => void }
+export interface Ctx {
+  root: HTMLElement; player: AudioPlayer; signal: AbortSignal; goHome: () => void;
+  /** Leaves the current flow the way 🏠 does, then opens the reader at a section. */
+  openReader: (section: string) => void;
+}
 export type SpeakResult = 'ok' | 'failed' | 'interrupted';
 
 /**
@@ -27,4 +31,11 @@ export function topBar(ctx: Ctx, fraction: number, ...extra: HTMLElement[]): HTM
   home.addEventListener('click', () => ctx.goHome());
   const bar = h('div', { class: 'progress' }, h('i', { style: `width:${Math.round(fraction * 100)}%` }));
   return h('div', { class: 'top' }, home, bar, ...extra);
+}
+
+/** "📖 Learn more": leaves the lesson like 🏠 (her card is already saved) and opens the reader at `section`. */
+export function learnMoreButton(ctx: Ctx, section: string): HTMLElement {
+  const b = h('button', { class: 'btn soft learn-more', 'aria-label': 'Learn more' }, h('span', {}, '📖'), h('span', { class: 'lm-text' }, ' Learn more'));
+  b.addEventListener('click', () => ctx.openReader(section));
+  return b;
 }

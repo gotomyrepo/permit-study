@@ -3,7 +3,7 @@ import { AudioPlayer } from './audio/player';
 import { ProgressStore, safeStorage } from './progress/store';
 import { isAbort } from './ui/dom';
 import type { Ctx } from './screens/ctx';
-import { showHome } from './screens/home';
+import { showHome, type HomeChoice } from './screens/home';
 import { learnCard } from './screens/learn';
 import { askQuestion } from './screens/question';
 import { lessonEnd } from './screens/lessonEnd';
@@ -18,20 +18,28 @@ export class App {
 
   private playlist: Playlist;
 
+  /** Set by ctx.openReader: what to open instead of Home after the current flow is aborted. */
+  private pending: HomeChoice | null = null;
+
   constructor(private root: HTMLElement, private lessons: Lesson[], chapters: Chapter[] = []) {
     this.playlist = new Playlist(chapters);
   }
 
   private newCtx(): Ctx {
     const c = new AbortController();
-    return { root: this.root, player: this.player, signal: c.signal, goHome: () => c.abort() };
+    return {
+      root: this.root, player: this.player, signal: c.signal, goHome: () => c.abort(),
+      openReader: (section) => { this.pending = { kind: 'reader', section }; c.abort(); },
+    };
   }
 
   async start(): Promise<never> {
     for (;;) {
       const ctx = this.newCtx();
       try {
-        const choice = await showHome(ctx, this.lessons, this.progress, this.playlist.length > 0);
+        const pending = this.pending;
+        this.pending = null;
+        const choice = pending ?? await showHome(ctx, this.lessons, this.progress, this.playlist.length > 0);
         this.player.stop();
         if (choice.kind === 'lesson') await this.runLesson(ctx, choice.lesson);
         else if (choice.kind === 'reader') await this.runReader(ctx, choice.section);
@@ -49,7 +57,7 @@ export class App {
     let i = this.progress.resumeCard(lesson);
     while (i < lesson.cards.length) {
       this.progress.setPlace(lesson.id, i);
-      const move = await learnCard(ctx, lesson.cards[i], i / total, i > 0);
+      const move = await learnCard(ctx, lesson.cards[i], i / total, i > 0, lesson.readerStart);
       if (move === 'next') i++;
       else if (move === 'back') i--;
       else { this.progress.clearPlace(lesson.id); i = 0; }
