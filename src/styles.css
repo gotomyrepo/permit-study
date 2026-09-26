@@ -156,7 +156,7 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .stage.reader-title { background: var(--soft); color: var(--soft-ink); align-items: center; min-height: 22vh; padding: 16px; font-size: 40px; font-weight: 800; text-align: center; }
 .caption.reader-cap { font-size: 24px; flex: 0 0 auto; }
 .reader-note { background: #fff3e0; border: 2px solid #ffb74d; border-radius: var(--radius); padding: 8px 12px; font-size: 20px; font-weight: 700; }
-.reader-bar .btn.go.icon:not([disabled]) { background: var(--go); border-color: #2e7d32; }
+.reader-bar .btn.go.icon { background: var(--go); border-color: #2e7d32; }
 /* Back, Pause and Next share the row: big, even targets at every width. */
 .reader-bar .btn.icon { flex: 1 1 0; min-width: 0; }
 /* The controls stay on screen: a long caption scrolls behind the bar instead of pushing it below the fold. */

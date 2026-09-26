@@ -106,6 +106,22 @@ test('a clip that fails shows a note, does not advance, and Next still works', a
   await playedSince(page, 'reader-ch04-signs-2.mp3', 0);
 });
 
+test('after a failed clip, Play is enabled and retries the same paragraph', async ({ page }) => {
+  const clip1 = /\/audio\/reader\/reader-ch04-signs-1\.mp3(\?|$)/;
+  await page.route(clip1, (r) => r.abort());
+  await listen(page).click();
+  await expect(page.locator('.reader-note')).toBeVisible();
+  await expect(btn(page, 'Play')).toBeEnabled(); // controls are never disabled
+  for (const b of await page.locator('.reader-bar button, .top button').all()) await expect(b).toBeEnabled();
+  await page.unroute(clip1); // her connection is back
+  const before = (await plays(page)).length;
+  await btn(page, 'Play').click();
+  await playedSince(page, 'reader-ch04-signs-1.mp3', before);
+  await expect(page.locator('.reader-note')).toBeHidden();
+  await expect(btn(page, 'Pause')).toBeVisible();
+  await expect(caption(page)).toContainText(firstWords(say(0, 0)));
+});
+
 test('the last paragraph leads to the finished card', async ({ page }) => {
   await listen(page).click();
   await btn(page, 'Chapters').click();

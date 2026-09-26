@@ -70,7 +70,11 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
 
   const para = childController(ctx.signal);
   let paused = false;
+  let failed = false;
+  let retry!: (m: Move) => void;
+  const retried = new Promise<Move>((resolve) => { retry = resolve; });
   pause.addEventListener('click', () => {
+    if (failed) { retry(i); return; } // ▶ after a failed clip tries this paragraph again (her connection may be back)
     paused = !paused;
     if (paused) ctx.player.pause(); else ctx.player.resume();
     pause.textContent = paused ? '▶' : '⏸';
@@ -83,13 +87,18 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
   });
   const played = speak(ctx, clip, caption, para.signal, query).then((r): Move | Promise<never> => {
     if (r === 'ok') return after ?? 'end';
-    if (r === 'failed') { note.hidden = false; pause.setAttribute('disabled', ''); }
+    if (r === 'failed') {
+      failed = true;
+      note.hidden = false;
+      pause.textContent = '▶';
+      pause.setAttribute('aria-label', 'Play');
+    }
     return untilLeft();
   });
   const tapped = chooseOne([back, next, menu], para.signal).then((k): Move =>
     k === 0 ? list.back(i, ctx.player.elapsedMs()) : k === 1 ? (after ?? 'end') : 'menu');
   try {
-    return await Promise.race([played, tapped]);
+    return await Promise.race([played, tapped, retried]);
   } finally {
     para.abort();
     ctx.player.stop();
