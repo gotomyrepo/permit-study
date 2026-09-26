@@ -53,12 +53,18 @@ test('Back: previous paragraph within 2 seconds, else restart this one', async (
   await listen(page).click();
   await btn(page, 'Next').click();
   await expect(caption(page)).toContainText(firstWords(say(0, 1)));
+  await playedSince(page, 'reader-ch04-signs-2.mp3', 0);
+  // Under 2 s, however slow the machine: rewind to the start and check before tapping.
+  expect(await page.evaluate(() => { const m = (window as any).media; m.currentTime = 0; return m.currentTime; })).toBeLessThan(2);
   await btn(page, 'Back').click();
   await expect(caption(page)).toContainText(firstWords(say(0, 0)));
+  const sinceNext = (await plays(page)).length;
   await btn(page, 'Next').click();
   await expect(caption(page)).toContainText(firstWords(say(0, 1)));
-  await playedSince(page, 'reader-ch04-signs-2.mp3', 0);
-  await page.waitForTimeout(3000);
+  await playedSince(page, 'reader-ch04-signs-2.mp3', sinceNext);
+  // Past 2 s without waiting: seek to 3 s, as the clip-ends test does.
+  await expect.poll(() => page.evaluate(() => Number.isFinite((window as any).media.duration))).toBe(true);
+  expect(await page.evaluate(() => { const m = (window as any).media; m.currentTime = 3; return m.currentTime; })).toBeGreaterThanOrEqual(2);
   const before = (await plays(page)).length;
   await btn(page, 'Back').click();
   await expect(caption(page)).toContainText(firstWords(say(0, 1)));
@@ -100,7 +106,8 @@ test('a clip that fails shows a note, does not advance, and Next still works', a
   await listen(page).click();
   await expect(page.locator('.reader-note')).toBeVisible();
   await expect(page.locator('.reader-note')).toHaveText("Can't play this part right now");
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(1500); // time enough for a wrong auto-advance to start the next clip
+  expect(await plays(page)).not.toContain('reader-ch04-signs-2.mp3');
   await expect(caption(page)).toContainText(firstWords(say(0, 0)));
   await btn(page, 'Next').click();
   await playedSince(page, 'reader-ch04-signs-2.mp3', 0);

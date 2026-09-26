@@ -50,11 +50,12 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
   const back = h('button', { class: 'btn soft icon', 'aria-label': 'Back' }, '⏮');
   const pause = h('button', { class: 'btn soft icon', 'aria-label': 'Pause' }, '⏸');
   const next = h('button', { class: 'btn go icon', 'aria-label': 'Next' }, '⏭');
-  const note = h('div', { class: 'reader-note', hidden: '' }, "Can't play this part right now");
+  // An empty live region from the start: a screen reader announces text added to it (unhiding one is not reliably announced).
+  const status = h('div', { class: 'reader-status', role: 'status', 'aria-live': 'polite' });
   ctx.root.replaceChildren(
     topBar(ctx, (i + 1) / list.length, menu),
     h('div', { class: 'reader-where' }, `Chapter ${chapter.number} · ${section.title}`),
-    picture(list, i), caption.el, note,
+    picture(list, i), caption.el, status,
     h('div', { class: 'bar reader-bar' }, back, pause, next),
   );
   // Each paragraph starts at the top; focusing Next must not scroll the page (the bar is sticky, and a
@@ -89,7 +90,7 @@ async function readParagraph(ctx: Ctx, list: Playlist, progress: ProgressStore, 
     if (r === 'ok') return after ?? 'end';
     if (r === 'failed') {
       failed = true;
-      note.hidden = false;
+      status.append(h('div', { class: 'reader-note' }, "Can't play this part right now"));
       pause.textContent = '▶';
       pause.setAttribute('aria-label', 'Play');
     }
@@ -128,7 +129,7 @@ async function chapterMenu(ctx: Ctx, list: Playlist, current: number): Promise<n
 async function finished(ctx: Ctx): Promise<void> {
   const cap = new Caption(PHRASES['phrase-reader-done']);
   const again = h('button', { class: 'btn go' }, '↺ Start over');
-  ctx.root.replaceChildren(topBar(ctx, 1), h('div', { class: 'big-center' }, h('div', { class: 'huge' }, '🎉'), cap.el), h('div', { class: 'bar' }, again));
+  ctx.root.replaceChildren(topBar(ctx, 1), h('div', { class: 'big-center' }, h('div', { class: 'huge', 'aria-hidden': 'true' }, '🎉'), cap.el), h('div', { class: 'bar' }, again));
   focusMain(ctx.root);
   void speak(ctx, 'phrase-reader-done', cap).catch(() => {});
   await clicked(again, ctx.signal);
