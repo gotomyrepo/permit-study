@@ -1,0 +1,25 @@
+# Manual figures for the reader. box: [x0, y0, x1, y1] in PDF points (the page is 396 x 612),
+# origin at the top left. Regenerate PNGs with: npm run figures. Look at every PNG after a change.
+- { id: fig-stop-sign,          page: 29, box: [123, 468, 190, 533] }
+- { id: fig-yield-sign,         page: 29, box: [304, 217, 380, 283] }
+- { id: fig-regulation-signs,   page: 29, box: [264, 364, 381, 419] }
+- { id: fig-warning-signs,      page: 30, box: [86, 76, 192, 167] }
+- { id: fig-work-area-signs,    page: 30, box: [68, 245, 194, 287] }
+- { id: fig-flag-person,        page: 30, box: [15, 385, 177, 575] }
+- { id: fig-destination-sign,   page: 30, box: [291, 74, 377, 112] }
+- { id: fig-route-signs,        page: 30, box: [273, 150, 379, 187] }
+- { id: fig-service-signs,      page: 30, box: [278, 283, 364, 326] }
+- { id: fig-traffic-light,      page: 30, box: [305, 388, 375, 476] }
+- { id: fig-light-flashing-red, page: 31, box: [143, 300, 191, 335] }
+- { id: fig-light-steady-yellow, page: 31, box: [143, 380, 191, 418] }
+- { id: fig-light-steady-green, page: 31, box: [143, 480, 191, 518] }
+- { id: fig-light-green-arrow,  page: 31, box: [143, 529, 191, 564] }
+- { id: fig-lane-use-lights,    page: 31, box: [204, 221, 372, 296] }
+- { id: fig-edge-line-narrows,  page: 31, box: [201, 491, 359, 579] }
+- { id: fig-line-broken,        page: 32, box: [17, 201, 161, 251] }
+- { id: fig-line-solid-broken,  page: 32, box: [17, 325, 160, 374] }
+- { id: fig-line-double-solid,  page: 32, box: [17, 427, 159, 477] }
+- { id: fig-line-solid,         page: 32, box: [17, 526, 159, 576] }
+- { id: fig-stop-crosswalk,     page: 32, box: [286, 102, 379, 282] }
+- { id: fig-lane-arrows,        page: 32, box: [203, 422, 345, 472] }
+- { id: fig-diamond-lane,       page: 33, box: [17, 251, 159, 301] }

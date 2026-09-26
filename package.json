@@ -10,7 +10,8 @@
     "check": "tsx scripts/check-content.ts",
     "audio": "tsx scripts/list-audio-lines.ts && python scripts/build_audio.py",
     "shots": "tsx scripts/screenshot-scenes.ts",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "figures": "python scripts/crop_figures.py"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
