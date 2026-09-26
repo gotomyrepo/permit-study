@@ -174,3 +174,13 @@ svg.scene [data-prop][data-state~="hidden"] { display: none; }
 .reader-status:empty { margin-top: -12px; }
 /* ---- Learn more: icon only on phones, so the lesson top bar fits ---- */
 @media (max-width: 480px) { .learn-more .lm-text { display: none; } }
+/* ---- parent review: tabs and the reader tab ---- */
+.review .tabs { display: flex; gap: 8px; margin: 8px 0 16px; }
+.review .tab { padding: 8px 16px; border: 2px solid #90caf9; border-radius: 8px; text-decoration: none; color: var(--soft-ink); font-weight: 700; }
+.review .tab.on { background: var(--soft-ink); color: #fff; }
+.review img.thumb { width: 100%; background: #fff; border: 1px solid #ddd; }
+.review .thumb.title-card { background: var(--soft); color: var(--soft-ink); font-weight: 800; padding: 16px 8px; text-align: center; }
+.review .pid { font-size: 12px; color: #777; margin: 0 0 6px; }
+.review .flags { background: #fff3e0; border: 2px solid #ffb74d; border-radius: 8px; padding: 8px 16px; margin: 0 0 16px; }
+.review .flags p { font-weight: 700; margin: 4px 0; }
+.review .flags a { cursor: pointer; }
