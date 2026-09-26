@@ -1,10 +1,15 @@
+import type { ReaderPlace } from '../reader/types';
+
 export interface KV { getItem(k: string): string | null; setItem(k: string, v: string): void }
 /** Where she is in one lesson; `seq` orders places by how recently they were used. */
 interface Place { card: number; seq: number }
-interface Data { completed: string[]; missed: string[]; places: Record<string, Place> }
+interface Data { completed: string[]; missed: string[]; places: Record<string, Place>; reader: ReaderPlace | null }
 
 const isPlace = (x: unknown): x is Place =>
   !!x && typeof x === 'object' && Number.isInteger((x as Place).card) && (x as Place).card >= 0 && Number.isFinite((x as Place).seq);
+
+const isReaderPlace = (x: unknown): x is ReaderPlace =>
+  !!x && typeof x === 'object' && ['chapter', 'section', 'paragraph'].every((k) => typeof (x as Record<string, unknown>)[k] === 'string');
 
 function loadPlaces(x: unknown): Record<string, Place> {
   const out: Record<string, Place> = {};
@@ -41,10 +46,11 @@ export class ProgressStore {
           completed: d.completed.filter((x: unknown) => typeof x === 'string'),
           missed: d.missed.filter((x: unknown) => typeof x === 'string'),
           places: loadPlaces(d.places),
+          reader: isReaderPlace(d.reader) ? { chapter: d.reader.chapter, section: d.reader.section, paragraph: d.reader.paragraph } : null,
         };
       }
     } catch { /* fall through */ }
-    return { completed: [], missed: [], places: {} };
+    return { completed: [], missed: [], places: {}, reader: null };
   }
 
   private save(): void {
@@ -83,6 +89,14 @@ export class ProgressStore {
       if (p && !this.isCompleted(l.id) && p.seq > bestSeq) { best = l; bestSeq = p.seq; }
     }
     return best ?? this.nextLesson(lessons);
+  }
+  /** Her place in the manual reader, or null if she has never listened. */
+  readerPlace(): ReaderPlace | null { return this.data.reader ? { ...this.data.reader } : null; }
+  setReaderPlace(p: ReaderPlace): void {
+    const r = this.data.reader;
+    if (r && r.chapter === p.chapter && r.section === p.section && r.paragraph === p.paragraph) return;
+    this.data.reader = { chapter: p.chapter, section: p.section, paragraph: p.paragraph };
+    this.save();
   }
   missed(): string[] { return [...this.data.missed]; }
   markMissed(qid: string): void { if (!this.data.missed.includes(qid)) { this.data.missed.push(qid); this.save(); } }

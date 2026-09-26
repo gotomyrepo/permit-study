@@ -80,4 +80,41 @@ describe('AudioPlayer', () => {
     expect(first.done).toBe(true);
     expect(FakeAudio.last.plays).toEqual([]);
   });
+
+  test('pause keeps play() pending; resume lets the clip finish', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    const s = settled(p.play('a', new AbortController().signal));
+    await flush();
+    p.pause();
+    expect(FakeAudio.last.paused).toBe(true);
+    await flush();
+    expect(s.done).toBe(false);
+    p.resume();
+    expect(FakeAudio.last.paused).toBe(false);
+    expect(FakeAudio.last.plays).toEqual(['/audio/a.mp3', '/audio/a.mp3']);
+    FakeAudio.last.end();
+    await flush();
+    expect(s).toEqual({ done: true, error: undefined });
+  });
+
+  test('elapsedMs is the clip position while playing, else 0', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    expect(p.elapsedMs()).toBe(0);
+    void p.play('a', new AbortController().signal);
+    await flush();
+    FakeAudio.last.currentTime = 2.5;
+    expect(p.elapsedMs()).toBe(2500);
+    FakeAudio.last.end();
+    await flush();
+    expect(p.elapsedMs()).toBe(0);
+  });
+
+  test('resume does nothing when no clip is playing', async () => {
+    const { AudioPlayer } = await import('../src/audio/player');
+    const p = new AudioPlayer('/');
+    p.resume();
+    expect(FakeAudio.last.plays).toEqual([]);
+  });
 });

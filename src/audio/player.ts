@@ -64,5 +64,14 @@ export class AudioPlayer {
     });
   }
 
+  /** Pauses the current clip. Its play() stays pending until resume() lets it end, or it is stopped or aborted. */
+  pause(): void { if (this.cancelCurrent) this.audio.pause(); }
+
+  /** Continues a paused clip. Does nothing if no clip is playing. */
+  resume(): void { if (this.cancelCurrent && this.audio.paused) void this.audio.play().catch(() => {}); }
+
+  /** How far into the current clip playback is, in ms (0 when no clip is playing). */
+  elapsedMs(): number { return this.cancelCurrent ? Math.round(this.audio.currentTime * 1000) : 0; }
+
   stop(): void { this.gen++; this.cancelCurrent?.(); this.audio.pause(); }
 }

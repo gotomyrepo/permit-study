@@ -110,4 +110,29 @@ describe('ProgressStore', () => {
       expect(p.keepGoing(L)?.id).toBe('signs');
     });
   });
+
+  describe('reader place', () => {
+    const place = { chapter: 'ch04', section: 'ch04-signals', paragraph: 'ch04-signals-3' };
+    test('starts empty, saves and reloads', () => {
+      const kv = memKV();
+      const p = new ProgressStore(kv);
+      expect(p.readerPlace()).toBeNull();
+      p.setReaderPlace(place);
+      expect(new ProgressStore(kv).readerPlace()).toEqual(place);
+    });
+    test('a malformed reader place is dropped and nothing else is lost', () => {
+      const raw = JSON.stringify({ completed: ['signs'], missed: ['q1'], places: { yield: { card: 1, seq: 1 } }, reader: { chapter: 'ch04', section: 3 } });
+      const p = new ProgressStore(memKV({ [ProgressStore.KEY]: raw }));
+      expect(p.readerPlace()).toBeNull();
+      expect(p.isCompleted('signs')).toBe(true);
+      expect(p.missed()).toEqual(['q1']);
+      expect(p.resumeCard({ id: 'yield', cards: [1, 2, 3] })).toBe(1);
+    });
+    test('the returned place is a copy', () => {
+      const p = new ProgressStore(memKV());
+      p.setReaderPlace(place);
+      p.readerPlace()!.paragraph = 'changed';
+      expect(p.readerPlace()).toEqual(place);
+    });
+  });
 });
