@@ -1,14 +1,18 @@
 import { z } from 'zod';
 import { Id, SourceSchema } from '../content/types';
 
-/** `fig-<id>`: a manual figure from content/reader/figures.yaml. `scene:<scene-id>`: a still of a lesson scene. */
-export const PICTURE_RE = /^(fig-[a-z0-9-]+|scene:[a-z0-9-]+)$/;
+/**
+ * `fig-<id>`: a manual figure from content/reader/figures.yaml. `scene:<scene-id>`: a still of a lesson scene.
+ * `none`: show the section title card (when no picture fits and the earlier one would mislead).
+ */
+export const PICTURE_NONE = 'none';
+export const PICTURE_RE = /^(fig-[a-z0-9-]+|scene:[a-z0-9-]+|none)$/;
 
 export const ParagraphSchema = z.object({
   id: Id,
   say: z.string().min(1),
   source: SourceSchema,
-  picture: z.string().regex(PICTURE_RE, 'picture is fig-<id> or scene:<scene-id>').optional(),
+  picture: z.string().regex(PICTURE_RE, 'picture is fig-<id>, scene:<scene-id> or none').optional(),
 });
 
 export const SectionSchema = z.object({

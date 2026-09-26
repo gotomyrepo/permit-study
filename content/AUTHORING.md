@@ -100,5 +100,6 @@ The learner is 18, autistic, and reads at a 1st–2nd grade level. Everything is
 - One file per chapter: `content/reader/chNN.yaml` (`id: chNN`, `number`, `title`, `sections`). Section ids are `chNN-<topic>`; paragraph ids are `<section id>-<n>` from 1.
 - `source.quote` is the whole contiguous manual passage the paragraph retells (it may continue onto the next page). `npm run check` verifies it.
 - `picture` is `fig-<id>` (a crop listed in `content/reader/figures.yaml`, made with `npm run figures`, then looked at) or `scene:<scene-id>` (run `npm run shots -- <scene-id>` first; `npm run figures` copies it). A paragraph with no picture keeps the section's latest picture, or shows the section title.
+- `picture: none` shows the section title card. Use it when no figure or scene shows what the paragraph names and the carried-over picture would contradict it (e.g. the red and yellow arrows, ch04-signals-7 and -9). Later paragraphs with no picture of their own show the title card too, so give the next paragraph an explicit picture.
 - A lesson's `readerStart` names the reader section that its "📖 Learn more" button opens.
 - After writing: `npm run check`, `npm run audio`, listen to every new clip on `review.html#reader`, then `npm run check -- --audio`.

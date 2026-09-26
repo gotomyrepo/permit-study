@@ -1,5 +1,5 @@
 import type { Lesson, Source } from './types';
-import type { Chapter } from '../reader/types';
+import { PICTURE_NONE, type Chapter } from '../reader/types';
 import { normalizeForMatch, normalizeIndexed } from './normalize';
 import { audioLines } from './audioLines';
 
@@ -163,7 +163,7 @@ export function validateReader(
         const where = `${ch.id}/${s.id}/${p.id}`;
         checkId(p.id, where);
         checkSource(p.source, where);
-        if (p.picture && !pictures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" has no PNG (run: npm run figures)`);
+        if (p.picture && p.picture !== PICTURE_NONE && !pictures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" has no PNG (run: npm run figures)`);
         if (p.picture?.startsWith('fig-') && !figures.has(p.picture)) errors.push(`${where}: picture "${p.picture}" is not listed in content/reader/figures.yaml`);
       }
     }

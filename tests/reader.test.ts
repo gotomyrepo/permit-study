@@ -66,6 +66,13 @@ describe('Playlist', () => {
     expect(list.pictureAt(2)).toBe('fig-two');
     expect(list.pictureAt(3)).toBeNull(); // new section: no carry-over
   });
+  test('pictureAt: picture none shows the title card, and later paragraphs without a picture inherit none', () => {
+    const c = ChapterSchema.parse({ id: 'ch09', number: 9, title: 'N', sections: [
+      { id: 'ch09-a', title: 'A', paragraphs: [para('ch09-a-1', 'fig-one'), para('ch09-a-2', 'none'), para('ch09-a-3'), para('ch09-a-4', 'fig-two')] },
+    ] });
+    const l = new Playlist([c]);
+    expect([0, 1, 2, 3].map((i) => l.pictureAt(i))).toEqual(['fig-one', null, null, 'fig-two']);
+  });
   test('at() throws outside the list', () => {
     expect(() => list.at(7)).toThrow();
   });
@@ -76,6 +83,8 @@ describe('reader schemas', () => {
     expect(ParagraphSchema.safeParse(para('p', 'fig-stop-sign')).success).toBe(true);
     expect(ParagraphSchema.safeParse(para('p', 'scene:yield-intersection')).success).toBe(true);
     expect(ParagraphSchema.safeParse(para('p', 'stop-sign.png')).success).toBe(false);
+    expect(ParagraphSchema.safeParse(para('p', 'none')).success).toBe(true);
+    expect(ParagraphSchema.safeParse(para('p', 'nothing')).success).toBe(false);
   });
   test('figure boxes must not be inverted', () => {
     expect(FigureSchema.safeParse({ id: 'fig-a', page: 29, box: [10, 10, 50, 40] }).success).toBe(true);
@@ -121,6 +130,11 @@ describe('validateReader', () => {
   test('fig picture with a PNG but not listed in figures.yaml (a stale PNG)', () => {
     expect(validateReader([ch4], pages, pics, new Set(['fig-one']), lessons).join())
       .toContain('ch04/ch04-a/ch04-a-3: picture "fig-two" is not listed in content/reader/figures.yaml');
+  });
+  test('picture none needs no PNG', () => {
+    const c = ChapterSchema.parse(structuredClone(ch4));
+    c.sections[0].paragraphs[1].picture = 'none';
+    expect(validateReader([c], pages, pics, figs, lessons)).toEqual([]);
   });
   test('readerStart that is not a section', () => {
     expect(validateReader([ch4], pages, pics, figs, [{ id: 'lights', readerStart: 'ch04-nope' }]).join())

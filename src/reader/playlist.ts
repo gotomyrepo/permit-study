@@ -1,4 +1,4 @@
-import type { Chapter, Paragraph, ReaderPlace, Section } from './types';
+import { PICTURE_NONE, type Chapter, type Paragraph, type ReaderPlace, type Section } from './types';
 
 export interface Entry { chapter: Chapter; section: Section; paragraph: Paragraph }
 
@@ -49,12 +49,15 @@ export class Playlist {
     return 0;
   }
 
-  /** The paragraph's picture, else the latest earlier picture in the same section, else null (show the section title). */
+  /**
+   * The paragraph's picture, else the latest earlier picture in the same section, else null (show the section title).
+   * `none` counts as a picture: it and the paragraphs after it without their own picture show the section title.
+   */
   pictureAt(i: number): string | null {
     const { section } = this.at(i);
     for (let j = i; j >= 0 && this.entries[j].section === section; j--) {
       const p = this.entries[j].paragraph.picture;
-      if (p) return p;
+      if (p) return p === PICTURE_NONE ? null : p;
     }
     return null;
   }

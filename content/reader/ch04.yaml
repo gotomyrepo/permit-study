@@ -195,7 +195,7 @@ sections:
         source:
           page: 31
           quote: "RED ARROW: Do not go in the direction of the arrow until the red arrow light is off and a green light or arrow light goes on. A right or left turn on red is not permitted at a red arrow."
-        picture: fig-traffic-light
+        picture: none
       - id: ch04-signals-8
         say: >-
           A steady yellow light means be prepared to stop, because the traffic signal is about to turn
@@ -211,7 +211,7 @@ sections:
         source:
           page: 31
           quote: "YELLOW ARROW: The protection of a green arrow will end. If you intend to turn in the direction of the arrow, be prepared to stop."
-        picture: fig-traffic-light
+        picture: none
       - id: ch04-signals-10
         say: >-
           A steady green light means go. But you still have to yield the right-of-way to other traffic
