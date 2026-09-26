@@ -1,4 +1,9 @@
-"""Generate narration mp3 + word timings for every line in content/audio-lines.json."""
+"""Generate narration mp3 + word timings for every line in content/audio-lines.json.
+
+public/audio and its subfolders hold generated clips only: every .mp3/.json there
+(other than manifest.json) is expected to come from a current line, and anything
+that doesn't is deleted as stale (see stale_files).
+"""
 import asyncio
 import hashlib
 import json
@@ -72,7 +77,13 @@ def line_dir(out: pathlib.Path, line: dict) -> pathlib.Path:
 
 
 def stale_files(out: pathlib.Path, lines: list[dict]) -> list[pathlib.Path]:
-    """Generated .mp3/.json files in `out` and its subfolders that no line makes any more (never manifest.json)."""
+    """Files in `out` and its subfolders that aren't a current line's output, so are safe to delete.
+
+    public/audio (and each subfolder, like public/audio/reader) holds only generated
+    .mp3/.json clips plus manifest.json: anything else there is a leftover from a line
+    that no longer exists (renamed id, removed content, ...) and is treated as stale.
+    manifest.json itself is never considered stale.
+    """
     keep = {(line.get("dir", ""), line["id"]) for line in lines}
     found: list[pathlib.Path] = []
     for folder in [out, *sorted(d for d in out.iterdir() if d.is_dir())]:
@@ -123,12 +134,23 @@ async def build_one(line: dict, voice: dict, manifest: dict, sem: asyncio.Semaph
 ID_RE = re.compile(r"^[a-z0-9_-]+$")
 
 
+def check_unique_ids(lines: list[dict]) -> None:
+    """Raise SystemExit naming the first duplicate id: the manifest is keyed by id only, so two
+    lines sharing an id would silently overwrite each other's clip and hash entry."""
+    seen: set[str] = set()
+    for line in lines:
+        if line["id"] in seen:
+            raise SystemExit(f"duplicate audio line id: {line['id']!r}")
+        seen.add(line["id"])
+
+
 async def main() -> None:
     lines = json.loads(LINES.read_text(encoding="utf-8"))
     for line in lines:
         assert ID_RE.match(line["id"]), f"invalid audio line id: {line['id']!r}"
         if "dir" in line:
             assert ID_RE.match(line["dir"]), f"invalid audio dir: {line['dir']!r}"
+    check_unique_ids(lines)
     voice = json.loads(VOICE.read_text(encoding="utf-8"))
     OUT.mkdir(parents=True, exist_ok=True)
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {}

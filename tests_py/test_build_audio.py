@@ -2,7 +2,9 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "scripts"))
-from build_audio import line_dir, match_words, stale_files  # noqa: E402
+import pytest
+
+from build_audio import check_unique_ids, line_dir, match_words, stale_files  # noqa: E402
 
 
 def b(text, ms):
@@ -76,3 +78,13 @@ def test_a_clip_in_the_wrong_folder_is_stale(tmp_path):
     (tmp_path / "reader-a.mp3").write_text("x")
     lines = [{"id": "reader-a", "text": "y", "dir": "reader"}]
     assert [f.name for f in stale_files(tmp_path, lines)] == ["reader-a.mp3"]
+
+
+def test_check_unique_ids_passes_when_all_distinct():
+    check_unique_ids([{"id": "card-a", "text": "x"}, {"id": "card-b", "text": "y"}])
+
+
+def test_check_unique_ids_rejects_a_duplicate_id():
+    lines = [{"id": "card-a", "text": "x"}, {"id": "card-a", "text": "y", "dir": "reader"}]
+    with pytest.raises(SystemExit, match="card-a"):
+        check_unique_ids(lines)
