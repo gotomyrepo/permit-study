@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const Id = z.string().regex(/^[a-z0-9-]+$/, 'ids use lowercase letters, digits and dashes');
+export const Id = z.string().regex(/^[a-z0-9-]+$/, 'ids use lowercase letters, digits and dashes');
 
 export const SourceSchema = z.object({
   page: z.number().int().positive(),
@@ -29,6 +29,8 @@ export const LessonSchema = z.object({
   order: z.number().int().positive(),
   title: z.string().min(1).max(20),
   icon: z.string().min(1),
+  /** Reader section that "📖 Learn more" opens (a section id in content/reader/ch*.yaml). */
+  readerStart: Id.optional(),
   cards: z.array(CardSchema).min(1),
   questions: z.array(QuestionSchema).min(1),
 });

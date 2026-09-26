@@ -1,0 +1,97 @@
+import { describe, test, expect } from 'vitest';
+import { ChapterSchema, FigureSchema, ParagraphSchema, picturePath, type Chapter } from '../src/reader/types';
+import { BACK_RESTART_MS, Playlist, readerStats } from '../src/reader/playlist';
+import { LessonSchema } from '../src/content/types';
+
+const src = { page: 29, quote: 'Traffic signs tell you about traffic rules' };
+const para = (id: string, picture?: string) => ({ id, say: `Words for ${id}.`, source: src, ...(picture ? { picture } : {}) });
+const ch4: Chapter = ChapterSchema.parse({
+  id: 'ch04', number: 4, title: 'Traffic Control', sections: [
+    { id: 'ch04-a', title: 'A', paragraphs: [para('ch04-a-1', 'fig-one'), para('ch04-a-2'), para('ch04-a-3', 'fig-two')] },
+    { id: 'ch04-b', title: 'B', paragraphs: [para('ch04-b-1'), para('ch04-b-2')] },
+  ],
+});
+const ch5: Chapter = ChapterSchema.parse({
+  id: 'ch05', number: 5, title: 'Intersections and Turns', sections: [
+    { id: 'ch05-a', title: 'C', paragraphs: [para('ch05-a-1'), para('ch05-a-2')] },
+  ],
+});
+const list = new Playlist([ch5, ch4]); // out of order on purpose
+const ids = () => list.entries.map((e) => e.paragraph.id);
+
+describe('Playlist', () => {
+  test('orders by chapter number, then section, then paragraph', () => {
+    expect(ids()).toEqual(['ch04-a-1', 'ch04-a-2', 'ch04-a-3', 'ch04-b-1', 'ch04-b-2', 'ch05-a-1', 'ch05-a-2']);
+    expect(list.length).toBe(7);
+    expect(list.chapters.map((c) => c.id)).toEqual(['ch04', 'ch05']);
+  });
+  test('next and prev cross sections and chapters and stop at the edges', () => {
+    expect(list.next(2)).toBe(3);
+    expect(list.next(4)).toBe(5);
+    expect(list.next(6)).toBeNull();
+    expect(list.prev(5)).toBe(4);
+    expect(list.prev(0)).toBeNull();
+  });
+  test('Back: previous paragraph under 2 seconds, else restart this one', () => {
+    expect(BACK_RESTART_MS).toBe(2000);
+    expect(list.back(3, 1999)).toBe(2);
+    expect(list.back(3, 2000)).toBe(3);
+    expect(list.back(0, 500)).toBe(0);
+  });
+  test('placeOf and indexOf round-trip', () => {
+    expect(list.placeOf(4)).toEqual({ chapter: 'ch04', section: 'ch04-b', paragraph: 'ch04-b-2' });
+    expect(list.indexOf(list.placeOf(4))).toBe(4);
+  });
+  test('resume falls back to the section, then the chapter, then the start', () => {
+    expect(list.resume({ chapter: 'ch04', section: 'ch04-b', paragraph: 'ch04-b-2' })).toBe(4);
+    expect(list.resume({ chapter: 'ch04', section: 'ch04-b', paragraph: 'gone' })).toBe(3);
+    expect(list.resume({ chapter: 'ch05', section: 'gone', paragraph: 'gone' })).toBe(5);
+    expect(list.resume({ chapter: 'gone', section: 'gone', paragraph: 'gone' })).toBe(0);
+    expect(list.resume(null)).toBe(0);
+  });
+  test('sectionStart', () => {
+    expect(list.sectionStart('ch04-b')).toBe(3);
+    expect(list.sectionStart('ch05-a')).toBe(5);
+    expect(list.sectionStart('nope')).toBe(-1);
+  });
+  test('pictureAt: own picture, else the latest one earlier in the same section, else none', () => {
+    expect(list.pictureAt(0)).toBe('fig-one');
+    expect(list.pictureAt(1)).toBe('fig-one');
+    expect(list.pictureAt(2)).toBe('fig-two');
+    expect(list.pictureAt(3)).toBeNull(); // new section: no carry-over
+  });
+  test('at() throws outside the list', () => {
+    expect(() => list.at(7)).toThrow();
+  });
+});
+
+describe('reader schemas', () => {
+  test('picture ids are fig-<id> or scene:<scene-id>', () => {
+    expect(ParagraphSchema.safeParse(para('p', 'fig-stop-sign')).success).toBe(true);
+    expect(ParagraphSchema.safeParse(para('p', 'scene:yield-intersection')).success).toBe(true);
+    expect(ParagraphSchema.safeParse(para('p', 'stop-sign.png')).success).toBe(false);
+  });
+  test('figure boxes must not be inverted', () => {
+    expect(FigureSchema.safeParse({ id: 'fig-a', page: 29, box: [10, 10, 50, 40] }).success).toBe(true);
+    expect(FigureSchema.safeParse({ id: 'fig-a', page: 29, box: [50, 10, 10, 40] }).success).toBe(false);
+  });
+  test('picturePath', () => {
+    expect(picturePath('fig-stop-sign')).toBe('reader/figures/fig-stop-sign.png');
+    expect(picturePath('scene:yield-intersection')).toBe('reader/scenes/yield-intersection.png');
+  });
+  test('lessons may name a readerStart section', () => {
+    const base = {
+      id: 'x', order: 1, title: 'X', icon: '🛑',
+      cards: [{ id: 'x-1', say: 'Hi.', scene: 's', step: 't', source: src }],
+      questions: [{ id: 'x-q1', ask: 'Q?', scene: 's', step: 't', choices: ['a', 'b'], answer: 0, explainCard: 'x-1', source: src }],
+    };
+    expect(LessonSchema.parse({ ...base, readerStart: 'ch04-signs' }).readerStart).toBe('ch04-signs');
+    expect(LessonSchema.safeParse({ ...base, readerStart: 'Ch 4' }).success).toBe(false);
+  });
+});
+
+describe('readerStats', () => {
+  test('counts chapters, sections, paragraphs and words', () => {
+    expect(readerStats([ch4, ch5])).toEqual({ chapters: 2, sections: 3, paragraphs: 7, words: 21, minutes: 0 });
+  });
+});
